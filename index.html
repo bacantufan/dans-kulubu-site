@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YUDANSK | Son Sene Müzikali</title>
-  <meta name="description" content="YUDANSK Son Sene Müzikali tanıtım sayfası" />
+  <meta name="description" content="YUDANSK Son Sene Müzikali resmi etkinlik sayfası" />
   <style>
     :root{
       --bg:#08080d;
@@ -55,6 +55,7 @@
       display:flex;
       align-items:center;
       gap:12px;
+      min-width:0;
     }
     .brand-mark{
       width:42px;height:42px;border-radius:14px;
@@ -62,6 +63,7 @@
       font-weight:900;
       background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
+      flex-shrink:0;
     }
     .brand-text strong{
       display:block;
@@ -72,6 +74,9 @@
       display:block;
       font-size:12px;
       color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .nav{
@@ -94,6 +99,7 @@
       font-size:14px;
       transition:.2s ease;
       border:1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
     }
     .btn:hover{transform:translateY(-1px)}
     .btn-primary{
@@ -296,7 +302,6 @@
       max-width:65ch;
     }
 
-    .grid{display:grid;gap:14px}
     .two-col{display:grid;gap:14px}
     .four-col{display:grid;gap:14px}
     .timeline{display:grid;gap:14px}
@@ -523,9 +528,10 @@
                 <span class="accent">Sıra Bizde.</span>
               </h1>
               <p>
-                Dansın, müziğin ve sahne enerjisinin bir araya geldiği bu gecede yalnızca bir gösteri izlemeye değil,
-                YUDANSK’ın ruhunu baştan sona yaşamaya geliyorsun. Bu sayfa tanıtım odaklı ana sayfa olarak kurgulandı;
-                bilet ve kayıt akışı ise ayrı bilet sayfasına taşındı.
+                YUDANSK’ın sahneye taşıdığı Son Sene Müzikali; üniversite hayatının son virajında,
+                anılarla vedalar arasında sıkışan gençlerin hikâyesini dans, müzik ve duyguyla anlatıyor.
+                Her sahnesinde arkadaşlığı, aşkı, ayrılığı, geleceğe dair korkuları ve umutları hissettiren
+                bu gece; yalnızca bir gösteri değil, birlikte yaşanacak unutulmaz bir final.
               </p>
 
               <div class="hero-actions">
@@ -536,15 +542,15 @@
               <div class="metrics">
                 <div class="metric">
                   <strong>01</strong>
-                  <span>Mobil odaklı, hızlı açılan yapı</span>
+                  <span>Dans, müzik ve hikâyenin birleştiği güçlü sahne deneyimi</span>
                 </div>
                 <div class="metric">
                   <strong>02</strong>
-                  <span>Sahne afişi hissi veren koyu tasarım</span>
+                  <span>Mobil odaklı ve hızlı açılan premium etkinlik sayfası</span>
                 </div>
                 <div class="metric">
                   <strong>03</strong>
-                  <span>Ayrı bilet sayfasına temiz geçiş</span>
+                  <span>Bilet sayfasına tek dokunuşla hızlı geçiş</span>
                 </div>
               </div>
             </div>
@@ -554,7 +560,7 @@
                 <small>YUDANSK presents</small>
                 <h2>Son Sene<br>Müzikali</h2>
                 <p>
-                  Gerçek etkinlik afişi, tarih ve salon netleşince bu alanı birebir ona göre özelleştirebiliriz.
+                  Dans, müzik ve duygunun aynı sahnede buluştuğu unutulmaz bir final gecesi.
                 </p>
               </div>
             </div>
@@ -567,33 +573,37 @@
       <div class="container">
         <div class="section-head">
           <span class="mini">Hikâye</span>
-          <h3>Bir gecelik gösteriden fazlası.</h3>
+          <h3>Bir hikâye, bir veda, bir final gecesi.</h3>
           <p>
-            Bu sayfa, ziyaretçinin telefondan girdiği anda etkinliğin atmosferini hissetmesi için tasarlandı.
-            Amaç sadece bilgi vermek değil; sahne duygusunu daha ilk ekranda kurmak.
+            Son Sene Müzikali; mezuniyete yaklaşan gençlerin geçmişleriyle, seçimleriyle ve
+            birbirleriyle kurdukları bağlarla yüzleştiği bir sahne yolculuğu. YUDANSK’ın enerjisiyle
+            şekillenen bu anlatı; dans koreografileri, güçlü müzikler ve duygusal geçişlerle seyirciyi
+            hikâyenin içine çekiyor.
           </p>
         </div>
 
         <div class="two-col">
           <article class="card">
-            <h4>Bu gece seni ne bekliyor?</h4>
+            <h4>Son Sene Müzikali hakkında</h4>
             <p>
-              Koreografi, ışık, tempo, geçişler ve kalabalığın aynı anda yükseldiği o final hissi.
-              Buraya daha sonra etkinlik hikâyesi, tema metni ya da kısa tanıtım yazısı ekleyebiliriz.
+              Hikâyenin merkezinde, üniversite yıllarının sonuna yaklaşırken hayatın onları farklı yönlere
+              sürükleyeceği gerçeğiyle yüzleşen gençler var. Okul anıları, dostluklar, kırgınlıklar,
+              hayaller ve vedalar; sahnede dans ve müzikle yeniden hayat buluyor.
             </p>
             <div class="tags">
-              <span class="tag">Dans performansları</span>
-              <span class="tag">Sahne anlatısı</span>
-              <span class="tag">Müzikal atmosfer</span>
-              <span class="tag">Kulüp enerjisi</span>
+              <span class="tag">Duygusal hikâye</span>
+              <span class="tag">Canlı sahne enerjisi</span>
+              <span class="tag">Dans & müzik</span>
+              <span class="tag">Üniversite ruhu</span>
             </div>
           </article>
 
           <article class="card">
-            <h4>Neden ayrı bilet sayfası?</h4>
+            <h4>YUDANSK sahnesinde</h4>
             <p>
-              Ana sayfa duyguyu ve ilgiyi toplar. Bilet sayfası ise doğrudan kayıt ve ödeme akışına odaklanır.
-              Bu ayrım hem daha profesyonel durur hem de kullanıcıyı tek amaçlı bir sayfaya götürür.
+              Yeditepe Üniversitesi Dans Kulübü’nün sahnelediği bu müzikal; yalnızca performanslarıyla değil,
+              taşıdığı kampüs ruhuyla da öne çıkıyor. Kalabalık kadrosu, koreografik gücü ve sahne atmosferiyle
+              gece boyunca izleyiciyi canlı tutan bir deneyim sunuyor.
             </p>
           </article>
         </div>
@@ -606,40 +616,42 @@
           <span class="mini">Deneyim</span>
           <h3>Geceyi neden kaçırmamalısın?</h3>
           <p>
-            Şimdilik bunlar şablon metinler. İstersen daha sonra gerçek müzikal temasına göre tamamen yeniden yazabiliriz.
+            Son Sene Müzikali, yalnızca izlenen bir gösteri değil; ritmi, hikâyesi ve sahne enerjisiyle
+            birlikte hissedilen bir gece. Müziğin yükseldiği, koreografilerin sahneyi doldurduğu ve finalin
+            uzun süre akılda kaldığı bir deneyim.
           </p>
         </div>
 
         <div class="four-col">
           <article class="card">
             <div class="icon">✦</div>
-            <h4>Yüksek enerji</h4>
+            <h4>Güçlü sahne atmosferi</h4>
             <p>
-              Daha ilk ekranda güçlü bir sahne ve etkinlik duygusu veren açılış yapısı.
+              Işık, müzik ve hareketin aynı anda yükseldiği; daha ilk andan itibaren seyirciyi içine alan bir sahne dili.
             </p>
           </article>
 
           <article class="card">
             <div class="icon">♫</div>
-            <h4>Müzikal akış</h4>
+            <h4>Duyguyla ilerleyen anlatı</h4>
             <p>
-              Gösteri bölümleri ve sahne geçişleri için net bir anlatım alanı.
+              Üniversite yıllarının son dönemine yaklaşan karakterlerin umutlarını, korkularını ve vedalarını taşıyan bir hikâye.
             </p>
           </article>
 
           <article class="card">
             <div class="icon">★</div>
-            <h4>Kulüp kimliği</h4>
+            <h4>Kalabalık ve canlı kadro</h4>
             <p>
-              YUDANSK’ın topluluk ruhunu yansıtan daha premium bir dijital yüz.
+              Oyuncular, dansçılar ve müzikal yapı bir araya gelerek sahnede dinamik ve etkileyici bir bütün oluşturuyor.
             </p>
           </article>
 
           <article class="card">
             <div class="icon">⌁</div>
-            <h4>Hızlı bilet geçişi</h4>
+            <h4>Final hissi</h4>
             <p>
-              Her ana CTA doğrudan ayrı bilet sayfasına yönlendirilecek şekilde kuruldu.
+              Gecenin sonunda yalnızca bir gösteri izlemiş olmuyorsun; bir dönemin kapanışına tanıklık ediyorsun.
             </p>
           </article>
         </div>
@@ -650,9 +662,10 @@
       <div class="container">
         <div class="section-head">
           <span class="mini">Akış</span>
-          <h3>Program şablonu</h3>
+          <h3>Program</h3>
           <p>
-            Tarih ve saatler netleştiğinde bunu gerçek programa göre anında güncelleyebiliriz.
+            Gösteri akışı, gece boyunca yükselen sahne temposunu ve anlatının katmanlarını destekleyecek şekilde ilerliyor.
+            Kapı açılışından final selamına kadar her bölüm, seyirciyi adım adım hikâyenin içine taşıyor.
           </p>
         </div>
 
@@ -699,15 +712,15 @@
     <section class="section">
       <div class="container">
         <div class="cta-box">
-          <h3>Yerini ayır, geceye dahil ol.</h3>
+          <h3>Bu geceye sen de dahil ol.</h3>
           <p>
-            Tanıtım tamam, şimdi kullanıcıyı temiz bir akışla bilet sayfasına gönderiyoruz.
-            Ödeme, dekont ve kayıt formu ayrı sayfada olacak.
+            YUDANSK’ın sahneye taşıdığı Son Sene Müzikali’nde yerini ayır; dans, müzik ve hikâyenin
+            birleştiği bu özel geceyi kaçırma.
           </p>
 
           <div class="cta-actions">
             <a href="bilet.html" class="btn btn-primary">Bilet Sayfasına Git</a>
-            <a href="https://instagram.com/" target="_blank" class="btn btn-secondary">Instagram</a>
+            <a href="https://www.instagram.com/yudansk/" target="_blank" class="btn btn-secondary">Instagram</a>
           </div>
         </div>
       </div>
@@ -719,10 +732,10 @@
       <div class="footer-card">
         <p>
           <strong>YUDANSK</strong><br>
-          Yeditepe Üniversitesi Dans Kulübü için hazırlanan müzikal etkinlik sayfası şablonu.
+          Yeditepe Üniversitesi Dans Kulübü’nün sahneye taşıdığı Son Sene Müzikali için hazırlanan resmi etkinlik sayfası.
         </p>
         <div class="copyright">
-          Bu yapı, ana sayfa ve bilet sayfası ayrımıyla geliştirilmeye hazır şablon olarak tasarlandı.
+          YUDANSK • Son Sene Müzikali
         </div>
       </div>
     </div>
