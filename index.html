@@ -3,23 +3,737 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Site Adı</title>
-
+  <title>YUDANSK | Son Sene Müzikali</title>
+  <meta name="description" content="YUDANSK Son Sene Müzikali tanıtım sayfası" />
   <style>
-    /* tüm css burada */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+    :root{
+      --bg:#08080d;
+      --bg2:#11111a;
+      --text:#f8f6f2;
+      --muted:#c6bfd3;
+      --gold:#f4c56c;
+      --gold2:#ff9f43;
+      --pink:#f55399;
+      --violet:#8f6bff;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.10);
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --radius:24px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(245,83,153,.18), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(143,107,255,.18), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(244,197,108,.10), transparent 35%),
+        linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
+      overflow-x:hidden;
+    }
+
+    a{text-decoration:none;color:inherit}
+    .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      backdrop-filter:blur(16px);
+      background:rgba(8,8,13,.72);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar-inner{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .brand-mark{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      font-weight:900;
+      background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .brand-text strong{
+      display:block;
+      font-size:14px;
+      letter-spacing:.12em;
+    }
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .nav{
+      display:none;
+      gap:18px;
+      align-items:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .nav a:hover{color:#fff}
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:14px 18px;
+      border-radius:16px;
+      font-weight:800;
+      font-size:14px;
+      transition:.2s ease;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      color:#130f08;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      border:none;
+      box-shadow:0 12px 30px rgba(244,197,108,.22);
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.06);
+      color:#fff;
+    }
+
+    .hero{padding:26px 0 24px}
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        linear-gradient(135deg, rgba(245,83,153,.10), rgba(143,107,255,.08), rgba(244,197,108,.08));
+      padding:26px 18px 22px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero-grid{
+      display:grid;
+      gap:18px;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:16px;
+    }
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .pill-live{
+      color:#130f08;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      border:none;
+    }
+
+    .hero-copy h1{
+      margin:0;
+      font-size:clamp(38px, 11vw, 76px);
+      line-height:.94;
+      letter-spacing:-.05em;
+    }
+    .hero-copy h1 .accent{
+      display:block;
+      background:linear-gradient(135deg,#fff0c6,var(--gold),#ffb7d8);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .hero-copy p{
+      margin:16px 0 0;
+      font-size:15px;
+      line-height:1.7;
+      color:var(--muted);
+      max-width:62ch;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:22px;
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:22px;
+    }
+    .metric{
+      padding:14px 12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .metric strong{
+      display:block;
+      font-size:22px;
+      margin-bottom:8px;
+      line-height:1;
+    }
+    .metric span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .poster{
+      min-height:360px;
+      border-radius:26px;
+      overflow:hidden;
+      position:relative;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:20px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 50% 8%, rgba(255,255,255,.50), transparent 16%),
+        radial-gradient(circle at 20% 0%, rgba(245,83,153,.35), transparent 18%),
+        radial-gradient(circle at 80% 0%, rgba(143,107,255,.35), transparent 18%),
+        linear-gradient(180deg,#130d1f 0%, #0e0e14 40%, #07070b 100%);
+      box-shadow:inset 0 -40px 100px rgba(0,0,0,.5);
+    }
+    .poster::before,
+    .poster::after{
+      content:"";
+      position:absolute;
+      top:-10%;
+      width:40%;
+      height:120%;
+      background:linear-gradient(180deg, rgba(77,18,70,.95), rgba(30,8,27,.96));
+    }
+    .poster::before{
+      left:-12%;
+      transform:skewX(-8deg);
+      border-radius:0 0 40px 0;
+    }
+    .poster::after{
+      right:-12%;
+      transform:skewX(8deg);
+      border-radius:0 0 0 40px;
+    }
+    .poster-inner{
+      position:relative;
+      z-index:2;
+      width:100%;
+      padding:26px 18px;
+      text-align:center;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)), rgba(0,0,0,.34);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter:blur(8px);
+    }
+    .poster-inner small{
+      display:inline-block;
+      margin-bottom:10px;
+      font-size:11px;
+      letter-spacing:.18em;
+      color:#ffdcc1;
+      text-transform:uppercase;
+    }
+    .poster-inner h2{
+      margin:0;
+      font-size:clamp(28px,8vw,52px);
+      line-height:1;
+      letter-spacing:-.04em;
+    }
+    .poster-inner p{
+      margin:12px auto 0;
+      max-width:30ch;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .section{padding:24px 0}
+    .section-head{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .section-head .mini{
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-weight:800;
+      color:var(--gold);
+    }
+    .section-head h3{
+      margin:0;
+      font-size:clamp(28px,7vw,44px);
+      line-height:1.04;
+      letter-spacing:-.04em;
+    }
+    .section-head p{
+      margin:0;
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:65ch;
+    }
+
+    .grid{display:grid;gap:14px}
+    .two-col{display:grid;gap:14px}
+    .four-col{display:grid;gap:14px}
+    .timeline{display:grid;gap:14px}
+
+    .card{
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+
+    .card h4{
+      margin:0 0 10px;
+      font-size:18px;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.65;
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    .tag{
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .icon{
+      width:48px;height:48px;border-radius:14px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:20px;
+      margin-bottom:14px;
+    }
+
+    .timeline-item{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .timeline-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .time{
+      color:var(--gold);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+    }
+    .badge{
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:11px;
+      white-space:nowrap;
+    }
+
+    .cta-box{
+      border-radius:28px;
+      padding:20px;
+      background:
+        linear-gradient(135deg, rgba(244,197,108,.14), rgba(245,83,153,.08), rgba(143,107,255,.08)),
+        rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:var(--shadow);
+    }
+    .cta-box h3{
+      margin:0 0 10px;
+      font-size:clamp(28px,7vw,42px);
+      line-height:1.04;
+      letter-spacing:-.04em;
+    }
+    .cta-box p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+      max-width:60ch;
+    }
+    .cta-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .footer{padding:10px 0 90px}
+    .footer-card{
+      border-radius:26px;
+      padding:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .footer-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.65;
+    }
+    .copyright{
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#9d95ab;
+      font-size:12px;
+    }
+
+    .mobile-cta{
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:12px;
+      z-index:50;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:18px;
+      background:rgba(10,10,14,.92);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 18px 50px rgba(0,0,0,.35);
+    }
+    .mobile-cta small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:2px;
+    }
+    .mobile-cta strong{
+      display:block;
+      font-size:15px;
+      line-height:1.1;
+    }
+
+    @media (min-width:720px){
+      .container{width:min(var(--max),calc(100% - 40px))}
+      .nav{display:flex}
+      .hero-card{padding:32px 28px 28px}
+      .hero-grid,
+      .two-col{
+        grid-template-columns:1.08fr .92fr;
+      }
+      .four-col{
+        grid-template-columns:repeat(2,1fr);
+      }
+      .timeline{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    @media (min-width:1024px){
+      .four-col{
+        grid-template-columns:repeat(4,1fr);
+      }
+      .timeline{
+        grid-template-columns:repeat(4,1fr);
+      }
+      .mobile-cta{display:none}
     }
   </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <a href="index.html" class="brand">
+          <div class="brand-mark">YD</div>
+          <div class="brand-text">
+            <strong>YUDANSK</strong>
+            <span>Son Sene Müzikali</span>
+          </div>
+        </a>
 
-  <!-- tüm html içerik burada -->
+        <nav class="nav">
+          <a href="#hikaye">Hikâye</a>
+          <a href="#deneyim">Deneyim</a>
+          <a href="#akis">Akış</a>
+          <a href="bilet.html">Bilet</a>
+        </nav>
 
-  <script>
-    // varsa js burada
-    console.log("site hazır");
-  </script>
+        <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="pill-row">
+            <span class="pill pill-live">YUDANSK Sunar</span>
+            <span class="pill">Müzikal Gecesi</span>
+            <span class="pill">Yeditepe Üniversitesi</span>
+          </div>
+
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h1>
+                Sahne Hazır.
+                <span class="accent">Sıra Bizde.</span>
+              </h1>
+              <p>
+                Dansın, müziğin ve sahne enerjisinin bir araya geldiği bu gecede yalnızca bir gösteri izlemeye değil,
+                YUDANSK’ın ruhunu baştan sona yaşamaya geliyorsun. Bu sayfa tanıtım odaklı ana sayfa olarak kurgulandı;
+                bilet ve kayıt akışı ise ayrı bilet sayfasına taşındı.
+              </p>
+
+              <div class="hero-actions">
+                <a href="bilet.html" class="btn btn-primary">Şimdi Bilet Al</a>
+                <a href="#hikaye" class="btn btn-secondary">Müzikali Keşfet</a>
+              </div>
+
+              <div class="metrics">
+                <div class="metric">
+                  <strong>01</strong>
+                  <span>Mobil odaklı, hızlı açılan yapı</span>
+                </div>
+                <div class="metric">
+                  <strong>02</strong>
+                  <span>Sahne afişi hissi veren koyu tasarım</span>
+                </div>
+                <div class="metric">
+                  <strong>03</strong>
+                  <span>Ayrı bilet sayfasına temiz geçiş</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="poster">
+              <div class="poster-inner">
+                <small>YUDANSK presents</small>
+                <h2>Son Sene<br>Müzikali</h2>
+                <p>
+                  Gerçek etkinlik afişi, tarih ve salon netleşince bu alanı birebir ona göre özelleştirebiliriz.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hikaye">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Hikâye</span>
+          <h3>Bir gecelik gösteriden fazlası.</h3>
+          <p>
+            Bu sayfa, ziyaretçinin telefondan girdiği anda etkinliğin atmosferini hissetmesi için tasarlandı.
+            Amaç sadece bilgi vermek değil; sahne duygusunu daha ilk ekranda kurmak.
+          </p>
+        </div>
+
+        <div class="two-col">
+          <article class="card">
+            <h4>Bu gece seni ne bekliyor?</h4>
+            <p>
+              Koreografi, ışık, tempo, geçişler ve kalabalığın aynı anda yükseldiği o final hissi.
+              Buraya daha sonra etkinlik hikâyesi, tema metni ya da kısa tanıtım yazısı ekleyebiliriz.
+            </p>
+            <div class="tags">
+              <span class="tag">Dans performansları</span>
+              <span class="tag">Sahne anlatısı</span>
+              <span class="tag">Müzikal atmosfer</span>
+              <span class="tag">Kulüp enerjisi</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <h4>Neden ayrı bilet sayfası?</h4>
+            <p>
+              Ana sayfa duyguyu ve ilgiyi toplar. Bilet sayfası ise doğrudan kayıt ve ödeme akışına odaklanır.
+              Bu ayrım hem daha profesyonel durur hem de kullanıcıyı tek amaçlı bir sayfaya götürür.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deneyim">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Deneyim</span>
+          <h3>Geceyi neden kaçırmamalısın?</h3>
+          <p>
+            Şimdilik bunlar şablon metinler. İstersen daha sonra gerçek müzikal temasına göre tamamen yeniden yazabiliriz.
+          </p>
+        </div>
+
+        <div class="four-col">
+          <article class="card">
+            <div class="icon">✦</div>
+            <h4>Yüksek enerji</h4>
+            <p>
+              Daha ilk ekranda güçlü bir sahne ve etkinlik duygusu veren açılış yapısı.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="icon">♫</div>
+            <h4>Müzikal akış</h4>
+            <p>
+              Gösteri bölümleri ve sahne geçişleri için net bir anlatım alanı.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="icon">★</div>
+            <h4>Kulüp kimliği</h4>
+            <p>
+              YUDANSK’ın topluluk ruhunu yansıtan daha premium bir dijital yüz.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="icon">⌁</div>
+            <h4>Hızlı bilet geçişi</h4>
+            <p>
+              Her ana CTA doğrudan ayrı bilet sayfasına yönlendirilecek şekilde kuruldu.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="akis">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Akış</span>
+          <h3>Program şablonu</h3>
+          <p>
+            Tarih ve saatler netleştiğinde bunu gerçek programa göre anında güncelleyebiliriz.
+          </p>
+        </div>
+
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="timeline-top">
+              <span class="time">18.30</span>
+              <span class="badge">Kapı Açılışı</span>
+            </div>
+            <h4>Karşılama</h4>
+            <p>Katılımcı girişi, yönlendirme ve sahne öncesi ilk atmosfer.</p>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-top">
+              <span class="time">19.00</span>
+              <span class="badge">Perde 1</span>
+            </div>
+            <h4>Açılış Performansı</h4>
+            <p>Geceyi başlatan ana giriş sekansı, ışık ve koreografi birleşimi.</p>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-top">
+              <span class="time">19.40</span>
+              <span class="badge">Perde 2</span>
+            </div>
+            <h4>Tematik Bölüm</h4>
+            <p>Hikâye akışı ve farklı performans bloklarının birleştiği orta bölüm.</p>
+          </article>
+
+          <article class="timeline-item">
+            <div class="timeline-top">
+              <span class="time">20.30</span>
+              <span class="badge">Finale</span>
+            </div>
+            <h4>Kapanış & Selam</h4>
+            <p>Final koreografisi, alkış ve sahne kapanışı.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-box">
+          <h3>Yerini ayır, geceye dahil ol.</h3>
+          <p>
+            Tanıtım tamam, şimdi kullanıcıyı temiz bir akışla bilet sayfasına gönderiyoruz.
+            Ödeme, dekont ve kayıt formu ayrı sayfada olacak.
+          </p>
+
+          <div class="cta-actions">
+            <a href="bilet.html" class="btn btn-primary">Bilet Sayfasına Git</a>
+            <a href="https://instagram.com/" target="_blank" class="btn btn-secondary">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-card">
+        <p>
+          <strong>YUDANSK</strong><br>
+          Yeditepe Üniversitesi Dans Kulübü için hazırlanan müzikal etkinlik sayfası şablonu.
+        </p>
+        <div class="copyright">
+          Bu yapı, ana sayfa ve bilet sayfası ayrımıyla geliştirilmeye hazır şablon olarak tasarlandı.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta">
+    <div>
+      <small>Son Sene Müzikali</small>
+      <strong>Bilet sayfasına geç</strong>
+    </div>
+    <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
+  </div>
 </body>
 </html>
