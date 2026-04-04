@@ -96,11 +96,18 @@ export default async function handler(req, res) {
     const rawText = await insertResponse.text();
 
     if (!insertResponse.ok) {
-      return sendJson(res, 500, {
-        success: false,
-        error: `Veritabanına kayıt başarısız: ${rawText}`
-      });
-    }
+  if (rawText.includes("duplicate key value") || rawText.includes("registrations_email_unique")) {
+    return sendJson(res, 400, {
+      success: false,
+      error: "Bu e-posta adresi ile daha önce kayıt oluşturulmuş."
+    });
+  }
+
+  return sendJson(res, 500, {
+    success: false,
+    error: `Veritabanına kayıt başarısız: ${rawText}`
+  });
+}
 
     return sendJson(res, 200, {
       success: true,
