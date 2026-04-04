@@ -16,9 +16,9 @@ export default async function handler(req, res) {
       attendance_date,
       rep,
       receipt_note,
+      receipt_path,
       receipt_file_name,
       receipt_file_mime,
-      receipt_file_base64,
       consent_approved
     } = body || {};
 
@@ -32,9 +32,9 @@ export default async function handler(req, res) {
       ["attendance_date", attendance_date],
       ["rep", rep],
       ["receipt_note", receipt_note],
+      ["receipt_path", receipt_path],
       ["receipt_file_name", receipt_file_name],
-      ["receipt_file_mime", receipt_file_mime],
-      ["receipt_file_base64", receipt_file_base64]
+      ["receipt_file_mime", receipt_file_mime]
     ];
 
     for (const [key, value] of requiredFields) {
@@ -52,11 +52,6 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
     }
 
-    const allowedMimes = new Set(["image/jpeg", "image/png", "application/pdf"]);
-    if (!allowedMimes.has(receipt_file_mime)) {
-      return sendJson(res, 400, { success: false, error: "Sadece JPG, PNG veya PDF yükleyebilirsin." });
-    }
-
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -66,38 +61,6 @@ export default async function handler(req, res) {
 
     const dayCode = getDayCode(attendance_date);
     const ticketCode = `MRM-${dayCode}-${randomCode(6)}`;
-
-    const base64Only = receipt_file_base64.includes(",")
-      ? receipt_file_base64.split(",")[1]
-      : receipt_file_base64;
-
-    const fileBuffer = Buffer.from(base64Only, "base64");
-
-    const safeFileName = sanitizeFileName(receipt_file_name);
-    const receiptPath = `${attendance_date.replace(/\s+/g, "-")}/${ticketCode}-${safeFileName}`;
-    const encodedReceiptPath = receiptPath.split("/").map(encodeURIComponent).join("/");
-
-    const uploadResponse = await fetch(
-      `${supabaseUrl}/storage/v1/object/receipts/${encodedReceiptPath}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${serviceRoleKey}`,
-          apikey: serviceRoleKey,
-          "Content-Type": receipt_file_mime,
-          "x-upsert": "false"
-        },
-        body: fileBuffer
-      }
-    );
-
-    if (!uploadResponse.ok) {
-      const uploadText = await uploadResponse.text();
-      return sendJson(res, 500, {
-        success: false,
-        error: `Dekont yükleme başarısız: ${uploadText}`
-      });
-    }
 
     const insertPayload = {
       ticket_code: ticketCode,
@@ -110,7 +73,7 @@ export default async function handler(req, res) {
       attendance_date: attendance_date.trim(),
       rep: rep.trim(),
       receipt_note: receipt_note.trim(),
-      receipt_path: receiptPath,
+      receipt_path: receipt_path.trim(),
       receipt_file_name: receipt_file_name.trim(),
       receipt_file_mime: receipt_file_mime.trim(),
       consent_approved: true,
@@ -130,11 +93,12 @@ export default async function handler(req, res) {
       body: JSON.stringify(insertPayload)
     });
 
+    const rawText = await insertResponse.text();
+
     if (!insertResponse.ok) {
-      const insertText = await insertResponse.text();
       return sendJson(res, 500, {
         success: false,
-        error: `Veritabanına kayıt başarısız: ${insertText}`
+        error: `Veritabanına kayıt başarısız: ${rawText}`
       });
     }
 
@@ -160,23 +124,16 @@ function sendJson(res, statusCode, data) {
 
 async function readJsonBody(req) {
   let raw = "";
-
-  for await (const chunk of req) {
-    raw += chunk;
-  }
-
-  if (!raw) return {};
-  return JSON.parse(raw);
+  for await (const chunk of req) raw += chunk;
+  return raw ? JSON.parse(raw) : {};
 }
 
 function randomCode(length = 6) {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let output = "";
-
   for (let i = 0; i < length; i++) {
     output += chars[Math.floor(Math.random() * chars.length)];
   }
-
   return output;
 }
 
@@ -187,14 +144,5 @@ function getDayCode(attendanceDate) {
     "23 Nisan": "23NIS",
     "24 Nisan": "24NIS"
   };
-
   return map[attendanceDate] || "DAY";
-}
-
-function sanitizeFileName(name = "receipt") {
-  return name
-    .normalize("NFKD")
-    .replace(/[^\w.\-]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
 }
