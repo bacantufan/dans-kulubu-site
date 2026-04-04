@@ -547,6 +547,7 @@
       .mobile-cta{display:none}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="topbar">
@@ -797,6 +798,14 @@
   </div>
 
   <script>
+  const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_secret_TcQ32CqhlZjtstetQEDvaQ_KpWONpUe";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
   const copyButtons = document.querySelectorAll(".copy-btn");
 
   copyButtons.forEach((button) => {
@@ -826,15 +835,6 @@
   const ticketForm = document.getElementById("ticketForm");
   const fakeSuccess = document.getElementById("fakeSuccess");
   const submitBtn = document.getElementById("submitBtn");
-
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error("Dosya okunamadı."));
-      reader.readAsDataURL(file);
-    });
-  }
 
   function showMessage(message, isSuccess = true) {
     fakeSuccess.style.display = "block";
@@ -873,7 +873,45 @@
         throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
       }
 
-      const receiptBase64 = await fileToBase64(receiptFile);
+      const maxFileSizeMB = 10;
+      const maxBytes = maxFileSizeMB * 1024 * 1024;
+
+      if (receiptFile.size > maxBytes) {
+        throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
+      }
+
+      const uploadUrlResponse = await fetch("/api/create-upload-url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          file_name: receiptFile.name,
+          file_type: receiptFile.type,
+          attendance_date: document.getElementById("attendanceDate").value.trim()
+        })
+      });
+
+      const uploadUrlResult = await uploadUrlResponse.json();
+
+      if (!uploadUrlResponse.ok || !uploadUrlResult.success) {
+        throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
+      }
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from("receipts")
+        .uploadToSignedUrl(
+          uploadUrlResult.path,
+          uploadUrlResult.token,
+          receiptFile,
+          {
+            contentType: receiptFile.type
+          }
+        );
+
+      if (uploadError) {
+        throw new Error(uploadError.message || "Dekont yüklenemedi.");
+      }
 
       const payload = {
         full_name: document.getElementById("fullName").value.trim(),
@@ -885,9 +923,9 @@
         attendance_date: document.getElementById("attendanceDate").value.trim(),
         rep: document.getElementById("rep").value.trim(),
         receipt_note: document.getElementById("receiptNote").value.trim(),
+        receipt_path: uploadUrlResult.path,
         receipt_file_name: receiptFile.name,
         receipt_file_mime: receiptFile.type,
-        receipt_file_base64: receiptBase64,
         consent_approved: consentApproved
       };
 
@@ -899,7 +937,14 @@
         body: JSON.stringify(payload)
       });
 
-      const result = await response.json();
+      const rawText = await response.text();
+
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || "Kayıt oluşturulamadı.");
