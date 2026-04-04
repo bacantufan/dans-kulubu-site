@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import QRCode from "qrcode";
+
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -122,30 +122,20 @@ export default async function handler(req, res) {
     }
 
     const qrPayload = `${publicBaseUrl}/checkin?ticket=${encodeURIComponent(ticketCode)}`;
-    const qrBuffer = await QRCode.toBuffer(qrPayload, {
-  errorCorrectionLevel: "H",
-  margin: 1,
-  width: 320
-});
+    
 
     const emailHtml = buildTicketEmail({
   fullName: full_name.trim(),
   attendanceDate: attendance_date.trim(),
-  ticketCode
+  ticketCode,
+  qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(ticketCode)}`
 });
 
     const { error: emailError } = await resend.emails.send({
   from: mailFrom,
   to: [email.trim().toLowerCase()],
   subject: `Muhteşem Renkler Müzikali Biletin • ${attendance_date}`,
-  html: emailHtml,
-  attachments: [
-    {
-      content: qrBuffer.toString("base64"),
-      filename: "qr-ticket.png",
-      contentId: "ticket-qr"
-    }
-  ]
+  html: emailHtml
 });
 
     if (emailError) {
@@ -202,7 +192,7 @@ async function updateEmailState({ supabaseUrl, serviceRoleKey, ticketCode, email
   });
 }
 
-function buildTicketEmail({ fullName, attendanceDate, ticketCode }) {
+function buildTicketEmail({ fullName, attendanceDate, ticketCode, qrImageUrl }) {
   return `
   <div style="margin:0;padding:0;background:#0b0c12;font-family:Inter,Arial,sans-serif;color:#f7f3ea;">
     <div style="max-width:680px;margin:0 auto;padding:32px 16px;">
@@ -262,7 +252,7 @@ function buildTicketEmail({ fullName, attendanceDate, ticketCode }) {
                 </div>
 
                 <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
-                  <img src="cid:ticket-qr" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;" />
+                  <img src="${qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
                 </div>
 
                 <div style="margin-top:12px;color:#9aa1b5;font-size:12px;line-height:1.6;">
