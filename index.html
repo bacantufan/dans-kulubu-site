@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUDANSK | Son Sene Müzikali</title>
-  <meta name="description" content="YUDANSK Son Sene Müzikali resmi etkinlik sayfası" />
+  <title>YUDANSK | Muhteşem Renkler Müzikali</title>
+  <meta
+    name="description"
+    content="YUDANSK tarafından sahnelenen Muhteşem Renkler Müzikali resmi etkinlik sayfası."
+  />
   <style>
     :root{
       --bg:#08080d;
@@ -18,7 +21,6 @@
       --card:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.10);
       --shadow:0 20px 50px rgba(0,0,0,.35);
-      --radius:24px;
       --max:1180px;
     }
 
@@ -38,12 +40,16 @@
 
     a{text-decoration:none;color:inherit}
     .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
+
     .topbar{
-      position:sticky;top:0;z-index:30;
+      position:sticky;
+      top:0;
+      z-index:30;
       backdrop-filter:blur(16px);
       background:rgba(8,8,13,.72);
       border-bottom:1px solid rgba(255,255,255,.08);
     }
+
     .topbar-inner{
       min-height:72px;
       display:flex;
@@ -51,25 +57,32 @@
       justify-content:space-between;
       gap:12px;
     }
+
     .brand{
       display:flex;
       align-items:center;
       gap:12px;
       min-width:0;
     }
+
     .brand-mark{
-      width:42px;height:42px;border-radius:14px;
-      display:grid;place-items:center;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
       font-weight:900;
       background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
       flex-shrink:0;
     }
+
     .brand-text strong{
       display:block;
       font-size:14px;
       letter-spacing:.12em;
     }
+
     .brand-text span{
       display:block;
       font-size:12px;
@@ -86,6 +99,7 @@
       color:var(--muted);
       font-size:14px;
     }
+
     .nav a:hover{color:#fff}
 
     .btn{
@@ -101,19 +115,25 @@
       border:1px solid rgba(255,255,255,.12);
       white-space:nowrap;
     }
+
     .btn:hover{transform:translateY(-1px)}
+
     .btn-primary{
       color:#130f08;
       background:linear-gradient(135deg,var(--gold),var(--gold2));
       border:none;
       box-shadow:0 12px 30px rgba(244,197,108,.22);
     }
+
     .btn-secondary{
       background:rgba(255,255,255,.06);
       color:#fff;
     }
 
-    .hero{padding:26px 0 24px}
+    .hero{
+      padding:26px 0 24px;
+    }
+
     .hero-card{
       position:relative;
       overflow:hidden;
@@ -137,6 +157,7 @@
       gap:10px;
       margin-bottom:16px;
     }
+
     .pill{
       padding:8px 12px;
       border-radius:999px;
@@ -146,6 +167,7 @@
       background:rgba(255,255,255,.07);
       border:1px solid rgba(255,255,255,.10);
     }
+
     .pill-live{
       color:#130f08;
       background:linear-gradient(135deg,var(--gold),var(--gold2));
@@ -154,10 +176,11 @@
 
     .hero-copy h1{
       margin:0;
-      font-size:clamp(38px, 11vw, 76px);
+      font-size:clamp(34px, 10vw, 72px);
       line-height:.94;
       letter-spacing:-.05em;
     }
+
     .hero-copy h1 .accent{
       display:block;
       background:linear-gradient(135deg,#fff0c6,var(--gold),#ffb7d8);
@@ -165,12 +188,13 @@
       background-clip:text;
       color:transparent;
     }
+
     .hero-copy p{
       margin:16px 0 0;
       font-size:15px;
-      line-height:1.7;
+      line-height:1.72;
       color:var(--muted);
-      max-width:62ch;
+      max-width:64ch;
     }
 
     .hero-actions{
@@ -186,23 +210,26 @@
       gap:10px;
       margin-top:22px;
     }
+
     .metric{
       padding:14px 12px;
       border-radius:18px;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.08);
     }
+
     .metric strong{
       display:block;
-      font-size:22px;
+      font-size:20px;
       margin-bottom:8px;
       line-height:1;
     }
+
     .metric span{
       display:block;
       font-size:12px;
       color:var(--muted);
-      line-height:1.4;
+      line-height:1.45;
     }
 
     .poster{
@@ -222,6 +249,7 @@
         linear-gradient(180deg,#130d1f 0%, #0e0e14 40%, #07070b 100%);
       box-shadow:inset 0 -40px 100px rgba(0,0,0,.5);
     }
+
     .poster::before,
     .poster::after{
       content:"";
@@ -231,16 +259,19 @@
       height:120%;
       background:linear-gradient(180deg, rgba(77,18,70,.95), rgba(30,8,27,.96));
     }
+
     .poster::before{
       left:-12%;
       transform:skewX(-8deg);
       border-radius:0 0 40px 0;
     }
+
     .poster::after{
       right:-12%;
       transform:skewX(8deg);
       border-radius:0 0 0 40px;
     }
+
     .poster-inner{
       position:relative;
       z-index:2;
@@ -252,6 +283,7 @@
       border:1px solid rgba(255,255,255,.10);
       backdrop-filter:blur(8px);
     }
+
     .poster-inner small{
       display:inline-block;
       margin-bottom:10px;
@@ -260,12 +292,14 @@
       color:#ffdcc1;
       text-transform:uppercase;
     }
+
     .poster-inner h2{
       margin:0;
-      font-size:clamp(28px,8vw,52px);
+      font-size:clamp(26px,8vw,48px);
       line-height:1;
       letter-spacing:-.04em;
     }
+
     .poster-inner p{
       margin:12px auto 0;
       max-width:30ch;
@@ -274,13 +308,17 @@
       line-height:1.6;
     }
 
-    .section{padding:24px 0}
+    .section{
+      padding:24px 0;
+    }
+
     .section-head{
       display:flex;
       flex-direction:column;
       gap:12px;
       margin-bottom:18px;
     }
+
     .section-head .mini{
       font-size:12px;
       letter-spacing:.16em;
@@ -288,23 +326,30 @@
       font-weight:800;
       color:var(--gold);
     }
+
     .section-head h3{
       margin:0;
       font-size:clamp(28px,7vw,44px);
       line-height:1.04;
       letter-spacing:-.04em;
     }
+
     .section-head p{
       margin:0;
       font-size:15px;
       color:var(--muted);
       line-height:1.7;
-      max-width:65ch;
+      max-width:70ch;
     }
 
-    .two-col{display:grid;gap:14px}
-    .four-col{display:grid;gap:14px}
-    .timeline{display:grid;gap:14px}
+    .two-col,
+    .four-col,
+    .dates-grid,
+    .cast-grid,
+    .team-grid{
+      display:grid;
+      gap:14px;
+    }
 
     .card{
       border-radius:24px;
@@ -318,6 +363,7 @@
       margin:0 0 10px;
       font-size:18px;
     }
+
     .card p{
       margin:0;
       color:var(--muted);
@@ -331,6 +377,7 @@
       gap:10px;
       margin-top:16px;
     }
+
     .tag{
       padding:10px 12px;
       border-radius:999px;
@@ -341,42 +388,77 @@
       font-weight:700;
     }
 
-    .icon{
-      width:48px;height:48px;border-radius:14px;
-      display:grid;place-items:center;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:20px;
-      margin-bottom:14px;
-    }
-
-    .timeline-item{
-      padding:16px;
+    .date-card{
       border-radius:22px;
+      padding:18px;
       background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
     }
-    .timeline-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+
+    .date-card strong{
+      display:block;
+      font-size:26px;
+      line-height:1;
       margin-bottom:10px;
-    }
-    .time{
       color:var(--gold);
-      font-size:13px;
-      font-weight:800;
-      letter-spacing:.08em;
+      letter-spacing:-.04em;
     }
-    .badge{
-      padding:7px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
+
+    .date-card span{
+      display:block;
+      font-size:13px;
+      color:#fff;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .date-card small{
+      display:block;
       color:var(--muted);
-      font-size:11px;
-      white-space:nowrap;
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .team-item{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 0;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .team-item:last-child{
+      border-bottom:none;
+      padding-bottom:0;
+    }
+
+    .team-role{
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .team-name{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      text-align:right;
+      max-width:60%;
+    }
+
+    .cast-grid{
+      grid-template-columns:1fr;
+    }
+
+    .cast-name{
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#f5f1ea;
+      font-size:14px;
+      line-height:1.5;
     }
 
     .cta-box{
@@ -388,12 +470,14 @@
       border:1px solid rgba(255,255,255,.10);
       box-shadow:var(--shadow);
     }
+
     .cta-box h3{
       margin:0 0 10px;
       font-size:clamp(28px,7vw,42px);
       line-height:1.04;
       letter-spacing:-.04em;
     }
+
     .cta-box p{
       margin:0;
       color:var(--muted);
@@ -401,6 +485,7 @@
       line-height:1.7;
       max-width:60ch;
     }
+
     .cta-actions{
       display:flex;
       flex-wrap:wrap;
@@ -408,19 +493,24 @@
       margin-top:18px;
     }
 
-    .footer{padding:10px 0 90px}
+    .footer{
+      padding:10px 0 90px;
+    }
+
     .footer-card{
       border-radius:26px;
       padding:18px;
       background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08);
     }
+
     .footer-card p{
       margin:0;
       color:var(--muted);
       font-size:14px;
       line-height:1.65;
     }
+
     .copyright{
       margin-top:18px;
       padding-top:16px;
@@ -446,6 +536,7 @@
       border:1px solid rgba(255,255,255,.12);
       box-shadow:0 18px 50px rgba(0,0,0,.35);
     }
+
     .mobile-cta small{
       display:block;
       color:var(--muted);
@@ -454,6 +545,7 @@
       letter-spacing:.08em;
       margin-bottom:2px;
     }
+
     .mobile-cta strong{
       display:block;
       font-size:15px;
@@ -463,26 +555,36 @@
     @media (min-width:720px){
       .container{width:min(var(--max),calc(100% - 40px))}
       .nav{display:flex}
+
       .hero-card{padding:32px 28px 28px}
+
       .hero-grid,
       .two-col{
-        grid-template-columns:1.08fr .92fr;
+        grid-template-columns:1.05fr .95fr;
       }
-      .four-col{
+
+      .dates-grid{
         grid-template-columns:repeat(2,1fr);
       }
-      .timeline{
+
+      .team-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .cast-grid{
         grid-template-columns:repeat(2,1fr);
       }
     }
 
     @media (min-width:1024px){
-      .four-col{
+      .dates-grid{
         grid-template-columns:repeat(4,1fr);
       }
-      .timeline{
-        grid-template-columns:repeat(4,1fr);
+
+      .cast-grid{
+        grid-template-columns:repeat(3,1fr);
       }
+
       .mobile-cta{display:none}
     }
   </style>
@@ -495,14 +597,15 @@
           <div class="brand-mark">YD</div>
           <div class="brand-text">
             <strong>YUDANSK</strong>
-            <span>Son Sene Müzikali</span>
+            <span>Muhteşem Renkler Müzikali</span>
           </div>
         </a>
 
         <nav class="nav">
           <a href="#hikaye">Hikâye</a>
-          <a href="#deneyim">Deneyim</a>
-          <a href="#akis">Akış</a>
+          <a href="#tarihler">Tarihler</a>
+          <a href="#ekip">Ekip</a>
+          <a href="#kadro">Kadro</a>
           <a href="bilet.html">Bilet</a>
         </nav>
 
@@ -517,40 +620,40 @@
         <div class="hero-card">
           <div class="pill-row">
             <span class="pill pill-live">YUDANSK Sunar</span>
-            <span class="pill">Müzikal Gecesi</span>
-            <span class="pill">Yeditepe Üniversitesi</span>
+            <span class="pill">21 • 22 • 23 • 24 Nisan</span>
+            <span class="pill">120 Dakika</span>
           </div>
 
           <div class="hero-grid">
             <div class="hero-copy">
               <h1>
-                Sahne Hazır.
-                <span class="accent">Sıra Bizde.</span>
+                Muhteşem
+                <span class="accent">Renkler Müzikali</span>
               </h1>
               <p>
-                YUDANSK’ın sahneye taşıdığı Son Sene Müzikali; üniversite hayatının son virajında,
-                anılarla vedalar arasında sıkışan gençlerin hikâyesini dans, müzik ve duyguyla anlatıyor.
-                Her sahnesinde arkadaşlığı, aşkı, ayrılığı, geleceğe dair korkuları ve umutları hissettiren
-                bu gece; yalnızca bir gösteri değil, birlikte yaşanacak unutulmaz bir final.
+                The Greatest Showman dünyasından ilham alan Muhteşem Renkler Müzikali; sahnenin ışıltısını,
+                hayallerin peşinden gitme cesaretini ve birlikte üretmenin coşkusunu müzik, dans ve görsel
+                anlatımla bir araya getiriyor. YUDANSK tarafından sahnelenen bu prodüksiyon, enerjisi yüksek
+                koreografileri ve güçlü sahne atmosferiyle izleyiciyi baştan sona içine çeken özel bir müzikal deneyimi sunuyor.
               </p>
 
               <div class="hero-actions">
                 <a href="bilet.html" class="btn btn-primary">Şimdi Bilet Al</a>
-                <a href="#hikaye" class="btn btn-secondary">Müzikali Keşfet</a>
+                <a href="#hikaye" class="btn btn-secondary">Etkinliği Keşfet</a>
               </div>
 
               <div class="metrics">
                 <div class="metric">
-                  <strong>01</strong>
-                  <span>Dans, müzik ve hikâyenin birleştiği güçlü sahne deneyimi</span>
+                  <strong>4 Gün</strong>
+                  <span>21, 22, 23 ve 24 Nisan’da sahnede</span>
                 </div>
                 <div class="metric">
-                  <strong>02</strong>
-                  <span>Mobil odaklı ve hızlı açılan premium etkinlik sayfası</span>
+                  <strong>120 DK</strong>
+                  <span>Yüksek tempolu, tek solukta geçen sahne deneyimi</span>
                 </div>
                 <div class="metric">
-                  <strong>03</strong>
-                  <span>Bilet sayfasına tek dokunuşla hızlı geçiş</span>
+                  <strong>YUDANSK</strong>
+                  <span>Yeditepe Üniversitesi Dans Kulübü prodüksiyonu</span>
                 </div>
               </div>
             </div>
@@ -558,9 +661,9 @@
             <div class="poster">
               <div class="poster-inner">
                 <small>YUDANSK presents</small>
-                <h2>Son Sene<br>Müzikali</h2>
+                <h2>Muhteşem<br>Renkler Müzikali</h2>
                 <p>
-                  Dans, müzik ve duygunun aynı sahnede buluştuğu unutulmaz bir final gecesi.
+                  Işık, ritim, sahne ve renklerin buluştuğu büyülü bir müzikal gece.
                 </p>
               </div>
             </div>
@@ -572,138 +675,213 @@
     <section class="section" id="hikaye">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Hikâye</span>
-          <h3>Bir hikâye, bir veda, bir final gecesi.</h3>
+          <span class="mini">Etkinlik Tanıtımı</span>
+          <h3>Sahnenin ışıltısı, müziğin gücü, dansın enerjisi.</h3>
           <p>
-            Son Sene Müzikali; mezuniyete yaklaşan gençlerin geçmişleriyle, seçimleriyle ve
-            birbirleriyle kurdukları bağlarla yüzleştiği bir sahne yolculuğu. YUDANSK’ın enerjisiyle
-            şekillenen bu anlatı; dans koreografileri, güçlü müzikler ve duygusal geçişlerle seyirciyi
-            hikâyenin içine çekiyor.
+            Muhteşem Renkler Müzikali; büyük hayallerin, cesaretin, birlik olmanın ve sahnede parlamanın hikâyesini
+            güçlü bir müzikal dille anlatıyor. Renkli görsel dünyası, canlı performansları ve ritmini hiç düşürmeyen
+            akışıyla seyirciyi yalnızca izlemeye değil, o dünyanın bir parçası olmaya davet ediyor.
           </p>
         </div>
 
         <div class="two-col">
           <article class="card">
-            <h4>Son Sene Müzikali hakkında</h4>
+            <h4>Müzikal hakkında</h4>
             <p>
-              Hikâyenin merkezinde, üniversite yıllarının sonuna yaklaşırken hayatın onları farklı yönlere
-              sürükleyeceği gerçeğiyle yüzleşen gençler var. Okul anıları, dostluklar, kırgınlıklar,
-              hayaller ve vedalar; sahnede dans ve müzikle yeniden hayat buluyor.
+              Bu yapım, gösteri dünyasının büyüsünü ve sahnenin arkasındaki emeği dans, müzik ve toplu performansın gücüyle
+              bir araya getiriyor. Her sahnesinde farklı bir enerji taşıyan Muhteşem Renkler Müzikali; temposu, duygusu ve
+              görsel diliyle izleyici üzerinde uzun süre kalacak bir etki bırakmayı hedefliyor.
             </p>
+
             <div class="tags">
-              <span class="tag">Duygusal hikâye</span>
-              <span class="tag">Canlı sahne enerjisi</span>
-              <span class="tag">Dans & müzik</span>
-              <span class="tag">Üniversite ruhu</span>
+              <span class="tag">The Greatest Showman ilhamı</span>
+              <span class="tag">Müzikal prodüksiyon</span>
+              <span class="tag">Dans & sahne enerjisi</span>
+              <span class="tag">YUDANSK</span>
             </div>
           </article>
 
           <article class="card">
-            <h4>YUDANSK sahnesinde</h4>
+            <h4>Etkinlik detayları</h4>
             <p>
-              Yeditepe Üniversitesi Dans Kulübü’nün sahnelediği bu müzikal; yalnızca performanslarıyla değil,
-              taşıdığı kampüs ruhuyla da öne çıkıyor. Kalabalık kadrosu, koreografik gücü ve sahne atmosferiyle
-              gece boyunca izleyiciyi canlı tutan bir deneyim sunuyor.
+              Yeditepe Üniversitesi Dans Kulübü tarafından hazırlanan Muhteşem Renkler Müzikali, 21-22-23-24 Nisan tarihlerinde
+              sahnelenecek. Yaklaşık 120 dakika süren bu prodüksiyon; müzik, koreografi, ışık ve sahne tasarımını tek bir güçlü
+              anlatıda birleştiriyor.
             </p>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="deneyim">
+    <section class="section" id="tarihler">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Deneyim</span>
-          <h3>Geceyi neden kaçırmamalısın?</h3>
+          <span class="mini">Temsil Günleri</span>
+          <h3>21 • 22 • 23 • 24 Nisan</h3>
           <p>
-            Son Sene Müzikali, yalnızca izlenen bir gösteri değil; ritmi, hikâyesi ve sahne enerjisiyle
-            birlikte hissedilen bir gece. Müziğin yükseldiği, koreografilerin sahneyi doldurduğu ve finalin
-            uzun süre akılda kaldığı bir deneyim.
+            Müzikal, dört farklı günde sahnelenecek. Gösteri günü seçimini bilet sayfası üzerinden yapabilirsin.
           </p>
         </div>
 
-        <div class="four-col">
-          <article class="card">
-            <div class="icon">✦</div>
-            <h4>Güçlü sahne atmosferi</h4>
-            <p>
-              Işık, müzik ve hareketin aynı anda yükseldiği; daha ilk andan itibaren seyirciyi içine alan bir sahne dili.
-            </p>
+        <div class="dates-grid">
+          <article class="date-card">
+            <strong>21</strong>
+            <span>Nisan</span>
+            <small>Gösteri günü • Muhteşem Renkler Müzikali</small>
           </article>
 
-          <article class="card">
-            <div class="icon">♫</div>
-            <h4>Duyguyla ilerleyen anlatı</h4>
-            <p>
-              Üniversite yıllarının son dönemine yaklaşan karakterlerin umutlarını, korkularını ve vedalarını taşıyan bir hikâye.
-            </p>
+          <article class="date-card">
+            <strong>22</strong>
+            <span>Nisan</span>
+            <small>Gösteri günü • Muhteşem Renkler Müzikali</small>
           </article>
 
-          <article class="card">
-            <div class="icon">★</div>
-            <h4>Kalabalık ve canlı kadro</h4>
-            <p>
-              Oyuncular, dansçılar ve müzikal yapı bir araya gelerek sahnede dinamik ve etkileyici bir bütün oluşturuyor.
-            </p>
+          <article class="date-card">
+            <strong>23</strong>
+            <span>Nisan</span>
+            <small>Gösteri günü • Muhteşem Renkler Müzikali</small>
           </article>
 
-          <article class="card">
-            <div class="icon">⌁</div>
-            <h4>Final hissi</h4>
-            <p>
-              Gecenin sonunda yalnızca bir gösteri izlemiş olmuyorsun; bir dönemin kapanışına tanıklık ediyorsun.
-            </p>
+          <article class="date-card">
+            <strong>24</strong>
+            <span>Nisan</span>
+            <small>Gösteri günü • Muhteşem Renkler Müzikali</small>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="akis">
+    <section class="section" id="ekip">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Akış</span>
-          <h3>Program</h3>
+          <span class="mini">Yaratıcı Ekip</span>
+          <h3>Sahne arkasındaki ekip</h3>
           <p>
-            Gösteri akışı, gece boyunca yükselen sahne temposunu ve anlatının katmanlarını destekleyecek şekilde ilerliyor.
-            Kapı açılışından final selamına kadar her bölüm, seyirciyi adım adım hikâyenin içine taşıyor.
+            Muhteşem Renkler Müzikali’nin yaratıcı ve teknik ekibi aşağıdaki gibidir.
           </p>
         </div>
 
-        <div class="timeline">
-          <article class="timeline-item">
-            <div class="timeline-top">
-              <span class="time">18.30</span>
-              <span class="badge">Kapı Açılışı</span>
+        <div class="team-grid">
+          <article class="card">
+            <div class="team-item">
+              <div class="team-role">Oyun Adı</div>
+              <div class="team-name">Muhteşem Renkler Müzikali</div>
             </div>
-            <h4>Karşılama</h4>
-            <p>Katılımcı girişi, yönlendirme ve sahne öncesi ilk atmosfer.</p>
+            <div class="team-item">
+              <div class="team-role">Yazan</div>
+              <div class="team-name">Yiğit Keskin</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Çeviren</div>
+              <div class="team-name">Yiğit Keskin</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Yöneten</div>
+              <div class="team-name">Yiğit Keskin</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Dramaturg</div>
+              <div class="team-name">Yiğit Keskin</div>
+            </div>
           </article>
 
-          <article class="timeline-item">
-            <div class="timeline-top">
-              <span class="time">19.00</span>
-              <span class="badge">Perde 1</span>
+          <article class="card">
+            <div class="team-item">
+              <div class="team-role">Dekor</div>
+              <div class="team-name">Zeynep Zerrin Erkol / Baran Çiftçi</div>
             </div>
-            <h4>Açılış Performansı</h4>
-            <p>Geceyi başlatan ana giriş sekansı, ışık ve koreografi birleşimi.</p>
+            <div class="team-item">
+              <div class="team-role">Kostüm</div>
+              <div class="team-name">Yeditepe Üniversitesi Dans Kulübü</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Işık</div>
+              <div class="team-name">KGF Event Engineering</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Müzik</div>
+              <div class="team-name">Benj Pasek / Justin Paul</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Vokal Koçu</div>
+              <div class="team-name">Nilüfer Özkan</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Müzik Direktörü</div>
+              <div class="team-name">Uğurcan Moroğlu</div>
+            </div>
+            <div class="team-item">
+              <div class="team-role">Koreografi</div>
+              <div class="team-name">Yiğit Dündar</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="kadro">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Kadro</span>
+          <h3>Oyuncular</h3>
+          <p>
+            Sahnedeki oyuncu kadrosu aşağıdaki isimlerden oluşmaktadır.
+          </p>
+        </div>
+
+        <div class="cast-grid">
+          <div class="cast-name">Adilkaan Yüceer</div>
+          <div class="cast-name">Alper Dikici</div>
+          <div class="cast-name">Alper Yasin Güngördü</div>
+          <div class="cast-name">Ata Berk Özkaya</div>
+          <div class="cast-name">Baran Çiftçi</div>
+          <div class="cast-name">Burçak Cevit</div>
+          <div class="cast-name">Ceren Candevir</div>
+          <div class="cast-name">Ceren Gündoğdu</div>
+          <div class="cast-name">Çelen Durugönül</div>
+          <div class="cast-name">Deniz Biçer</div>
+          <div class="cast-name">Doğa Su Ülker</div>
+          <div class="cast-name">Eda Karaosmanoğlu</div>
+          <div class="cast-name">Emre Okul</div>
+          <div class="cast-name">Lider Kartbaba</div>
+          <div class="cast-name">Mercan Akbaş</div>
+          <div class="cast-name">Mert Kaan Arslan</div>
+          <div class="cast-name">Mira Güzel</div>
+          <div class="cast-name">Sare Demir</div>
+          <div class="cast-name">Sıla Manaf</div>
+          <div class="cast-name">Siren Kallem</div>
+          <div class="cast-name">Sudenur Özgen</div>
+          <div class="cast-name">Zeynep Sarıbaş</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="danscilar">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Dans Kadrosu</span>
+          <h3>Dansçılar</h3>
+          <p>
+            Muhteşem Renkler Müzikali’nin dans kadrosu YUDANSK performans ekibinden oluşmaktadır.
+            Dansçı isim listesi bu alanda ayrıca paylaşılacaktır.
+          </p>
+        </div>
+
+        <div class="two-col">
+          <article class="card">
+            <h4>YUDANSK performans ekibi</h4>
+            <p>
+              Sahne geçişleri, toplu koreografi düzeni ve gösterinin ritmini taşıyan dans bölümleri
+              Yeditepe Üniversitesi Dans Kulübü performans ekibi tarafından sahnelenmektedir.
+            </p>
           </article>
 
-          <article class="timeline-item">
-            <div class="timeline-top">
-              <span class="time">19.40</span>
-              <span class="badge">Perde 2</span>
-            </div>
-            <h4>Tematik Bölüm</h4>
-            <p>Hikâye akışı ve farklı performans bloklarının birleştiği orta bölüm.</p>
-          </article>
-
-          <article class="timeline-item">
-            <div class="timeline-top">
-              <span class="time">20.30</span>
-              <span class="badge">Finale</span>
-            </div>
-            <h4>Kapanış & Selam</h4>
-            <p>Final koreografisi, alkış ve sahne kapanışı.</p>
+          <article class="card">
+            <h4>Gösteri dili</h4>
+            <p>
+              Müzikalin dans dili; yüksek enerji, ritim duygusu ve güçlü grup sahneleri üzerine kuruludur.
+              Dans kadrosuna ait isim listesi netleştiğinde bu bölüm isim isim güncellenecektir.
+            </p>
           </article>
         </div>
       </div>
@@ -712,10 +890,10 @@
     <section class="section">
       <div class="container">
         <div class="cta-box">
-          <h3>Bu geceye sen de dahil ol.</h3>
+          <h3>Bu gecede yerini al.</h3>
           <p>
-            YUDANSK’ın sahneye taşıdığı Son Sene Müzikali’nde yerini ayır; dans, müzik ve hikâyenin
-            birleştiği bu özel geceyi kaçırma.
+            YUDANSK tarafından sahnelenen Muhteşem Renkler Müzikali için biletini şimdi oluştur;
+            sahnenin, müziğin ve dansın aynı anda yükseldiği bu özel deneyimi kaçırma.
           </p>
 
           <div class="cta-actions">
@@ -732,10 +910,10 @@
       <div class="footer-card">
         <p>
           <strong>YUDANSK</strong><br>
-          Yeditepe Üniversitesi Dans Kulübü’nün sahneye taşıdığı Son Sene Müzikali için hazırlanan resmi etkinlik sayfası.
+          Yeditepe Üniversitesi Dans Kulübü tarafından sahnelenen Muhteşem Renkler Müzikali resmi etkinlik sayfası.
         </p>
         <div class="copyright">
-          YUDANSK • Son Sene Müzikali
+          Muhteşem Renkler Müzikali • YUDANSK
         </div>
       </div>
     </div>
@@ -743,7 +921,7 @@
 
   <div class="mobile-cta">
     <div>
-      <small>Son Sene Müzikali</small>
+      <small>Muhteşem Renkler Müzikali</small>
       <strong>Bilet sayfasına geç</strong>
     </div>
     <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
