@@ -204,6 +204,7 @@ if (sheetsWebhookUrl) {
       rep: rep.trim(),
       receipt_note: receipt_note.trim(),
       receipt_path: receipt_path.trim(),
+      receipt_url: receiptSignedUrl,
       status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
       emailed: !emailError,
       checked_in: false
