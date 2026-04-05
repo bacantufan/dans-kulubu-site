@@ -107,7 +107,8 @@ export default async function handler(req, res) {
 
     const rawInsertText = await insertResponse.text();
 
-    if (
+    if (!insertResponse.ok) {
+      if (
   rawInsertText.includes("duplicate key value") ||
   rawInsertText.includes("registrations_email_attendance_date_unique")
 ) {
@@ -116,7 +117,6 @@ export default async function handler(req, res) {
     error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
   });
 }
-
       return sendJson(res, 500, {
         success: false,
         error: `Veritabanına kayıt başarısız: ${rawInsertText}`
