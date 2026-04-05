@@ -56,7 +56,29 @@ export default async function handler(req, res) {
     if (!allowedDates.has(attendance_date)) {
       return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
     }
+const signedUrlResponse = await fetch(
+  `${supabaseUrl}/storage/v1/object/sign/receipts/${receipt_path.trim()}`,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${serviceRoleKey}`,
+      apikey: serviceRoleKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      expiresIn: 60 * 60 * 24 * 30
+    })
+  }
+);
 
+let receiptSignedUrl = "";
+
+if (signedUrlResponse.ok) {
+  const signedUrlData = await signedUrlResponse.json();
+  if (signedUrlData?.signedURL) {
+    receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
+  }
+}
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
