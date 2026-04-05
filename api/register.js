@@ -197,31 +197,32 @@ export default async function handler(req, res) {
     }
 
     if (sheetsWebhookUrl) {
-      try {
-        await fetch(sheetsWebhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ticket_code: ticketCode,
-            full_name: full_name.trim(),
-            phone: phone.trim(),
-            email: email.trim().toLowerCase(),
-            university: university.trim(),
-            department: department.trim(),
-            class_level: class_level.trim(),
-            attendance_date: attendance_date.trim(),
-            rep: rep.trim(),
-            receipt_note: receipt_note.trim(),
-            receipt_path: receipt_path.trim(),
-            receipt_url: receiptSignedUrl,
-            status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
-            emailed: !emailError,
-            checked_in: false
-          })
-        });
-      } catch (sheetError) {
+  console.log("RECEIPT SIGNED URL:", receiptSignedUrl);
+
+  await fetch(sheetsWebhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      ticket_code: ticketCode,
+      full_name: full_name.trim(),
+      phone: phone.trim(),
+      email: email.trim().toLowerCase(),
+      university: university.trim(),
+      department: department.trim(),
+      class_level: class_level.trim(),
+      attendance_date: attendance_date.trim(),
+      rep: rep.trim(),
+      receipt_note: receipt_note.trim(),
+      receipt_path: receipt_path.trim(),
+      receipt_url: receiptSignedUrl,
+      status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
+      emailed: !emailError,
+      checked_in: false
+    })
+  });
+} catch (sheetError) {
         console.error("SHEETS WEBHOOK ERROR:", sheetError);
       }
     }
