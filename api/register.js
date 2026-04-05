@@ -107,16 +107,15 @@ export default async function handler(req, res) {
 
     const rawInsertText = await insertResponse.text();
 
-    if (!insertResponse.ok) {
-      if (
-        rawInsertText.includes("duplicate key value") ||
-        rawInsertText.includes("registrations_email_unique")
-      ) {
-        return sendJson(res, 400, {
-          success: false,
-          error: "Bu e-posta adresi ile daha önce kayıt oluşturulmuş."
-        });
-      }
+    if (
+  rawInsertText.includes("duplicate key value") ||
+  rawInsertText.includes("registrations_email_attendance_date_unique")
+) {
+  return sendJson(res, 400, {
+    success: false,
+    error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
+  });
+}
 
       return sendJson(res, 500, {
         success: false,
