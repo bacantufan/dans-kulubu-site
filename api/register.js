@@ -1,6 +1,5 @@
 import { Resend } from "resend";
 
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
@@ -58,34 +57,11 @@ export default async function handler(req, res) {
     }
 
     const supabaseUrl = process.env.SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const resendApiKey = process.env.RESEND_API_KEY;
-const mailFrom = process.env.MAIL_FROM;
-const publicBaseUrl = process.env.PUBLIC_BASE_URL;
-const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-    const signedUrlResponse = await fetch(
-  `${supabaseUrl}/storage/v1/object/sign/receipts/${receipt_path.trim()}`,
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${serviceRoleKey}`,
-      apikey: serviceRoleKey,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      expiresIn: 60 * 60 * 24 * 30
-    })
-  }
-);
-
-let receiptSignedUrl = "";
-
-if (signedUrlResponse.ok) {
-  const signedUrlData = await signedUrlResponse.json();
-  if (signedUrlData?.signedURL) {
-    receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
-  }
-}
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const mailFrom = process.env.MAIL_FROM;
+    const publicBaseUrl = process.env.PUBLIC_BASE_URL;
+    const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
     if (!supabaseUrl || !serviceRoleKey) {
       return sendJson(res, 500, { success: false, error: "Supabase environment variable eksik." });
@@ -129,10 +105,13 @@ if (signedUrlResponse.ok) {
       body: JSON.stringify(insertPayload)
     });
 
-    const rawText = await insertResponse.text();
+    const rawInsertText = await insertResponse.text();
 
     if (!insertResponse.ok) {
-      if (rawText.includes("duplicate key value") || rawText.includes("registrations_email_unique")) {
+      if (
+        rawInsertText.includes("duplicate key value") ||
+        rawInsertText.includes("registrations_email_unique")
+      ) {
         return sendJson(res, 400, {
           success: false,
           error: "Bu e-posta adresi ile daha önce kayıt oluşturulmuş."
@@ -141,86 +120,122 @@ if (signedUrlResponse.ok) {
 
       return sendJson(res, 500, {
         success: false,
-        error: `Veritabanına kayıt başarısız: ${rawText}`
+        error: `Veritabanına kayıt başarısız: ${rawInsertText}`
       });
     }
 
-    const qrPayload = `${publicBaseUrl}/checkin?ticket=${encodeURIComponent(ticketCode)}`;
-    
+    let receiptSignedUrl = "";
+
+    try {
+      const signedUrlResponse = await fetch(
+        `${supabaseUrl}/storage/v1/object/sign/receipts/${receipt_path.trim()}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${serviceRoleKey}`,
+            apikey: serviceRoleKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            expiresIn: 60 * 60 * 24 * 30
+          })
+        }
+      );
+
+      if (signedUrlResponse.ok) {
+        const signedUrlData = await signedUrlResponse.json();
+        if (signedUrlData?.signedURL) {
+          receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
+        }
+      }
+    } catch (e) {
+      console.error("SIGNED URL ERROR:", e);
+    }
+
+    const qrImageUrl = `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(ticketCode)}`;
 
     const emailHtml = buildTicketEmail({
-  fullName: full_name.trim(),
-  attendanceDate: attendance_date.trim(),
-  ticketCode,
-  qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(ticketCode)}`
-});
+      fullName: full_name.trim(),
+      attendanceDate: attendance_date.trim(),
+      ticketCode,
+      qrImageUrl
+    });
 
-    const { error: emailError } = await resend.emails.send({
-  from: mailFrom,
-  to: [email.trim().toLowerCase()],
-  subject: `Muhteşem Renkler Müzikali Biletin • ${attendance_date}`,
-  html: emailHtml
-});
+    let emailError = null;
+
+    try {
+      const emailResult = await resend.emails.send({
+        from: mailFrom,
+        to: [email.trim().toLowerCase()],
+        subject: `Muhteşem Renkler Müzikali Biletin • ${attendance_date}`,
+        html: emailHtml
+      });
+
+      if (emailResult?.error) {
+        emailError = emailResult.error;
+      }
+    } catch (err) {
+      emailError = err;
+    }
 
     if (emailError) {
-      await updateEmailState({
+      await updateRegistrationStatus({
         supabaseUrl,
         serviceRoleKey,
         ticketCode,
         emailed: false,
         status: "EMAIL_FAILED"
       });
-
-      return sendJson(res, 200, {
-        success: true,
-        ticket_code: ticketCode,
-        attendance_date,
-        warning: "Kayıt oluşturuldu ancak e-posta gönderimi başarısız oldu."
+    } else {
+      await updateRegistrationStatus({
+        supabaseUrl,
+        serviceRoleKey,
+        ticketCode,
+        emailed: true,
+        status: "EMAIL_SENT"
       });
     }
 
-    await updateEmailState({
-      supabaseUrl,
-      serviceRoleKey,
-      ticketCode,
-      emailed: true,
-      status: "EMAIL_SENT"
-    });
-    const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-
-if (sheetsWebhookUrl) {
-  await fetch(sheetsWebhookUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      ticket_code: ticketCode,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: email.trim().toLowerCase(),
-      university: university.trim(),
-      department: department.trim(),
-      class_level: class_level.trim(),
-      attendance_date: attendance_date.trim(),
-      rep: rep.trim(),
-      receipt_note: receipt_note.trim(),
-      receipt_path: receipt_path.trim(),
-      receipt_url: receiptSignedUrl,
-      status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
-      emailed: !emailError,
-      checked_in: false
-    })
-  });
-}
+    if (sheetsWebhookUrl) {
+      try {
+        await fetch(sheetsWebhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ticket_code: ticketCode,
+            full_name: full_name.trim(),
+            phone: phone.trim(),
+            email: email.trim().toLowerCase(),
+            university: university.trim(),
+            department: department.trim(),
+            class_level: class_level.trim(),
+            attendance_date: attendance_date.trim(),
+            rep: rep.trim(),
+            receipt_note: receipt_note.trim(),
+            receipt_path: receipt_path.trim(),
+            receipt_url: receiptSignedUrl,
+            status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
+            emailed: !emailError,
+            checked_in: false
+          })
+        });
+      } catch (sheetError) {
+        console.error("SHEETS WEBHOOK ERROR:", sheetError);
+      }
+    }
 
     return sendJson(res, 200, {
       success: true,
-      message: "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
+      message: emailError
+        ? "Kayıt oluşturuldu ancak e-posta gönderimi başarısız oldu."
+        : "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
       ticket_code: ticketCode,
       attendance_date
     });
   } catch (error) {
+    console.error("REGISTER API ERROR:", error);
     return sendJson(res, 500, {
       success: false,
       error: error.message || "Beklenmeyen bir hata oluştu."
@@ -228,19 +243,28 @@ if (sheetsWebhookUrl) {
   }
 }
 
-async function updateEmailState({ supabaseUrl, serviceRoleKey, ticketCode, emailed, status }) {
-  await fetch(`${supabaseUrl}/rest/v1/registrations?ticket_code=eq.${encodeURIComponent(ticketCode)}`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${serviceRoleKey}`,
-      apikey: serviceRoleKey,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      emailed,
-      status
-    })
-  });
+async function updateRegistrationStatus({
+  supabaseUrl,
+  serviceRoleKey,
+  ticketCode,
+  emailed,
+  status
+}) {
+  await fetch(
+    `${supabaseUrl}/rest/v1/registrations?ticket_code=eq.${encodeURIComponent(ticketCode)}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${serviceRoleKey}`,
+        apikey: serviceRoleKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        emailed,
+        status
+      })
+    }
+  );
 }
 
 function buildTicketEmail({ fullName, attendanceDate, ticketCode, qrImageUrl }) {
@@ -268,49 +292,51 @@ function buildTicketEmail({ fullName, attendanceDate, ticketCode, qrImageUrl }) 
 
         <div style="padding:18px 24px 28px;">
           <div style="border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
-            <div style="display:grid;grid-template-columns:1.1fr .9fr;">
-              <div style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);">
-                <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-                  Etkinlik Bilgisi
-                </div>
-
-                <div style="margin-bottom:16px;">
-                  <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Etkinlik</div>
-                  <div style="color:#ffffff;font-size:18px;font-weight:700;">Muhteşem Renkler Müzikali</div>
-                </div>
-
-                <div style="margin-bottom:16px;">
-                  <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-                  <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
-                </div>
-
-                <div style="margin-bottom:16px;">
-                  <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
-                  <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticketCode)}</div>
-                </div>
-
-                <div>
-                  <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
-                  <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
-                    Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
+              <tr>
+                <td valign="top" style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);width:55%;">
+                  <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
+                    Etkinlik Bilgisi
                   </div>
-                </div>
-              </div>
 
-              <div style="padding:22px;text-align:center;background:rgba(255,255,255,.03);">
-                <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-                  QR Giriş Kodu
-                </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Etkinlik</div>
+                    <div style="color:#ffffff;font-size:18px;font-weight:700;">Muhteşem Renkler Müzikali</div>
+                  </div>
 
-                <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
-                  <img src="${qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
-                </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
+                    <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+                  </div>
 
-                <div style="margin-top:12px;color:#9aa1b5;font-size:12px;line-height:1.6;">
-                  QR okutulduğunda bilet kodun doğrulanacaktır.
-                </div>
-              </div>
-            </div>
+                  <div style="margin-bottom:16px;">
+                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
+                    <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticketCode)}</div>
+                  </div>
+
+                  <div>
+                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
+                    <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
+                      Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
+                    </div>
+                  </div>
+                </td>
+
+                <td valign="top" style="padding:22px;text-align:center;background:rgba(255,255,255,.03);width:45%;">
+                  <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
+                    QR Giriş Kodu
+                  </div>
+
+                  <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
+                    <img src="${qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
+                  </div>
+
+                  <div style="margin-top:12px;color:#9aa1b5;font-size:12px;line-height:1.6;">
+                    QR okutulduğunda bilet kodun doğrulanacaktır.
+                  </div>
+                </td>
+              </tr>
+            </table>
           </div>
 
           <div style="margin-top:18px;padding:16px 18px;border-radius:18px;background:rgba(244,197,108,.08);border:1px solid rgba(244,197,108,.18);color:#f3e4bf;font-size:13px;line-height:1.7;">
