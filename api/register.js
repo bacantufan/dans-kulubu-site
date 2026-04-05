@@ -144,12 +144,12 @@ export default async function handler(req, res) {
 
       if (signedUrlResponse.ok) {
         const signedUrlData = await signedUrlResponse.json();
-        if (signedUrlData?.signedURL) {
+        if (signedUrlData && signedUrlData.signedURL) {
           receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
         }
       }
-    } catch (e) {
-      console.error("SIGNED URL ERROR:", e);
+    } catch (signedUrlError) {
+      console.error("SIGNED URL ERROR:", signedUrlError);
     }
 
     const qrImageUrl = `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(ticketCode)}`;
@@ -171,7 +171,7 @@ export default async function handler(req, res) {
         html: emailHtml
       });
 
-      if (emailResult?.error) {
+      if (emailResult && emailResult.error) {
         emailError = emailResult.error;
       }
     } catch (err) {
@@ -197,32 +197,33 @@ export default async function handler(req, res) {
     }
 
     if (sheetsWebhookUrl) {
-  console.log("RECEIPT SIGNED URL:", receiptSignedUrl);
+      try {
+        console.log("RECEIPT SIGNED URL:", receiptSignedUrl);
 
-  await fetch(sheetsWebhookUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      ticket_code: ticketCode,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: email.trim().toLowerCase(),
-      university: university.trim(),
-      department: department.trim(),
-      class_level: class_level.trim(),
-      attendance_date: attendance_date.trim(),
-      rep: rep.trim(),
-      receipt_note: receipt_note.trim(),
-      receipt_path: receipt_path.trim(),
-      receipt_url: receiptSignedUrl,
-      status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
-      emailed: !emailError,
-      checked_in: false
-    })
-  });
-} catch (sheetError) {
+        await fetch(sheetsWebhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ticket_code: ticketCode,
+            full_name: full_name.trim(),
+            phone: phone.trim(),
+            email: email.trim().toLowerCase(),
+            university: university.trim(),
+            department: department.trim(),
+            class_level: class_level.trim(),
+            attendance_date: attendance_date.trim(),
+            rep: rep.trim(),
+            receipt_note: receipt_note.trim(),
+            receipt_path: receipt_path.trim(),
+            receipt_url: receiptSignedUrl,
+            status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
+            emailed: !emailError,
+            checked_in: false
+          })
+        });
+      } catch (sheetError) {
         console.error("SHEETS WEBHOOK ERROR:", sheetError);
       }
     }
@@ -367,7 +368,9 @@ function sendJson(res, statusCode, data) {
 
 async function readJsonBody(req) {
   let raw = "";
-  for await (const chunk of req) raw += chunk;
+  for await (const chunk of req) {
+    raw += chunk;
+  }
   return raw ? JSON.parse(raw) : {};
 }
 
