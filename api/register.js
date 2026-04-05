@@ -162,6 +162,32 @@ export default async function handler(req, res) {
       emailed: true,
       status: "EMAIL_SENT"
     });
+    const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+
+if (sheetsWebhookUrl) {
+  await fetch(sheetsWebhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      ticket_code: ticketCode,
+      full_name: full_name.trim(),
+      phone: phone.trim(),
+      email: email.trim().toLowerCase(),
+      university: university.trim(),
+      department: department.trim(),
+      class_level: class_level.trim(),
+      attendance_date: attendance_date.trim(),
+      rep: rep.trim(),
+      receipt_note: receipt_note.trim(),
+      receipt_path: receipt_path.trim(),
+      status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
+      emailed: !emailError,
+      checked_in: false
+    })
+  });
+}
 
     return sendJson(res, 200, {
       success: true,
