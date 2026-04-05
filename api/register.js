@@ -56,7 +56,14 @@ export default async function handler(req, res) {
     if (!allowedDates.has(attendance_date)) {
       return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
     }
-const signedUrlResponse = await fetch(
+
+    const supabaseUrl = process.env.SUPABASE_URL;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const resendApiKey = process.env.RESEND_API_KEY;
+const mailFrom = process.env.MAIL_FROM;
+const publicBaseUrl = process.env.PUBLIC_BASE_URL;
+const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    const signedUrlResponse = await fetch(
   `${supabaseUrl}/storage/v1/object/sign/receipts/${receipt_path.trim()}`,
   {
     method: "POST",
@@ -79,11 +86,6 @@ if (signedUrlResponse.ok) {
     receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
   }
 }
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const mailFrom = process.env.MAIL_FROM;
-    const publicBaseUrl = process.env.PUBLIC_BASE_URL;
 
     if (!supabaseUrl || !serviceRoleKey) {
       return sendJson(res, 500, { success: false, error: "Supabase environment variable eksik." });
