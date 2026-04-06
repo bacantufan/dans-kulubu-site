@@ -550,6 +550,24 @@
   color:#ffd7a0;
   margin-top:2px;
 }
+    .submit-main-btn{
+  width:min(100%, 420px);
+  min-height:56px;
+  margin:0 auto;
+  display:flex;
+  font-size:16px;
+  font-weight:900;
+  border-radius:18px;
+}
+
+.refund-note{
+  text-align:center;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:800;
+  color:#ffd7a0;
+  margin-top:2px;
+}
 
     @media (min-width:760px){
       .container{width:min(var(--max),calc(100% - 40px))}
@@ -631,7 +649,7 @@
               </div>
 
               <div class="price-value">
-                <strong id="copy-amount">500₺</strong>
+                <strong id="copy-amount">600₺</strong>
                 <span>/ toplam</span>
               </div>
 
@@ -675,7 +693,7 @@
                 <div class="copy-row">
                   <div>
                     <small>Tutar</small>
-                    <strong id="copy-amount-2">500₺</strong>
+                    <strong id="copy-amount-2">600₺</strong>
                   </div>
                   <button type="button" class="copy-btn" data-copy-target="copy-amount-2">Kopyala</button>
                 </div>
@@ -751,6 +769,14 @@
     </div>
   </div>
 
+  <div id="extraAttendeesWrap" class="field" style="display:none; margin-top:12px;">
+    <label>Diğer katılımcıların ad soyad bilgileri <span class="req">*</span></label>
+    <div id="extraAttendeesList" class="form-grid"></div>
+    <div class="field-note">
+      Birden fazla bilet seçtiğinde, diğer katılımcıların isimlerini eksiksiz girmen gerekir.
+    </div>
+  </div>
+
   <div class="field">
     <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
     <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
@@ -801,190 +827,224 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://qhuayxwvucbiaczhieiy.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0CWHB-oGYYn49_Hq2XiuPQ_z600s0hQ";
+  const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
 
-    const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+      }
+    }
+  );
+
+  const copyButtons = document.querySelectorAll(".copy-btn");
+  const ticketQuantity = document.getElementById("ticketQuantity");
+  const amountText1 = document.getElementById("copy-amount");
+  const amountText2 = document.getElementById("copy-amount-2");
+  const extraAttendeesWrap = document.getElementById("extraAttendeesWrap");
+  const extraAttendeesList = document.getElementById("extraAttendeesList");
+
+  try {
+    localStorage.removeItem("supabase.auth.token");
+  } catch (e) {}
+
+  function updateTotalAmount() {
+    const quantity = Number(ticketQuantity.value || 1);
+    const total = quantity * 600;
+    amountText1.innerText = `${total}₺`;
+    amountText2.innerText = `${total}₺`;
+  }
+
+  function renderExtraAttendees() {
+    const quantity = Number(ticketQuantity.value || 1);
+    extraAttendeesList.innerHTML = "";
+
+    if (quantity <= 1) {
+      extraAttendeesWrap.style.display = "none";
+      return;
+    }
+
+    extraAttendeesWrap.style.display = "grid";
+
+    for (let i = 2; i <= quantity; i++) {
+      const field = document.createElement("div");
+      field.className = "field";
+      field.innerHTML = `
+        <label for="attendee_${i}">${i}. Bilet Sahibi Ad Soyad <span class="req">*</span></label>
+        <input id="attendee_${i}" name="attendee_${i}" type="text" placeholder="${i}. katılımcının adı soyadı" required>
+      `;
+      extraAttendeesList.appendChild(field);
     }
   }
-);
 
-    const copyButtons = document.querySelectorAll(".copy-btn");
-    const ticketQuantity = document.getElementById("ticketQuantity");
-    const amountText1 = document.getElementById("copy-amount");
-    const amountText2 = document.getElementById("copy-amount-2");
+  copyButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const targetId = button.getAttribute("data-copy-target");
+      const target = document.getElementById(targetId);
+      if (!target) return;
 
-    function updateTotalAmount() {
-      const quantity = Number(ticketQuantity.value || 1);
-      const total = quantity * 600;
-      amountText1.innerText = `${total}₺`;
-      amountText2.innerText = `${total}₺`;
-    }
-
-    copyButtons.forEach((button) => {
-      button.addEventListener("click", async () => {
-        const targetId = button.getAttribute("data-copy-target");
-        const target = document.getElementById(targetId);
-        if (!target) return;
-
-        const text = target.innerText.trim();
-
-        try {
-          await navigator.clipboard.writeText(text);
-          const original = button.innerText;
-          button.innerText = "Kopyalandı";
-          button.classList.add("done");
-
-          setTimeout(() => {
-            button.innerText = original;
-            button.classList.remove("done");
-          }, 1500);
-        } catch (err) {
-          alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
-        }
-      });
-    });
-
-    ticketQuantity.addEventListener("change", updateTotalAmount);
-    updateTotalAmount();
-
-    const ticketForm = document.getElementById("ticketForm");
-    const fakeSuccess = document.getElementById("fakeSuccess");
-    const submitBtn = document.getElementById("submitBtn");
-
-    function showMessage(message, isSuccess = true) {
-      fakeSuccess.style.display = "block";
-      fakeSuccess.innerText = message;
-
-      if (isSuccess) {
-        fakeSuccess.style.background = "rgba(132,246,183,.1)";
-        fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
-        fakeSuccess.style.color = "#cffff0";
-      } else {
-        fakeSuccess.style.background = "rgba(255,127,127,.1)";
-        fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
-        fakeSuccess.style.color = "#ffd2d2";
-      }
-
-      fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    ticketForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      fakeSuccess.style.display = "none";
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Gönderiliyor...";
+      const text = target.innerText.trim();
 
       try {
-        const receiptFile = document.getElementById("receiptFile").files[0];
-        const consentApproved = document.getElementById("consentApproved").checked;
+        await navigator.clipboard.writeText(text);
+        const original = button.innerText;
+        button.innerText = "Kopyalandı";
+        button.classList.add("done");
 
-        if (!receiptFile) {
-          throw new Error("Dekont dosyası zorunlu.");
-        }
-
-        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-        if (!allowedTypes.includes(receiptFile.type)) {
-          throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
-        }
-
-        const maxFileSizeMB = 10;
-        const maxBytes = maxFileSizeMB * 1024 * 1024;
-
-        if (receiptFile.size > maxBytes) {
-          throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
-        }
-
-        const uploadUrlResponse = await fetch("/api/create-upload-url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            file_name: receiptFile.name,
-            file_type: receiptFile.type,
-            attendance_date: document.getElementById("attendanceDate").value.trim()
-          })
-        });
-
-        const safeFileName = receiptFile.name
-  .normalize("NFKD")
-  .replace(/[^\w.\-]+/g, "-")
-  .replace(/-+/g, "-")
-  .replace(/^-|-$/g, "");
-
-const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
-const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
-const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
-
-const { error: uploadError } = await supabaseClient.storage
-  .from("receipts")
-  .upload(uploadPath, receiptFile, {
-    contentType: receiptFile.type,
-    upsert: false
-  });
-
-if (uploadError) {
-  throw new Error(uploadError.message || "Dekont yüklenemedi.");
-}
-
-        const payload = {
-          full_name: document.getElementById("fullName").value.trim(),
-          phone: document.getElementById("phone").value.trim(),
-          email: document.getElementById("email").value.trim(),
-          attendance_date: document.getElementById("attendanceDate").value.trim(),
-          ticket_quantity: Number(document.getElementById("ticketQuantity").value || 1),
-          rep: document.getElementById("rep").value.trim(),
-          receipt_note: document.getElementById("receiptNote").value.trim(),
-          receipt_path: uploadPath,
-          receipt_file_name: receiptFile.name,
-          receipt_file_mime: receiptFile.type,
-          consent_approved: consentApproved
-        };
-
-        const response = await fetch("/api/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const rawText = await response.text();
-
-        let result;
-        try {
-          result = JSON.parse(rawText);
-        } catch {
-          throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
-        }
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || "Kayıt oluşturulamadı.");
-        }
-
-        showMessage(
-          `${result.attendance_date} için ${result.ticket_quantity} adet bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
-          true
-        );
-
-        ticketForm.reset();
-        updateTotalAmount();
-      } catch (error) {
-        showMessage(error.message || "Bir hata oluştu.", false);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Kaydı Tamamla";
+        setTimeout(() => {
+          button.innerText = original;
+          button.classList.remove("done");
+        }, 1500);
+      } catch (err) {
+        alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
       }
     });
-  </script>
+  });
+
+  ticketQuantity.addEventListener("change", () => {
+    updateTotalAmount();
+    renderExtraAttendees();
+  });
+
+  updateTotalAmount();
+  renderExtraAttendees();
+
+  const ticketForm = document.getElementById("ticketForm");
+  const fakeSuccess = document.getElementById("fakeSuccess");
+  const submitBtn = document.getElementById("submitBtn");
+
+  function showMessage(message, isSuccess = true) {
+    fakeSuccess.style.display = "block";
+    fakeSuccess.innerText = message;
+
+    if (isSuccess) {
+      fakeSuccess.style.background = "rgba(132,246,183,.1)";
+      fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
+      fakeSuccess.style.color = "#cffff0";
+    } else {
+      fakeSuccess.style.background = "rgba(255,127,127,.1)";
+      fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
+      fakeSuccess.style.color = "#ffd2d2";
+    }
+
+    fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  ticketForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    fakeSuccess.style.display = "none";
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Gönderiliyor...";
+
+    try {
+      const receiptFile = document.getElementById("receiptFile").files[0];
+      const consentApproved = document.getElementById("consentApproved").checked;
+
+      if (!receiptFile) {
+        throw new Error("Dekont dosyası zorunlu.");
+      }
+
+      const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+      if (!allowedTypes.includes(receiptFile.type)) {
+        throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
+      }
+
+      const maxFileSizeMB = 10;
+      const maxBytes = maxFileSizeMB * 1024 * 1024;
+
+      if (receiptFile.size > maxBytes) {
+        throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
+      }
+
+      const safeFileName = receiptFile.name
+        .normalize("NFKD")
+        .replace(/[^\w.\-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
+      const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
+      const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from("receipts")
+        .upload(uploadPath, receiptFile, {
+          contentType: receiptFile.type,
+          upsert: false
+        });
+
+      if (uploadError) {
+        throw new Error(uploadError.message || "Dekont yüklenemedi.");
+      }
+
+      const quantityValue = Number(document.getElementById("ticketQuantity").value || 1);
+      const attendeeNames = [];
+
+      for (let i = 2; i <= quantityValue; i++) {
+        const input = document.getElementById(`attendee_${i}`);
+        if (!input || !input.value.trim()) {
+          throw new Error(`${i}. bilet sahibi için ad soyad bilgisi zorunlu.`);
+        }
+        attendeeNames.push(input.value.trim());
+      }
+
+      const payload = {
+        full_name: document.getElementById("fullName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        attendance_date: document.getElementById("attendanceDate").value.trim(),
+        ticket_quantity: quantityValue,
+        attendee_names: attendeeNames,
+        rep: document.getElementById("rep").value.trim(),
+        receipt_note: document.getElementById("receiptNote").value.trim(),
+        receipt_path: uploadPath,
+        receipt_file_name: receiptFile.name,
+        receipt_file_mime: receiptFile.type,
+        consent_approved: consentApproved
+      };
+
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const rawText = await response.text();
+
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
+      }
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Kayıt oluşturulamadı.");
+      }
+
+      showMessage(
+        `${result.attendance_date} için ${result.ticket_quantity} adet bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
+        true
+      );
+
+      ticketForm.reset();
+      updateTotalAmount();
+      renderExtraAttendees();
+    } catch (error) {
+      showMessage(error.message || "Bir hata oluştu.", false);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Kaydı Tamamla";
+    }
+  });
+</script>
 </body>
 </html>
