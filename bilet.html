@@ -922,22 +922,22 @@
           })
         });
 
-        const uploadUrlResult = await uploadUrlResponse.json();
+        const safeFileName = receiptFile.name
+  .normalize("NFKD")
+  .replace(/[^\w.\-]+/g, "-")
+  .replace(/-+/g, "-")
+  .replace(/^-|-$/g, "");
 
-        if (!uploadUrlResponse.ok || !uploadUrlResult.success) {
-          throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
-        }
+const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
+const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
+const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
 
-        const { error: uploadError } = await supabaseClient.storage
+const { error: uploadError } = await supabaseClient.storage
   .from("receipts")
-  .uploadToSignedUrl(
-    uploadUrlResult.path,
-    uploadUrlResult.token,
-    receiptFile,
-    {
-      contentType: receiptFile.type
-    }
-  );
+  .upload(uploadPath, receiptFile, {
+    contentType: receiptFile.type,
+    upsert: false
+  });
 
 if (uploadError) {
   throw new Error(uploadError.message || "Dekont yüklenemedi.");
@@ -954,7 +954,7 @@ if (uploadError) {
           ticket_quantity: Number(document.getElementById("ticketQuantity").value || 1),
           rep: document.getElementById("rep").value.trim(),
           receipt_note: document.getElementById("receiptNote").value.trim(),
-          receipt_path: uploadUrlResult.path,
+          receipt_path: uploadPath,
           receipt_file_name: receiptFile.name,
           receipt_file_mime: receiptFile.type,
           consent_approved: consentApproved
