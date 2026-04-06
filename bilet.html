@@ -921,20 +921,21 @@
           throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
         }
 
-        const { error: uploadError } = await supabaseClient.storage
-  .from("receipts")
-  .uploadToSignedUrl(
-    uploadUrlResult.path,
-    uploadUrlResult.token,
-    receiptFile,
-    {
-      contentType: receiptFile.type
-    }
-  );
+        const uploadResponse = await fetch(
+  `${SUPABASE_URL}/storage/v1/object/upload/sign/receipts/${uploadUrlResult.path}?token=${encodeURIComponent(uploadUrlResult.token)}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": receiptFile.type
+    },
+    body: receiptFile
+  }
+);
 
-        if (uploadError) {
-          throw new Error(uploadError.message || "Dekont yüklenemedi.");
-        }
+if (!uploadResponse.ok) {
+  const uploadText = await uploadResponse.text();
+  throw new Error(uploadText || "Dekont yüklenemedi.");
+}
 
         const payload = {
           full_name: document.getElementById("fullName").value.trim(),
