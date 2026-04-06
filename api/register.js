@@ -88,7 +88,6 @@ export default async function handler(req, res) {
     const emailLower = email.trim().toLowerCase();
     const trimmedDate = attendance_date.trim();
 
-    // Aynı email aynı gün için ikinci sipariş açamasın
     const existingResponse = await fetch(
       `${supabaseUrl}/rest/v1/registrations?select=id&email=eq.${encodeURIComponent(emailLower)}&attendance_date=eq.${encodeURIComponent(trimmedDate)}&limit=1`,
       {
