@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YUDANSK | Muhteşem Renkler Müzikali Bilet</title>
   <meta name="description" content="Muhteşem Renkler Müzikali bilet ve kayıt sayfası" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
       --bg:#08080d;
@@ -547,7 +548,6 @@
       .mobile-cta{display:none}
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="topbar">
@@ -578,8 +578,7 @@
 
           <h1>Yerini Ayır.</h1>
           <p>
-            Muhteşem Renkler Müzikali için katılmak istediğin temsil gününü seçerek bilet başvurunu oluşturabilirsin.
-            Her gün için ayrı kayıt alınacak ve her bilet yalnızca seçilen gün için geçerli olacaktır.
+            Muhteşem Renkler Müzikali için katılmak istediğin temsil gününü seçebilir, aynı sipariş içinde birden fazla bilet oluşturabilirsin.
           </p>
 
           <div class="hero-actions">
@@ -596,8 +595,7 @@
           <span class="mini">Bilet / Kayıt</span>
           <h2>Bilet ve temsil günü seçimi</h2>
           <p>
-            Aşağıda etkinlik bilet bilgisi, ödeme detayları ve kayıt formu yer alıyor. Formda hangi gün katılacağını seçerek
-            başvurunu tamamlayabilirsin. QR biletin seçtiğin temsil gününe göre oluşturulacaktır.
+            Aşağıda etkinlik bilet bilgisi, ödeme detayları ve kayıt formu yer alıyor. Kaç bilet almak istediğini seçebilir, toplam tutarı otomatik olarak görebilirsin.
           </p>
         </div>
 
@@ -608,36 +606,35 @@
                 <div>
                   <h3>Genel Katılım Bileti</h3>
                   <p style="margin-top:8px;color:var(--muted);font-size:14px;line-height:1.6;">
-                    Standart katılım bileti, seçtiğin temsil günü için etkinlik alanına giriş ve gösteriye erişim hakkı sağlar.
+                    Seçtiğin temsil günü için geçerli olacak şekilde çoklu bilet alımı yapabilirsin. Her bilet için ayrı QR kod üretilecektir.
                   </p>
                 </div>
                 <span class="price-pill">Satışta</span>
               </div>
 
               <div class="price-value">
-                <strong>600₺</strong>
-                <span>/ kişi</span>
+                <strong id="copy-amount">300₺</strong>
+                <span>/ toplam</span>
               </div>
 
               <div class="benefits">
                 <div class="benefit"><i>•</i><span>Etkinliğe giriş hakkı</span></div>
-                <div class="benefit"><i>•</i><span>Seçilen gün için geçerli tekil QR kayıt</span></div>
-                <div class="benefit"><i>•</i><span>Gösteri boyunca tüm sahne deneyimine erişim</span></div>
+                <div class="benefit"><i>•</i><span>Her bilet için ayrı QR kayıt</span></div>
+                <div class="benefit"><i>•</i><span>Tek mail içinde tüm biletlerin gönderimi</span></div>
               </div>
             </div>
 
             <div class="box">
               <h3>Ödeme adımları</h3>
               <p>
-                Lütfen ödemeni aşağıdaki hesap bilgileri üzerinden tamamla ve ardından dekontunu forma ekleyerek
-                kayıt sürecini bitir.
+                Lütfen ödemeni aşağıdaki hesap bilgileri üzerinden tamamla ve ardından dekontunu forma ekleyerek kayıt sürecini bitir.
               </p>
 
               <div class="steps">
                 <div class="step">1) Aşağıdaki hesap bilgilerine havale / EFT yap.</div>
-                <div class="step">2) Açıklama kısmına <strong>Ad Soyad - Katılım gösterilecek gün</strong> yaz.</div>
+                <div class="step">2) Açıklama kısmına <strong>Ad Soyad - Muhteşem Renkler</strong> yaz.</div>
                 <div class="step">3) Dekontunu kaydet ve kayıt formuna yükle.</div>
-                <div class="step">4) Formda katılacağın günü seçerek başvurunu tamamla.</div>
+                <div class="step">4) Formda katılacağın günü ve bilet adedini seçerek başvurunu tamamla.</div>
               </div>
 
               <div class="copy-list">
@@ -646,36 +643,36 @@
                     <small>Alıcı Adı</small>
                     <strong id="copy-name">Yeditepe Üniversitesi Rektörlüğü Döner Sermaye İşletmesi</strong>
                   </div>
-                  <button class="copy-btn" data-copy-target="copy-name">Kopyala</button>
+                  <button type="button" class="copy-btn" data-copy-target="copy-name">Kopyala</button>
                 </div>
 
                 <div class="copy-row">
                   <div>
                     <small>IBAN</small>
-                    <strong id="copy-iban">TR81 0006 7010 0000 0092 8550 91 </strong>
+                    <strong id="copy-iban">TR81 0006 7010 0000 0092 8550 91</strong>
                   </div>
-                  <button class="copy-btn" data-copy-target="copy-iban">Kopyala</button>
+                  <button type="button" class="copy-btn" data-copy-target="copy-iban">Kopyala</button>
                 </div>
 
                 <div class="copy-row">
                   <div>
                     <small>Tutar</small>
-                    <strong id="copy-amount">600₺</strong>
+                    <strong id="copy-amount-2">600₺</strong>
                   </div>
-                  <button class="copy-btn" data-copy-target="copy-amount">Kopyala</button>
+                  <button type="button" class="copy-btn" data-copy-target="copy-amount-2">Kopyala</button>
                 </div>
 
                 <div class="copy-row">
                   <div>
                     <small>Açıklama</small>
-                    <strong id="copy-desc">Ad Soyad - Katılım gösterilecek gün </strong>
+                    <strong id="copy-desc">Ad Soyad - Katılım Gösterilecek Gün</strong>
                   </div>
-                  <button class="copy-btn" data-copy-target="copy-desc">Kopyala</button>
+                  <button type="button" class="copy-btn" data-copy-target="copy-desc">Kopyala</button>
                 </div>
               </div>
 
               <div class="warning">
-                Ödeme yaptıktan sonra dekontunu yüklemeden form gönderimi yapma. Ayrıca seçtiğin temsil günü, girişte QR kontrolü için kayıt altına alınacaktır.
+                Ödeme yaptıktan sonra dekontunu yüklemeden form gönderimi yapma. Her bilet için ayrı QR kod oluşturulacaktır.
               </div>
             </div>
           </div>
@@ -684,104 +681,117 @@
             <div class="box">
               <h3>Kayıt formu</h3>
               <p>
-                Lütfen aşağıdaki bilgileri eksiksiz doldur. Başvurunun değerlendirilebilmesi için iletişim bilgilerin, katılacağın gün ve dekont yüklemen gereklidir.
+                Lütfen aşağıdaki bilgileri eksiksiz doldur. Aynı e-posta ile aynı temsil gününe ikinci sipariş açılamaz; ancak tek sipariş içinde birden fazla bilet alabilirsin.
               </p>
 
               <form id="ticketForm">
-  <div class="form-grid two">
-    <div class="field">
-      <label for="fullName">Ad Soyad <span class="req">*</span></label>
-      <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
-    </div>
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="fullName">Ad Soyad <span class="req">*</span></label>
+                    <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
+                  </div>
 
-    <div class="field">
-      <label for="phone">Telefon <span class="req">*</span></label>
-      <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
-    </div>
-  </div>
+                  <div class="field">
+                    <label for="phone">Telefon <span class="req">*</span></label>
+                    <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
+                  </div>
+                </div>
 
-  <div class="form-grid two">
-    <div class="field">
-      <label for="email">E-posta <span class="req">*</span></label>
-      <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
-    </div>
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="email">E-posta <span class="req">*</span></label>
+                    <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
+                  </div>
 
-    <div class="field">
-      <label for="university">Üniversite <span class="req">*</span></label>
-      <input id="university" name="university" type="text" placeholder="Yeditepe Üniversitesi" required>
-    </div>
-  </div>
+                  <div class="field">
+                    <label for="university">Üniversite <span class="req">*</span></label>
+                    <input id="university" name="university" type="text" placeholder="Yeditepe Üniversitesi" required>
+                  </div>
+                </div>
 
-  <div class="form-grid two">
-    <div class="field">
-      <label for="department">Bölüm <span class="req">*</span></label>
-      <input id="department" name="department" type="text" placeholder="Bölümünüz" required>
-    </div>
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="department">Bölüm <span class="req">*</span></label>
+                    <input id="department" name="department" type="text" placeholder="Bölümünüz" required>
+                  </div>
 
-    <div class="field">
-      <label for="classLevel">Sınıf <span class="req">*</span></label>
-      <select id="classLevel" name="classLevel" required>
-        <option value="">Seçiniz</option>
-        <option>Hazırlık</option>
-        <option>1. Sınıf</option>
-        <option>2. Sınıf</option>
-        <option>3. Sınıf</option>
-        <option>4. Sınıf</option>
-        <option>Mezun</option>
-        <option>Diğer</option>
-      </select>
-    </div>
-  </div>
+                  <div class="field">
+                    <label for="classLevel">Sınıf <span class="req">*</span></label>
+                    <select id="classLevel" name="classLevel" required>
+                      <option value="">Seçiniz</option>
+                      <option>Hazırlık</option>
+                      <option>1. Sınıf</option>
+                      <option>2. Sınıf</option>
+                      <option>3. Sınıf</option>
+                      <option>4. Sınıf</option>
+                      <option>Mezun</option>
+                      <option>Diğer</option>
+                    </select>
+                  </div>
+                </div>
 
-  <div class="form-grid two">
-    <div class="field">
-      <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
-      <select id="attendanceDate" name="attendanceDate" required>
-        <option value="">Temsil günü seçiniz</option>
-        <option>21 Nisan</option>
-        <option>22 Nisan</option>
-        <option>23 Nisan</option>
-        <option>24 Nisan</option>
-      </select>
-    </div>
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
+                    <select id="attendanceDate" name="attendanceDate" required>
+                      <option value="">Temsil günü seçiniz</option>
+                      <option>21 Nisan</option>
+                      <option>22 Nisan</option>
+                      <option>23 Nisan</option>
+                      <option>24 Nisan</option>
+                    </select>
+                  </div>
 
-    <div class="field">
-      <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
-      <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
-    </div>
-  </div>
+                  <div class="field">
+                    <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
+                    <select id="ticketQuantity" name="ticketQuantity" required>
+                      <option value="1">1 Bilet</option>
+                      <option value="2">2 Bilet</option>
+                      <option value="3">3 Bilet</option>
+                      <option value="4">4 Bilet</option>
+                      <option value="5">5 Bilet</option>
+                    </select>
+                  </div>
+                </div>
 
-  <div class="field">
-    <label for="receiptNote">Not <span class="req">*</span></label>
-    <textarea id="receiptNote" name="receiptNote" placeholder="Etkinlik hakkında sorularınızı ya da notlarınızı paylaşabilirsiniz." required></textarea>
-  </div>
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
+                    <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
+                  </div>
 
-  <div class="field" style="margin-top:12px;">
-    <label>Dekont Yükle <span class="req">*</span></label>
-    <div class="upload-box">
-      <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
-      <div class="field-note">
-        JPG, PNG veya PDF yükleyebilirsin.
-      </div>
-    </div>
-  </div>
+                  <div class="field">
+                    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
+                    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
+                  </div>
+                </div>
 
-  <label class="consent">
-    <input id="consentApproved" type="checkbox" required>
-    <span>
-      Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
-    </span>
-  </label>
+                <div class="field" style="margin-top:12px;">
+                  <label>Dekont Yükle <span class="req">*</span></label>
+                  <div class="upload-box">
+                    <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
+                    <div class="field-note">
+                      JPG, PNG veya PDF yükleyebilirsin.
+                    </div>
+                  </div>
+                </div>
 
-  <div class="submit-row">
-    <button id="submitBtn" type="submit" class="btn btn-primary" style="width:100%;">Kaydı Tamamla</button>
-    <div class="submit-note">
-      Formu göndermeden önce iletişim bilgilerini, temsil gününü ve dekont dosyanı kontrol etmeyi unutma.
-    </div>
-  </div>
+                <label class="consent">
+                  <input id="consentApproved" type="checkbox" required>
+                  <span>
+                    Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
+                  </span>
+                </label>
 
-  <div class="fake-success" id="fakeSuccess"></div>
-</form>
+                <div class="submit-row">
+                  <button id="submitBtn" type="submit" class="btn btn-primary" style="width:100%;">Kaydı Tamamla</button>
+                  <div class="submit-note">
+                    Formu göndermeden önce iletişim bilgilerini, temsil gününü, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
+                  </div>
+                </div>
+
+                <div class="fake-success" id="fakeSuccess"></div>
+              </form>
             </div>
           </div>
         </div>
@@ -798,171 +808,186 @@
   </div>
 
   <script>
-  const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
+    const SUPABASE_URL = "https://qhuayxwvucbiaczhieiy.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0CWHB-oGYYn49_Hq2XiuPQ_z600s0hQ";
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
-  const copyButtons = document.querySelectorAll(".copy-btn");
+    const copyButtons = document.querySelectorAll(".copy-btn");
+    const ticketQuantity = document.getElementById("ticketQuantity");
+    const amountText1 = document.getElementById("copy-amount");
+    const amountText2 = document.getElementById("copy-amount-2");
 
-  copyButtons.forEach((button) => {
-    button.addEventListener("click", async () => {
-      const targetId = button.getAttribute("data-copy-target");
-      const target = document.getElementById(targetId);
-      if (!target) return;
-
-      const text = target.innerText.trim();
-
-      try {
-        await navigator.clipboard.writeText(text);
-        const original = button.innerText;
-        button.innerText = "Kopyalandı";
-        button.classList.add("done");
-
-        setTimeout(() => {
-          button.innerText = original;
-          button.classList.remove("done");
-        }, 1500);
-      } catch (err) {
-        alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
-      }
-    });
-  });
-
-  const ticketForm = document.getElementById("ticketForm");
-  const fakeSuccess = document.getElementById("fakeSuccess");
-  const submitBtn = document.getElementById("submitBtn");
-
-  function showMessage(message, isSuccess = true) {
-    fakeSuccess.style.display = "block";
-    fakeSuccess.innerText = message;
-
-    if (isSuccess) {
-      fakeSuccess.style.background = "rgba(132,246,183,.1)";
-      fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
-      fakeSuccess.style.color = "#cffff0";
-    } else {
-      fakeSuccess.style.background = "rgba(255,127,127,.1)";
-      fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
-      fakeSuccess.style.color = "#ffd2d2";
+    function updateTotalAmount() {
+      const quantity = Number(ticketQuantity.value || 1);
+      const total = quantity * 300;
+      amountText1.innerText = `${total}₺`;
+      amountText2.innerText = `${total}₺`;
     }
 
-    fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
+    copyButtons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const targetId = button.getAttribute("data-copy-target");
+        const target = document.getElementById(targetId);
+        if (!target) return;
 
-  ticketForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
+        const text = target.innerText.trim();
 
-    fakeSuccess.style.display = "none";
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Gönderiliyor...";
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = button.innerText;
+          button.innerText = "Kopyalandı";
+          button.classList.add("done");
 
-    try {
-      const receiptFile = document.getElementById("receiptFile").files[0];
-      const consentApproved = document.getElementById("consentApproved").checked;
-
-      if (!receiptFile) {
-        throw new Error("Dekont dosyası zorunlu.");
-      }
-
-      const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-      if (!allowedTypes.includes(receiptFile.type)) {
-        throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
-      }
-
-      const maxFileSizeMB = 10;
-      const maxBytes = maxFileSizeMB * 1024 * 1024;
-
-      if (receiptFile.size > maxBytes) {
-        throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
-      }
-
-      const uploadUrlResponse = await fetch("/api/create-upload-url", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          file_name: receiptFile.name,
-          file_type: receiptFile.type,
-          attendance_date: document.getElementById("attendanceDate").value.trim()
-        })
+          setTimeout(() => {
+            button.innerText = original;
+            button.classList.remove("done");
+          }, 1500);
+        } catch (err) {
+          alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
+        }
       });
+    });
 
-      const uploadUrlResult = await uploadUrlResponse.json();
+    ticketQuantity.addEventListener("change", updateTotalAmount);
+    updateTotalAmount();
 
-      if (!uploadUrlResponse.ok || !uploadUrlResult.success) {
-        throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
+    const ticketForm = document.getElementById("ticketForm");
+    const fakeSuccess = document.getElementById("fakeSuccess");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function showMessage(message, isSuccess = true) {
+      fakeSuccess.style.display = "block";
+      fakeSuccess.innerText = message;
+
+      if (isSuccess) {
+        fakeSuccess.style.background = "rgba(132,246,183,.1)";
+        fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
+        fakeSuccess.style.color = "#cffff0";
+      } else {
+        fakeSuccess.style.background = "rgba(255,127,127,.1)";
+        fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
+        fakeSuccess.style.color = "#ffd2d2";
       }
 
-      const { error: uploadError } = await supabaseClient.storage
-        .from("receipts")
-        .uploadToSignedUrl(
-          uploadUrlResult.path,
-          uploadUrlResult.token,
-          receiptFile,
-          {
-            contentType: receiptFile.type
-          }
+      fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    ticketForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      fakeSuccess.style.display = "none";
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Gönderiliyor...";
+
+      try {
+        const receiptFile = document.getElementById("receiptFile").files[0];
+        const consentApproved = document.getElementById("consentApproved").checked;
+
+        if (!receiptFile) {
+          throw new Error("Dekont dosyası zorunlu.");
+        }
+
+        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+        if (!allowedTypes.includes(receiptFile.type)) {
+          throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
+        }
+
+        const maxFileSizeMB = 10;
+        const maxBytes = maxFileSizeMB * 1024 * 1024;
+
+        if (receiptFile.size > maxBytes) {
+          throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
+        }
+
+        const uploadUrlResponse = await fetch("/api/create-upload-url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            file_name: receiptFile.name,
+            file_type: receiptFile.type,
+            attendance_date: document.getElementById("attendanceDate").value.trim()
+          })
+        });
+
+        const uploadUrlResult = await uploadUrlResponse.json();
+
+        if (!uploadUrlResponse.ok || !uploadUrlResult.success) {
+          throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
+        }
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from("receipts")
+          .uploadToSignedUrl(
+            uploadUrlResult.path,
+            uploadUrlResult.token,
+            receiptFile,
+            {
+              contentType: receiptFile.type
+            }
+          );
+
+        if (uploadError) {
+          throw new Error(uploadError.message || "Dekont yüklenemedi.");
+        }
+
+        const payload = {
+          full_name: document.getElementById("fullName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          university: document.getElementById("university").value.trim(),
+          department: document.getElementById("department").value.trim(),
+          class_level: document.getElementById("classLevel").value.trim(),
+          attendance_date: document.getElementById("attendanceDate").value.trim(),
+          ticket_quantity: Number(document.getElementById("ticketQuantity").value || 1),
+          rep: document.getElementById("rep").value.trim(),
+          receipt_note: document.getElementById("receiptNote").value.trim(),
+          receipt_path: uploadUrlResult.path,
+          receipt_file_name: receiptFile.name,
+          receipt_file_mime: receiptFile.type,
+          consent_approved: consentApproved
+        };
+
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const rawText = await response.text();
+
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
+        }
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Kayıt oluşturulamadı.");
+        }
+
+        showMessage(
+          `${result.attendance_date} için ${result.ticket_quantity} adet bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
+          true
         );
 
-      if (uploadError) {
-        throw new Error(uploadError.message || "Dekont yüklenemedi.");
+        ticketForm.reset();
+        updateTotalAmount();
+      } catch (error) {
+        showMessage(error.message || "Bir hata oluştu.", false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Kaydı Tamamla";
       }
-
-      const payload = {
-        full_name: document.getElementById("fullName").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        university: document.getElementById("university").value.trim(),
-        department: document.getElementById("department").value.trim(),
-        class_level: document.getElementById("classLevel").value.trim(),
-        attendance_date: document.getElementById("attendanceDate").value.trim(),
-        rep: document.getElementById("rep").value.trim(),
-        receipt_note: document.getElementById("receiptNote").value.trim(),
-        receipt_path: uploadUrlResult.path,
-        receipt_file_name: receiptFile.name,
-        receipt_file_mime: receiptFile.type,
-        consent_approved: consentApproved
-      };
-
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const rawText = await response.text();
-
-      let result;
-      try {
-        result = JSON.parse(rawText);
-      } catch {
-        throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
-      }
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || "Kayıt oluşturulamadı.");
-      }
-
-      showMessage(
-        `${result.attendance_date} için başvurun alındı. Bilet kodun: ${result.ticket_code}. Ödeme ve bilgi kontrolünün ardından QR biletin e-posta üzerinden paylaşılacaktır.`,
-        true
-      );
-
-      ticketForm.reset();
-    } catch (error) {
-      showMessage(error.message || "Bir hata oluştu.", false);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Kaydı Tamamla";
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
