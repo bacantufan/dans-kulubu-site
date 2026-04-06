@@ -963,26 +963,25 @@
       }
 
       const safeFileName = receiptFile.name
-        .normalize("NFKD")
-        .replace(/[^\w.\-]+/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
+  .normalize("NFKD")
+  .replace(/[^\w.\-]+/g, "-")
+  .replace(/-+/g, "-")
+  .replace(/^-|-$/g, "");
 
-      const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
-      const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
-      const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
+const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
+const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
+const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
 
-      const { error: uploadError } = await supabaseClient.storage
-        .from("receipts")
-        .upload(uploadPath, receiptFile, {
-          contentType: receiptFile.type,
-          upsert: false
-        });
+const { error: uploadError } = await supabaseClient.storage
+  .from("receipts")
+  .upload(uploadPath, receiptFile, {
+    contentType: receiptFile.type,
+    upsert: false
+  });
 
-      if (uploadError) {
-        throw new Error(uploadError.message || "Dekont yüklenemedi.");
-      }
-
+if (uploadError) {
+  throw new Error(uploadError.message || "Dekont yüklenemedi.");
+}
       const quantityValue = Number(document.getElementById("ticketQuantity").value || 1);
       const attendeeNames = [];
 
