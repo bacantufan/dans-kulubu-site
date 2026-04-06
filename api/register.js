@@ -16,6 +16,7 @@ export default async function handler(req, res) {
       email,
       attendance_date,
       ticket_quantity,
+      attendee_names,
       rep,
       receipt_note,
       receipt_path,
@@ -57,6 +58,15 @@ export default async function handler(req, res) {
       return sendJson(res, 400, {
         success: false,
         error: "Bilet adedi 1 ile 5 arasında olmalıdır."
+      });
+    }
+
+    const extraAttendeeNames = Array.isArray(attendee_names) ? attendee_names : [];
+
+    if (quantity > 1 && extraAttendeeNames.length !== quantity - 1) {
+      return sendJson(res, 400, {
+        success: false,
+        error: "Ek katılımcı isimleri eksik girildi."
       });
     }
 
@@ -111,25 +121,31 @@ export default async function handler(req, res) {
     const dayCode = getDayCode(trimmedDate);
     const orderCode = `ORD-${dayCode}-${randomCode(6)}`;
 
-    const insertPayload = Array.from({ length: quantity }, (_, index) => ({
-      ticket_code: `MRM-${dayCode}-${randomCode(6)}`,
-      order_code: orderCode,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: emailLower,
-      attendance_date: trimmedDate,
-      ticket_quantity: quantity,
-      ticket_index: index + 1,
-      rep: rep.trim(),
-      receipt_note: receipt_note.trim(),
-      receipt_path: receipt_path.trim(),
-      receipt_file_name: receipt_file_name.trim(),
-      receipt_file_mime: receipt_file_mime.trim(),
-      consent_approved: true,
-      status: "REGISTERED",
-      emailed: false,
-      checked_in: false
-    }));
+    const insertPayload = Array.from({ length: quantity }, (_, index) => {
+      const attendeeName =
+        index === 0 ? full_name.trim() : String(extraAttendeeNames[index - 1] || "").trim();
+
+      return {
+        ticket_code: `MRM-${dayCode}-${randomCode(6)}`,
+        order_code: orderCode,
+        full_name: full_name.trim(),
+        attendee_name: attendeeName,
+        phone: phone.trim(),
+        email: emailLower,
+        attendance_date: trimmedDate,
+        ticket_quantity: quantity,
+        ticket_index: index + 1,
+        rep: rep.trim(),
+        receipt_note: receipt_note.trim(),
+        receipt_path: receipt_path.trim(),
+        receipt_file_name: receipt_file_name.trim(),
+        receipt_file_mime: receipt_file_mime.trim(),
+        consent_approved: true,
+        status: "REGISTERED",
+        emailed: false,
+        checked_in: false
+      };
+    });
 
     const insertResponse = await fetch(`${supabaseUrl}/rest/v1/registrations`, {
       method: "POST",
@@ -156,6 +172,7 @@ export default async function handler(req, res) {
     const tickets = insertedRows.map((row) => ({
       ticketCode: row.ticket_code,
       ticketIndex: row.ticket_index,
+      attendeeName: row.attendee_name,
       qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(row.ticket_code)}`
     }));
 
@@ -207,6 +224,7 @@ export default async function handler(req, res) {
               ticket_quantity: row.ticket_quantity || quantity,
               ticket_index: row.ticket_index,
               ticket_code: row.ticket_code,
+              attendee_name: row.attendee_name || "",
               full_name: row.full_name,
               phone: row.phone,
               email: row.email,
@@ -279,6 +297,11 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
             </div>
 
             <div style="margin-bottom:16px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Sahibi</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(ticket.attendeeName)}</div>
+            </div>
+
+            <div style="margin-bottom:16px;">
               <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
             </div>
@@ -286,13 +309,6 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
             <div style="margin-bottom:16px;">
               <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticket.ticketCode)}</div>
-            </div>
-
-            <div>
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
-              <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
-                Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
-              </div>
             </div>
           </td>
 
