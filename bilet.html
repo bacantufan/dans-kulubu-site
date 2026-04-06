@@ -703,33 +703,6 @@
                     <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
                   </div>
 
-                  <div class="field">
-                    <label for="university">Üniversite <span class="req">*</span></label>
-                    <input id="university" name="university" type="text" placeholder="Yeditepe Üniversitesi" required>
-                  </div>
-                </div>
-
-                <div class="form-grid two">
-                  <div class="field">
-                    <label for="department">Bölüm <span class="req">*</span></label>
-                    <input id="department" name="department" type="text" placeholder="Bölümünüz" required>
-                  </div>
-
-                  <div class="field">
-                    <label for="classLevel">Sınıf <span class="req">*</span></label>
-                    <select id="classLevel" name="classLevel" required>
-                      <option value="">Seçiniz</option>
-                      <option>Hazırlık</option>
-                      <option>1. Sınıf</option>
-                      <option>2. Sınıf</option>
-                      <option>3. Sınıf</option>
-                      <option>4. Sınıf</option>
-                      <option>Mezun</option>
-                      <option>Diğer</option>
-                    </select>
-                  </div>
-                </div>
-
                 <div class="form-grid two">
                   <div class="field">
                     <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
@@ -947,9 +920,6 @@ if (uploadError) {
           full_name: document.getElementById("fullName").value.trim(),
           phone: document.getElementById("phone").value.trim(),
           email: document.getElementById("email").value.trim(),
-          university: document.getElementById("university").value.trim(),
-          department: document.getElementById("department").value.trim(),
-          class_level: document.getElementById("classLevel").value.trim(),
           attendance_date: document.getElementById("attendanceDate").value.trim(),
           ticket_quantity: Number(document.getElementById("ticketQuantity").value || 1),
           rep: document.getElementById("rep").value.trim(),
