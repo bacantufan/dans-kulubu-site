@@ -922,15 +922,15 @@
         }
 
         const { error: uploadError } = await supabaseClient.storage
-          .from("receipts")
-          .uploadToSignedUrl(
-            uploadUrlResult.path,
-            uploadUrlResult.token,
-            receiptFile,
-            {
-              contentType: receiptFile.type
-            }
-          );
+  .from("receipts")
+  .uploadToSignedUrl(
+    uploadUrlResult.path,
+    uploadUrlResult.token,
+    receiptFile,
+    {
+      contentType: receiptFile.type
+    }
+  );
 
         if (uploadError) {
           throw new Error(uploadError.message || "Dekont yüklenemedi.");
