@@ -18,6 +18,7 @@ export default async function handler(req, res) {
       department,
       class_level,
       attendance_date,
+      ticket_quantity,
       rep,
       receipt_note,
       receipt_path,
@@ -56,6 +57,15 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
     }
 
+    const quantity = Number(ticket_quantity || 1);
+
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 5) {
+      return sendJson(res, 400, {
+        success: false,
+        error: "Bilet adedi 1 ile 5 arasında olmalıdır."
+      });
+    }
+
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -71,18 +81,54 @@ export default async function handler(req, res) {
       return sendJson(res, 500, { success: false, error: "Resend environment variable eksik." });
     }
 
-    const dayCode = getDayCode(attendance_date);
-    const ticketCode = `MRM-${dayCode}-${randomCode(6)}`;
+    const emailLower = email.trim().toLowerCase();
+    const trimmedDate = attendance_date.trim();
 
-    const insertPayload = {
-      ticket_code: ticketCode,
+    // Aynı email aynı gün için ikinci sipariş açamasın
+    const existingResponse = await fetch(
+      `${supabaseUrl}/rest/v1/registrations?select=id&email=eq.${encodeURIComponent(emailLower)}&attendance_date=eq.${encodeURIComponent(trimmedDate)}&limit=1`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${serviceRoleKey}`,
+          apikey: serviceRoleKey,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    if (!existingResponse.ok) {
+      const existingText = await existingResponse.text();
+      return sendJson(res, 500, {
+        success: false,
+        error: `Kayıt kontrolü başarısız: ${existingText}`
+      });
+    }
+
+    const existingRows = await existingResponse.json();
+
+    if (Array.isArray(existingRows) && existingRows.length > 0) {
+      return sendJson(res, 400, {
+        success: false,
+        error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
+      });
+    }
+
+    const dayCode = getDayCode(trimmedDate);
+    const orderCode = `ORD-${dayCode}-${randomCode(6)}`;
+
+    const insertPayload = Array.from({ length: quantity }, (_, index) => ({
+      ticket_code: `MRM-${dayCode}-${randomCode(6)}`,
+      order_code: orderCode,
       full_name: full_name.trim(),
       phone: phone.trim(),
-      email: email.trim().toLowerCase(),
+      email: emailLower,
       university: university.trim(),
       department: department.trim(),
       class_level: class_level.trim(),
-      attendance_date: attendance_date.trim(),
+      attendance_date: trimmedDate,
+      ticket_quantity: quantity,
+      ticket_index: index + 1,
       rep: rep.trim(),
       receipt_note: receipt_note.trim(),
       receipt_path: receipt_path.trim(),
@@ -92,7 +138,7 @@ export default async function handler(req, res) {
       status: "REGISTERED",
       emailed: false,
       checked_in: false
-    };
+    }));
 
     const insertResponse = await fetch(`${supabaseUrl}/rest/v1/registrations`, {
       method: "POST",
@@ -108,26 +154,19 @@ export default async function handler(req, res) {
     const rawInsertText = await insertResponse.text();
 
     if (!insertResponse.ok) {
-      if (
-  rawInsertText.includes("duplicate key value") ||
-  rawInsertText.includes("registrations_email_attendance_date_unique")
-) {
-  return sendJson(res, 400, {
-    success: false,
-    error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
-  });
-}
       return sendJson(res, 500, {
         success: false,
         error: `Veritabanına kayıt başarısız: ${rawInsertText}`
       });
     }
 
+    const insertedRows = JSON.parse(rawInsertText);
+
     let receiptSignedUrl = "";
 
     try {
       const signedUrlResponse = await fetch(
-        `${supabaseUrl}/storage/v1/object/sign/receipts/${receipt_path.trim()}`,
+        `${supabaseUrl}/storage/v1/object/sign/receipts/${encodeStoragePath(receipt_path.trim())}`,
         {
           method: "POST",
           headers: {
@@ -151,13 +190,18 @@ export default async function handler(req, res) {
       console.error("SIGNED URL ERROR:", signedUrlError);
     }
 
-    const qrImageUrl = `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(ticketCode)}`;
+    const tickets = insertedRows.map((row) => ({
+      ticketCode: row.ticket_code,
+      ticketIndex: row.ticket_index,
+      qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(row.ticket_code)}`
+    }));
 
     const emailHtml = buildTicketEmail({
       fullName: full_name.trim(),
-      attendanceDate: attendance_date.trim(),
-      ticketCode,
-      qrImageUrl
+      attendanceDate: trimmedDate,
+      orderCode,
+      quantity,
+      tickets
     });
 
     let emailError = null;
@@ -165,8 +209,8 @@ export default async function handler(req, res) {
     try {
       const emailResult = await resend.emails.send({
         from: mailFrom,
-        to: [email.trim().toLowerCase()],
-        subject: `Muhteşem Renkler Müzikali Biletin • ${attendance_date}`,
+        to: [emailLower],
+        subject: `Muhteşem Renkler Müzikali Biletlerin • ${trimmedDate}`,
         html: emailHtml
       });
 
@@ -177,51 +221,46 @@ export default async function handler(req, res) {
       emailError = err;
     }
 
-    if (emailError) {
+    for (const row of insertedRows) {
       await updateRegistrationStatus({
         supabaseUrl,
         serviceRoleKey,
-        ticketCode,
-        emailed: false,
-        status: "EMAIL_FAILED"
-      });
-    } else {
-      await updateRegistrationStatus({
-        supabaseUrl,
-        serviceRoleKey,
-        ticketCode,
-        emailed: true,
-        status: "EMAIL_SENT"
+        ticketCode: row.ticket_code,
+        emailed: !emailError,
+        status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT"
       });
     }
 
     if (sheetsWebhookUrl) {
       try {
-        console.log("RECEIPT SIGNED URL:", receiptSignedUrl);
-
-        await fetch(sheetsWebhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ticket_code: ticketCode,
-            full_name: full_name.trim(),
-            phone: phone.trim(),
-            email: email.trim().toLowerCase(),
-            university: university.trim(),
-            department: department.trim(),
-            class_level: class_level.trim(),
-            attendance_date: attendance_date.trim(),
-            rep: rep.trim(),
-            receipt_note: receipt_note.trim(),
-            receipt_path: receipt_path.trim(),
-            receipt_url: receiptSignedUrl,
-            status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
-            emailed: !emailError,
-            checked_in: false
-          })
-        });
+        for (const row of insertedRows) {
+          await fetch(sheetsWebhookUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              order_code: row.order_code || orderCode,
+              ticket_quantity: row.ticket_quantity || quantity,
+              ticket_index: row.ticket_index,
+              ticket_code: row.ticket_code,
+              full_name: row.full_name,
+              phone: row.phone,
+              email: row.email,
+              university: row.university,
+              department: row.department,
+              class_level: row.class_level,
+              attendance_date: row.attendance_date,
+              rep: row.rep,
+              receipt_note: row.receipt_note,
+              receipt_path: row.receipt_path,
+              receipt_url: receiptSignedUrl,
+              status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
+              emailed: !emailError,
+              checked_in: false
+            })
+          });
+        }
       } catch (sheetError) {
         console.error("SHEETS WEBHOOK ERROR:", sheetError);
       }
@@ -232,8 +271,9 @@ export default async function handler(req, res) {
       message: emailError
         ? "Kayıt oluşturuldu ancak e-posta gönderimi başarısız oldu."
         : "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
-      ticket_code: ticketCode,
-      attendance_date
+      order_code: orderCode,
+      attendance_date: trimmedDate,
+      ticket_quantity: quantity
     });
   } catch (error) {
     console.error("REGISTER API ERROR:", error);
@@ -268,10 +308,51 @@ async function updateRegistrationStatus({
   );
 }
 
-function buildTicketEmail({ fullName, attendanceDate, ticketCode, qrImageUrl }) {
+function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, tickets }) {
+  const ticketCards = tickets.map((ticket) => `
+    <div style="margin-top:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
+        <tr>
+          <td valign="top" style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);width:55%;">
+            <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
+              Bilet ${ticket.ticketIndex}
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticket.ticketCode)}</div>
+            </div>
+
+            <div>
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
+              <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
+                Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
+              </div>
+            </div>
+          </td>
+
+          <td valign="top" style="padding:22px;text-align:center;background:rgba(255,255,255,.03);width:45%;">
+            <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
+              QR Giriş Kodu
+            </div>
+
+            <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
+              <img src="${ticket.qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  `).join("");
+
   return `
   <div style="margin:0;padding:0;background:#0b0c12;font-family:Inter,Arial,sans-serif;color:#f7f3ea;">
-    <div style="max-width:680px;margin:0 auto;padding:32px 16px;">
+    <div style="max-width:760px;margin:0 auto;padding:32px 16px;">
       <div style="text-align:center;margin-bottom:24px;">
         <div style="display:inline-block;padding:8px 14px;border-radius:999px;background:#1a1c25;color:#f4c56c;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">
           YUDANSK Bilet
@@ -279,66 +360,37 @@ function buildTicketEmail({ fullName, attendanceDate, ticketCode, qrImageUrl }) 
       </div>
 
       <div style="border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#141626 0%,#0e1018 55%,#17111d 100%);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 50px rgba(0,0,0,.35);">
-        <div style="padding:28px 24px 14px;background:radial-gradient(circle at top left, rgba(245,83,153,.18), transparent 30%),radial-gradient(circle at top right, rgba(143,107,255,.18), transparent 30%);">
+        <div style="padding:28px 24px 18px;background:radial-gradient(circle at top left, rgba(245,83,153,.18), transparent 30%),radial-gradient(circle at top right, rgba(143,107,255,.18), transparent 30%);">
           <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f4c56c;font-weight:700;margin-bottom:10px;">
             Muhteşem Renkler Müzikali
           </div>
           <h1 style="margin:0;font-size:34px;line-height:1;color:#ffffff;letter-spacing:-.04em;">
-            Biletin Hazır
+            Biletlerin Hazır
           </h1>
           <p style="margin:14px 0 0;color:#c9bfd8;font-size:15px;line-height:1.7;">
-            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıdaki bilet ve QR kod ile etkinlik girişini gerçekleştirebilirsin.
+            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor.
           </p>
+
+          <div style="margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);">
+            <div style="margin-bottom:10px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Sipariş Kodu</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(orderCode)}</div>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+            </div>
+
+            <div>
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Toplam Bilet</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${quantity}</div>
+            </div>
+          </div>
         </div>
 
         <div style="padding:18px 24px 28px;">
-          <div style="border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
-              <tr>
-                <td valign="top" style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);width:55%;">
-                  <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-                    Etkinlik Bilgisi
-                  </div>
-
-                  <div style="margin-bottom:16px;">
-                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Etkinlik</div>
-                    <div style="color:#ffffff;font-size:18px;font-weight:700;">Muhteşem Renkler Müzikali</div>
-                  </div>
-
-                  <div style="margin-bottom:16px;">
-                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-                    <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
-                  </div>
-
-                  <div style="margin-bottom:16px;">
-                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
-                    <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticketCode)}</div>
-                  </div>
-
-                  <div>
-                    <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
-                    <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
-                      Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
-                    </div>
-                  </div>
-                </td>
-
-                <td valign="top" style="padding:22px;text-align:center;background:rgba(255,255,255,.03);width:45%;">
-                  <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-                    QR Giriş Kodu
-                  </div>
-
-                  <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
-                    <img src="${qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
-                  </div>
-
-                  <div style="margin-top:12px;color:#9aa1b5;font-size:12px;line-height:1.6;">
-                    QR okutulduğunda bilet kodun doğrulanacaktır.
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
+          ${ticketCards}
 
           <div style="margin-top:18px;padding:16px 18px;border-radius:18px;background:rgba(244,197,108,.08);border:1px solid rgba(244,197,108,.18);color:#f3e4bf;font-size:13px;line-height:1.7;">
             Bu e-posta otomatik olarak oluşturulmuştur. Etkinlik günü değişikliği veya destek taleplerin için YUDANSK organizasyon ekibiyle iletişime geçebilirsin.
@@ -357,6 +409,13 @@ function escapeHtml(value = "") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function encodeStoragePath(path = "") {
+  return path
+    .split("/")
+    .map(part => encodeURIComponent(part))
+    .join("/");
 }
 
 function sendJson(res, statusCode, data) {
