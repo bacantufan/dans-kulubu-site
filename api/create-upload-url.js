@@ -52,7 +52,7 @@ export default async function handler(req, res) {
 
     return sendJson(res, 200, {
       success: true,
-      path: data.path || path,
+      path: path,
       token: data.token
     });
   } catch (error) {
