@@ -532,6 +532,24 @@
       font-size:15px;
       line-height:1.1;
     }
+    .submit-main-btn{
+  width:min(100%, 420px);
+  min-height:56px;
+  margin:0 auto;
+  display:flex;
+  font-size:16px;
+  font-weight:900;
+  border-radius:18px;
+}
+
+.refund-note{
+  text-align:center;
+  font-size:13px;
+  line-height:1.7;
+  font-weight:800;
+  color:#ffd7a0;
+  margin-top:2px;
+}
 
     @media (min-width:760px){
       .container{width:min(var(--max),calc(100% - 40px))}
@@ -685,86 +703,88 @@
               </p>
 
               <form id="ticketForm">
-                <div class="form-grid two">
-                  <div class="field">
-                    <label for="fullName">Ad Soyad <span class="req">*</span></label>
-                    <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
-                  </div>
+  <div class="form-grid two">
+    <div class="field">
+      <label for="fullName">Ad Soyad <span class="req">*</span></label>
+      <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
+    </div>
 
-                  <div class="field">
-                    <label for="phone">Telefon <span class="req">*</span></label>
-                    <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
-                  </div>
-                </div>
+    <div class="field">
+      <label for="phone">Telefon <span class="req">*</span></label>
+      <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
+    </div>
+  </div>
 
-                <div class="form-grid two">
-                  <div class="field">
-                    <label for="email">E-posta <span class="req">*</span></label>
-                    <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
-                  </div>
+  <div class="form-grid two">
+    <div class="field">
+      <label for="email">E-posta <span class="req">*</span></label>
+      <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
+    </div>
 
-                <div class="form-grid two">
-                  <div class="field">
-                    <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
-                    <select id="attendanceDate" name="attendanceDate" required>
-                      <option value="">Temsil günü seçiniz</option>
-                      <option>21 Nisan</option>
-                      <option>22 Nisan</option>
-                      <option>23 Nisan</option>
-                      <option>24 Nisan</option>
-                    </select>
-                  </div>
+    <div class="field">
+      <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
+      <select id="attendanceDate" name="attendanceDate" required>
+        <option value="">Temsil günü seçiniz</option>
+        <option>21 Nisan</option>
+        <option>22 Nisan</option>
+        <option>23 Nisan</option>
+        <option>24 Nisan</option>
+      </select>
+    </div>
+  </div>
 
-                  <div class="field">
-                    <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
-                    <select id="ticketQuantity" name="ticketQuantity" required>
-                      <option value="1">1 Bilet</option>
-                      <option value="2">2 Bilet</option>
-                      <option value="3">3 Bilet</option>
-                      <option value="4">4 Bilet</option>
-                      <option value="5">5 Bilet</option>
-                    </select>
-                  </div>
-                </div>
+  <div class="form-grid two">
+    <div class="field">
+      <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
+      <select id="ticketQuantity" name="ticketQuantity" required>
+        <option value="1">1 Bilet</option>
+        <option value="2">2 Bilet</option>
+        <option value="3">3 Bilet</option>
+        <option value="4">4 Bilet</option>
+        <option value="5">5 Bilet</option>
+      </select>
+    </div>
 
-                <div class="form-grid two">
-                  <div class="field">
-                    <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
-                    <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
-                  </div>
+    <div class="field">
+      <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
+      <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
+    </div>
+  </div>
 
-                  <div class="field">
-                    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
-                    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
-                  </div>
-                </div>
+  <div class="field">
+    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
+    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
+  </div>
 
-                <div class="field" style="margin-top:12px;">
-                  <label>Dekont Yükle <span class="req">*</span></label>
-                  <div class="upload-box">
-                    <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
-                    <div class="field-note">
-                      JPG, PNG veya PDF yükleyebilirsin.
-                    </div>
-                  </div>
-                </div>
+  <div class="field" style="margin-top:12px;">
+    <label>Dekont Yükle <span class="req">*</span></label>
+    <div class="upload-box">
+      <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
+      <div class="field-note">
+        JPG, PNG veya PDF yükleyebilirsin.
+      </div>
+    </div>
+  </div>
 
-                <label class="consent">
-                  <input id="consentApproved" type="checkbox" required>
-                  <span>
-                    Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
-                  </span>
-                </label>
+  <label class="consent">
+    <input id="consentApproved" type="checkbox" required>
+    <span>
+      Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
+    </span>
+  </label>
 
-                <div class="submit-row">
-                  <button id="submitBtn" type="submit" class="btn btn-primary" style="width:100%;">Kaydı Tamamla</button>
-                  <div class="submit-note">
-                    Formu göndermeden önce iletişim bilgilerini, temsil gününü, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
-                  </div>
-                </div>
+  <div class="submit-row">
+    <button id="submitBtn" type="submit" class="btn btn-primary submit-main-btn">Kaydı Tamamla</button>
+    <div class="submit-note">
+      Formu göndermeden önce iletişim bilgilerini, temsil gününü, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
+    </div>
+    <div class="refund-note">
+      NOT: Satın alınan biletlerde iptal, iade ve değişiklik yapılamamaktadır.
+    </div>
+  </div>
 
-                <div class="fake-success" id="fakeSuccess"></div>
-              </form>
+  <div class="fake-success" id="fakeSuccess"></div>
+</form>
             </div>
           </div>
         </div>
