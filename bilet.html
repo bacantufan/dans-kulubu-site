@@ -812,9 +812,16 @@
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0CWHB-oGYYn49_Hq2XiuPQ_z600s0hQ";
 
     const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  }
+);
 
     const copyButtons = document.querySelectorAll(".copy-btn");
     const ticketQuantity = document.getElementById("ticketQuantity");
