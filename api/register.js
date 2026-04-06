@@ -1,452 +1,993 @@
-import { Resend } from "resend";
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUDANSK | Muhteşem Renkler Müzikali Bilet</title>
+  <meta name="description" content="Muhteşem Renkler Müzikali bilet ve kayıt sayfası" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{
+      --bg:#08080d;
+      --bg2:#11111a;
+      --text:#f8f6f2;
+      --muted:#c6bfd3;
+      --gold:#f4c56c;
+      --gold2:#ff9f43;
+      --pink:#f55399;
+      --violet:#8f6bff;
+      --green:#84f6b7;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.10);
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --max:1180px;
+    }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(245,83,153,.18), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(143,107,255,.18), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(244,197,108,.10), transparent 35%),
+        linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
+      overflow-x:hidden;
+    }
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return sendJson(res, 405, { success: false, error: "Sadece POST destekleniyor." });
-  }
+    a{text-decoration:none;color:inherit}
+    .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
 
-  try {
-    const body = await readJsonBody(req);
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      backdrop-filter:blur(16px);
+      background:rgba(8,8,13,.72);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
 
-    const {
-      full_name,
-      phone,
-      email,
-      university,
-      department,
-      class_level,
-      attendance_date,
-      ticket_quantity,
-      rep,
-      receipt_note,
-      receipt_path,
-      receipt_file_name,
-      receipt_file_mime,
-      consent_approved
-    } = body || {};
+    .topbar-inner{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
 
-    const requiredFields = [
-      ["full_name", full_name],
-      ["phone", phone],
-      ["email", email],
-      ["university", university],
-      ["department", department],
-      ["class_level", class_level],
-      ["attendance_date", attendance_date],
-      ["rep", rep],
-      ["receipt_note", receipt_note],
-      ["receipt_path", receipt_path],
-      ["receipt_file_name", receipt_file_name],
-      ["receipt_file_mime", receipt_file_mime]
-    ];
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
 
-    for (const [key, value] of requiredFields) {
-      if (!value || String(value).trim() === "") {
-        return sendJson(res, 400, { success: false, error: `${key} alanı zorunlu.` });
+    .brand-mark{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      font-weight:900;
+      background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      flex-shrink:0;
+    }
+
+    .brand-text strong{
+      display:block;
+      font-size:14px;
+      letter-spacing:.12em;
+    }
+
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:14px 18px;
+      border-radius:16px;
+      font-weight:800;
+      font-size:14px;
+      transition:.2s ease;
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      white-space:nowrap;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+
+    .btn-primary{
+      color:#130f08;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      border:none;
+      box-shadow:0 12px 30px rgba(244,197,108,.22);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.06);
+      color:#fff;
+    }
+
+    .hero{
+      padding:24px 0 18px;
+    }
+
+    .hero-card{
+      border-radius:30px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        linear-gradient(135deg, rgba(244,197,108,.10), rgba(245,83,153,.08), rgba(143,107,255,.08));
+      padding:24px 18px;
+      box-shadow:var(--shadow);
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    .pill-live{
+      color:#130f08;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      border:none;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(34px, 9vw, 58px);
+      line-height:.96;
+      letter-spacing:-.05em;
+    }
+
+    .hero p{
+      margin:14px 0 0;
+      max-width:58ch;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+
+    .section{padding:18px 0 80px}
+
+    .section-head{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .section-head .mini{
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-weight:800;
+      color:var(--gold);
+    }
+
+    .section-head h2{
+      margin:0;
+      font-size:clamp(28px,7vw,42px);
+      line-height:1.04;
+      letter-spacing:-.04em;
+    }
+
+    .section-head p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+      max-width:65ch;
+    }
+
+    .ticket-grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .box{
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+
+    .price-card{
+      border-radius:24px;
+      padding:18px;
+      background:
+        linear-gradient(135deg, rgba(244,197,108,.18), rgba(255,159,67,.12)),
+        rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .price-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .price-top h3{
+      margin:0;
+      font-size:20px;
+      line-height:1.1;
+    }
+
+    .price-pill{
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.08em;
+      color:#1b1202;
+      background:linear-gradient(135deg, #ffe29d, #ffbe61);
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .price-value{
+      display:flex;
+      align-items:flex-end;
+      gap:8px;
+      margin-bottom:8px;
+    }
+
+    .price-value strong{
+      font-size:clamp(36px, 9vw, 52px);
+      line-height:.9;
+      letter-spacing:-.05em;
+    }
+
+    .price-value span{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:4px;
+    }
+
+    .benefits{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .benefit{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .benefit i{
+      font-style:normal;
+      color:var(--gold);
+      margin-top:1px;
+    }
+
+    .box h3{
+      margin:0 0 10px;
+      font-size:20px;
+    }
+
+    .box p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.65;
+    }
+
+    .steps{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .step{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .copy-list{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .copy-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .copy-row small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-bottom:4px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .copy-row strong{
+      display:block;
+      font-size:14px;
+      line-height:1.45;
+      word-break:break-word;
+    }
+
+    .copy-btn{
+      min-width:92px;
+      height:42px;
+      border:none;
+      border-radius:12px;
+      font-weight:800;
+      background:rgba(255,255,255,.08);
+      color:white;
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+    }
+
+    .copy-btn.done{
+      background:rgba(132,246,183,.14);
+      border-color:rgba(132,246,183,.28);
+      color:#b8ffd6;
+    }
+
+    .warning{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,127,127,.08);
+      border:1px solid rgba(255,127,127,.16);
+      color:#ffd2d2;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:8px;
+    }
+
+    .field label{
+      font-size:13px;
+      font-weight:700;
+      color:#fff;
+    }
+
+    .field .req{color:var(--gold)}
+
+    .field input,
+    .field select,
+    .field textarea{
+      width:100%;
+      min-height:52px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      padding:14px;
+      font-size:15px;
+      outline:none;
+    }
+
+    .field textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder{
+      color:#9d95ac;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus{
+      border-color:rgba(244,197,108,.45);
+      box-shadow:0 0 0 4px rgba(244,197,108,.08);
+    }
+
+    .field-note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .upload-box{
+      padding:16px;
+      border-radius:20px;
+      border:1px dashed rgba(255,255,255,.18);
+      background:rgba(255,255,255,.04);
+    }
+
+    .upload-box input[type="file"]{
+      border:none;
+      background:transparent;
+      padding:0;
+      min-height:auto;
+    }
+
+    .consent{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+      margin-top:12px;
+    }
+
+    .consent input{
+      margin-top:3px;
+      transform:scale(1.12);
+    }
+
+    .submit-row{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .submit-note{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .fake-success{
+      display:none;
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(132,246,183,.1);
+      border:1px solid rgba(132,246,183,.2);
+      color:#cffff0;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .mobile-cta{
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:12px;
+      z-index:50;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:18px;
+      background:rgba(10,10,14,.92);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 18px 50px rgba(0,0,0,.35);
+    }
+
+    .mobile-cta small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:2px;
+    }
+
+    .mobile-cta strong{
+      display:block;
+      font-size:15px;
+      line-height:1.1;
+    }
+
+    @media (min-width:760px){
+      .container{width:min(var(--max),calc(100% - 40px))}
+      .ticket-grid{
+        grid-template-columns:.94fr 1.06fr;
+        gap:18px;
+      }
+      .form-grid.two{
+        grid-template-columns:repeat(2,1fr);
       }
     }
 
-    if (consent_approved !== true) {
-      return sendJson(res, 400, { success: false, error: "Onay kutusu zorunlu." });
+    @media (min-width:1024px){
+      .mobile-cta{display:none}
     }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <a href="index.html" class="brand">
+          <div class="brand-mark">YD</div>
+          <div class="brand-text">
+            <strong>YUDANSK</strong>
+            <span>Muhteşem Renkler Müzikali • Bilet</span>
+          </div>
+        </a>
 
-    const allowedDates = new Set(["21 Nisan", "22 Nisan", "23 Nisan", "24 Nisan"]);
-    if (!allowedDates.has(attendance_date)) {
-      return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
-    }
+        <a href="index.html" class="btn btn-secondary">Ana Sayfa</a>
+      </div>
+    </div>
+  </header>
 
-    const quantity = Number(ticket_quantity || 1);
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="pill-row">
+            <span class="pill pill-live">Bilet Satışı</span>
+            <span class="pill">21 • 22 • 23 • 24 Nisan</span>
+            <span class="pill">QR ile Giriş</span>
+          </div>
 
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 5) {
-      return sendJson(res, 400, {
-        success: false,
-        error: "Bilet adedi 1 ile 5 arasında olmalıdır."
-      });
-    }
+          <h1>Yerini Ayır.</h1>
+          <p>
+            Muhteşem Renkler Müzikali için katılmak istediğin temsil gününü seçebilir, aynı sipariş içinde birden fazla bilet oluşturabilirsin.
+          </p>
 
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const mailFrom = process.env.MAIL_FROM;
-    const publicBaseUrl = process.env.PUBLIC_BASE_URL;
-    const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+          <div class="hero-actions">
+            <a href="#formAlani" class="btn btn-primary">Kayıt Formuna Git</a>
+            <a href="index.html" class="btn btn-secondary">Tanıtım Sayfasına Dön</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      return sendJson(res, 500, { success: false, error: "Supabase environment variable eksik." });
-    }
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="mini">Bilet / Kayıt</span>
+          <h2>Bilet ve temsil günü seçimi</h2>
+          <p>
+            Aşağıda etkinlik bilet bilgisi, ödeme detayları ve kayıt formu yer alıyor. Kaç bilet almak istediğini seçebilir, toplam tutarı otomatik olarak görebilirsin.
+          </p>
+        </div>
 
-    if (!resendApiKey || !mailFrom || !publicBaseUrl) {
-      return sendJson(res, 500, { success: false, error: "Resend environment variable eksik." });
-    }
+        <div class="ticket-grid">
+          <div>
+            <div class="price-card">
+              <div class="price-top">
+                <div>
+                  <h3>Genel Katılım Bileti</h3>
+                  <p style="margin-top:8px;color:var(--muted);font-size:14px;line-height:1.6;">
+                    Seçtiğin temsil günü için geçerli olacak şekilde çoklu bilet alımı yapabilirsin. Her bilet için ayrı QR kod üretilecektir.
+                  </p>
+                </div>
+                <span class="price-pill">Satışta</span>
+              </div>
 
-    const emailLower = email.trim().toLowerCase();
-    const trimmedDate = attendance_date.trim();
+              <div class="price-value">
+                <strong id="copy-amount">600₺</strong>
+                <span>/ toplam</span>
+              </div>
 
-    // Aynı email aynı gün için ikinci sipariş açamasın
-    const existingResponse = await fetch(
-      `${supabaseUrl}/rest/v1/registrations?select=id&email=eq.${encodeURIComponent(emailLower)}&attendance_date=eq.${encodeURIComponent(trimmedDate)}&limit=1`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${serviceRoleKey}`,
-          apikey: serviceRoleKey,
-          "Content-Type": "application/json"
-        }
-      }
+              <div class="benefits">
+                <div class="benefit"><i>•</i><span>Etkinliğe giriş hakkı</span></div>
+                <div class="benefit"><i>•</i><span>Her bilet için ayrı QR kayıt</span></div>
+                <div class="benefit"><i>•</i><span>Tek mail içinde tüm biletlerin gönderimi</span></div>
+              </div>
+            </div>
+
+            <div class="box">
+              <h3>Ödeme adımları</h3>
+              <p>
+                Lütfen ödemeni aşağıdaki hesap bilgileri üzerinden tamamla ve ardından dekontunu forma ekleyerek kayıt sürecini bitir.
+              </p>
+
+              <div class="steps">
+                <div class="step">1) Aşağıdaki hesap bilgilerine havale / EFT yap.</div>
+                <div class="step">2) Açıklama kısmına <strong>Ad Soyad - Muhteşem Renkler</strong> yaz.</div>
+                <div class="step">3) Dekontunu kaydet ve kayıt formuna yükle.</div>
+                <div class="step">4) Formda katılacağın günü ve bilet adedini seçerek başvurunu tamamla.</div>
+              </div>
+
+              <div class="copy-list">
+                <div class="copy-row">
+                  <div>
+                    <small>Alıcı Adı</small>
+                    <strong id="copy-name">Yeditepe Üniversitesi Rektörlüğü Döner Sermaye İşletmesi</strong>
+                  </div>
+                  <button type="button" class="copy-btn" data-copy-target="copy-name">Kopyala</button>
+                </div>
+
+                <div class="copy-row">
+                  <div>
+                    <small>IBAN</small>
+                    <strong id="copy-iban">TR81 0006 7010 0000 0092 8550 91 </strong>
+                  </div>
+                  <button type="button" class="copy-btn" data-copy-target="copy-iban">Kopyala</button>
+                </div>
+
+                <div class="copy-row">
+                  <div>
+                    <small>Tutar</small>
+                    <strong id="copy-amount-2">600₺</strong>
+                  </div>
+                  <button type="button" class="copy-btn" data-copy-target="copy-amount-2">Kopyala</button>
+                </div>
+
+                <div class="copy-row">
+                  <div>
+                    <small>Açıklama</small>
+                    <strong id="copy-desc">Ad Soyad - Katılım Gösterilecek Gün</strong>
+                  </div>
+                  <button type="button" class="copy-btn" data-copy-target="copy-desc">Kopyala</button>
+                </div>
+              </div>
+
+              <div class="warning">
+                Ödeme yaptıktan sonra dekontunu yüklemeden form gönderimi yapma. Her bilet için ayrı QR kod oluşturulacaktır.
+              </div>
+            </div>
+          </div>
+
+          <div id="formAlani">
+            <div class="box">
+              <h3>Kayıt formu</h3>
+              <p>
+                Lütfen aşağıdaki bilgileri eksiksiz doldur. Aynı e-posta ile aynı temsil gününe ikinci sipariş açılamaz; ancak tek sipariş içinde birden fazla bilet alabilirsin.
+              </p>
+
+              <form id="ticketForm">
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="fullName">Ad Soyad <span class="req">*</span></label>
+                    <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="phone">Telefon <span class="req">*</span></label>
+                    <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
+                  </div>
+                </div>
+
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="email">E-posta <span class="req">*</span></label>
+                    <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="university">Üniversite <span class="req">*</span></label>
+                    <input id="university" name="university" type="text" placeholder="Yeditepe Üniversitesi" required>
+                  </div>
+                </div>
+
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="department">Bölüm <span class="req">*</span></label>
+                    <input id="department" name="department" type="text" placeholder="Bölümünüz" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="classLevel">Sınıf <span class="req">*</span></label>
+                    <select id="classLevel" name="classLevel" required>
+                      <option value="">Seçiniz</option>
+                      <option>Hazırlık</option>
+                      <option>1. Sınıf</option>
+                      <option>2. Sınıf</option>
+                      <option>3. Sınıf</option>
+                      <option>4. Sınıf</option>
+                      <option>Mezun</option>
+                      <option>Diğer</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
+                    <select id="attendanceDate" name="attendanceDate" required>
+                      <option value="">Temsil günü seçiniz</option>
+                      <option>21 Nisan</option>
+                      <option>22 Nisan</option>
+                      <option>23 Nisan</option>
+                      <option>24 Nisan</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
+                    <select id="ticketQuantity" name="ticketQuantity" required>
+                      <option value="1">1 Bilet</option>
+                      <option value="2">2 Bilet</option>
+                      <option value="3">3 Bilet</option>
+                      <option value="4">4 Bilet</option>
+                      <option value="5">5 Bilet</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid two">
+                  <div class="field">
+                    <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
+                    <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
+                    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
+                  </div>
+                </div>
+
+                <div class="field" style="margin-top:12px;">
+                  <label>Dekont Yükle <span class="req">*</span></label>
+                  <div class="upload-box">
+                    <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
+                    <div class="field-note">
+                      JPG, PNG veya PDF yükleyebilirsin.
+                    </div>
+                  </div>
+                </div>
+
+                <label class="consent">
+                  <input id="consentApproved" type="checkbox" required>
+                  <span>
+                    Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
+                  </span>
+                </label>
+
+                <div class="submit-row">
+                  <button id="submitBtn" type="submit" class="btn btn-primary" style="width:100%;">Kaydı Tamamla</button>
+                  <div class="submit-note">
+                    Formu göndermeden önce iletişim bilgilerini, temsil gününü, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
+                  </div>
+                </div>
+
+                <div class="fake-success" id="fakeSuccess"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="mobile-cta">
+    <div>
+      <small>Muhteşem Renkler Müzikali</small>
+      <strong>Formu aşağıda doldur</strong>
+    </div>
+    <a href="#formAlani" class="btn btn-primary">Forma Git</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://qhuayxwvucbiaczhieiy.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0CWHB-oGYYn49_Hq2XiuPQ_z600s0hQ";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
     );
 
-    if (!existingResponse.ok) {
-      const existingText = await existingResponse.text();
-      return sendJson(res, 500, {
-        success: false,
-        error: `Kayıt kontrolü başarısız: ${existingText}`
-      });
+    const copyButtons = document.querySelectorAll(".copy-btn");
+    const ticketQuantity = document.getElementById("ticketQuantity");
+    const amountText1 = document.getElementById("copy-amount");
+    const amountText2 = document.getElementById("copy-amount-2");
+
+    function updateTotalAmount() {
+      const quantity = Number(ticketQuantity.value || 1);
+      const total = quantity * 300;
+      amountText1.innerText = `${total}₺`;
+      amountText2.innerText = `${total}₺`;
     }
 
-    const existingRows = await existingResponse.json();
+    copyButtons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const targetId = button.getAttribute("data-copy-target");
+        const target = document.getElementById(targetId);
+        if (!target) return;
 
-    if (Array.isArray(existingRows) && existingRows.length > 0) {
-      return sendJson(res, 400, {
-        success: false,
-        error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
+        const text = target.innerText.trim();
+
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = button.innerText;
+          button.innerText = "Kopyalandı";
+          button.classList.add("done");
+
+          setTimeout(() => {
+            button.innerText = original;
+            button.classList.remove("done");
+          }, 1500);
+        } catch (err) {
+          alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
+        }
       });
-    }
-
-    const dayCode = getDayCode(trimmedDate);
-    const orderCode = `ORD-${dayCode}-${randomCode(6)}`;
-
-    const insertPayload = Array.from({ length: quantity }, (_, index) => ({
-      ticket_code: `MRM-${dayCode}-${randomCode(6)}`,
-      order_code: orderCode,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: emailLower,
-      university: university.trim(),
-      department: department.trim(),
-      class_level: class_level.trim(),
-      attendance_date: trimmedDate,
-      ticket_quantity: quantity,
-      ticket_index: index + 1,
-      rep: rep.trim(),
-      receipt_note: receipt_note.trim(),
-      receipt_path: receipt_path.trim(),
-      receipt_file_name: receipt_file_name.trim(),
-      receipt_file_mime: receipt_file_mime.trim(),
-      consent_approved: true,
-      status: "REGISTERED",
-      emailed: false,
-      checked_in: false
-    }));
-
-    const insertResponse = await fetch(`${supabaseUrl}/rest/v1/registrations`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${serviceRoleKey}`,
-        apikey: serviceRoleKey,
-        "Content-Type": "application/json",
-        Prefer: "return=representation"
-      },
-      body: JSON.stringify(insertPayload)
     });
 
-    const rawInsertText = await insertResponse.text();
+    ticketQuantity.addEventListener("change", updateTotalAmount);
+    updateTotalAmount();
 
-    if (!insertResponse.ok) {
-      return sendJson(res, 500, {
-        success: false,
-        error: `Veritabanına kayıt başarısız: ${rawInsertText}`
-      });
+    const ticketForm = document.getElementById("ticketForm");
+    const fakeSuccess = document.getElementById("fakeSuccess");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function showMessage(message, isSuccess = true) {
+      fakeSuccess.style.display = "block";
+      fakeSuccess.innerText = message;
+
+      if (isSuccess) {
+        fakeSuccess.style.background = "rgba(132,246,183,.1)";
+        fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
+        fakeSuccess.style.color = "#cffff0";
+      } else {
+        fakeSuccess.style.background = "rgba(255,127,127,.1)";
+        fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
+        fakeSuccess.style.color = "#ffd2d2";
+      }
+
+      fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
-    const insertedRows = JSON.parse(rawInsertText);
+    ticketForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    let receiptSignedUrl = "";
+      fakeSuccess.style.display = "none";
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Gönderiliyor...";
 
-    try {
-      const signedUrlResponse = await fetch(
-        `${supabaseUrl}/storage/v1/object/sign/receipts/${encodeStoragePath(receipt_path.trim())}`,
-        {
+      try {
+        const receiptFile = document.getElementById("receiptFile").files[0];
+        const consentApproved = document.getElementById("consentApproved").checked;
+
+        if (!receiptFile) {
+          throw new Error("Dekont dosyası zorunlu.");
+        }
+
+        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+        if (!allowedTypes.includes(receiptFile.type)) {
+          throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
+        }
+
+        const maxFileSizeMB = 10;
+        const maxBytes = maxFileSizeMB * 1024 * 1024;
+
+        if (receiptFile.size > maxBytes) {
+          throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
+        }
+
+        const uploadUrlResponse = await fetch("/api/create-upload-url", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${serviceRoleKey}`,
-            apikey: serviceRoleKey,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            expiresIn: 60 * 60 * 24 * 30
+            file_name: receiptFile.name,
+            file_type: receiptFile.type,
+            attendance_date: document.getElementById("attendanceDate").value.trim()
           })
+        });
+
+        const uploadUrlResult = await uploadUrlResponse.json();
+
+        if (!uploadUrlResponse.ok || !uploadUrlResult.success) {
+          throw new Error(uploadUrlResult.error || "Yükleme bağlantısı oluşturulamadı.");
         }
-      );
 
-      if (signedUrlResponse.ok) {
-        const signedUrlData = await signedUrlResponse.json();
-        if (signedUrlData && signedUrlData.signedURL) {
-          receiptSignedUrl = `${supabaseUrl}/storage/v1${signedUrlData.signedURL}`;
+        const { error: uploadError } = await supabaseClient.storage
+          .from("receipts")
+          .uploadToSignedUrl(
+            uploadUrlResult.path,
+            uploadUrlResult.token,
+            receiptFile,
+            {
+              contentType: receiptFile.type
+            }
+          );
+
+        if (uploadError) {
+          throw new Error(uploadError.message || "Dekont yüklenemedi.");
         }
-      }
-    } catch (signedUrlError) {
-      console.error("SIGNED URL ERROR:", signedUrlError);
-    }
 
-    const tickets = insertedRows.map((row) => ({
-      ticketCode: row.ticket_code,
-      ticketIndex: row.ticket_index,
-      qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(row.ticket_code)}`
-    }));
+        const payload = {
+          full_name: document.getElementById("fullName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          university: document.getElementById("university").value.trim(),
+          department: document.getElementById("department").value.trim(),
+          class_level: document.getElementById("classLevel").value.trim(),
+          attendance_date: document.getElementById("attendanceDate").value.trim(),
+          ticket_quantity: Number(document.getElementById("ticketQuantity").value || 1),
+          rep: document.getElementById("rep").value.trim(),
+          receipt_note: document.getElementById("receiptNote").value.trim(),
+          receipt_path: uploadUrlResult.path,
+          receipt_file_name: receiptFile.name,
+          receipt_file_mime: receiptFile.type,
+          consent_approved: consentApproved
+        };
 
-    const emailHtml = buildTicketEmail({
-      fullName: full_name.trim(),
-      attendanceDate: trimmedDate,
-      orderCode,
-      quantity,
-      tickets
-    });
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
 
-    let emailError = null;
+        const rawText = await response.text();
 
-    try {
-      const emailResult = await resend.emails.send({
-        from: mailFrom,
-        to: [emailLower],
-        subject: `Muhteşem Renkler Müzikali Biletlerin • ${trimmedDate}`,
-        html: emailHtml
-      });
-
-      if (emailResult && emailResult.error) {
-        emailError = emailResult.error;
-      }
-    } catch (err) {
-      emailError = err;
-    }
-
-    for (const row of insertedRows) {
-      await updateRegistrationStatus({
-        supabaseUrl,
-        serviceRoleKey,
-        ticketCode: row.ticket_code,
-        emailed: !emailError,
-        status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT"
-      });
-    }
-
-    if (sheetsWebhookUrl) {
-      try {
-        for (const row of insertedRows) {
-          await fetch(sheetsWebhookUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              order_code: row.order_code || orderCode,
-              ticket_quantity: row.ticket_quantity || quantity,
-              ticket_index: row.ticket_index,
-              ticket_code: row.ticket_code,
-              full_name: row.full_name,
-              phone: row.phone,
-              email: row.email,
-              university: row.university,
-              department: row.department,
-              class_level: row.class_level,
-              attendance_date: row.attendance_date,
-              rep: row.rep,
-              receipt_note: row.receipt_note,
-              receipt_path: row.receipt_path,
-              receipt_url: receiptSignedUrl,
-              status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
-              emailed: !emailError,
-              checked_in: false
-            })
-          });
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
         }
-      } catch (sheetError) {
-        console.error("SHEETS WEBHOOK ERROR:", sheetError);
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Kayıt oluşturulamadı.");
+        }
+
+        showMessage(
+          `${result.attendance_date} için ${result.ticket_quantity} adet bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
+          true
+        );
+
+        ticketForm.reset();
+        updateTotalAmount();
+      } catch (error) {
+        showMessage(error.message || "Bir hata oluştu.", false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Kaydı Tamamla";
       }
-    }
-
-    return sendJson(res, 200, {
-      success: true,
-      message: emailError
-        ? "Kayıt oluşturuldu ancak e-posta gönderimi başarısız oldu."
-        : "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
-      order_code: orderCode,
-      attendance_date: trimmedDate,
-      ticket_quantity: quantity
     });
-  } catch (error) {
-    console.error("REGISTER API ERROR:", error);
-    return sendJson(res, 500, {
-      success: false,
-      error: error.message || "Beklenmeyen bir hata oluştu."
-    });
-  }
-}
-
-async function updateRegistrationStatus({
-  supabaseUrl,
-  serviceRoleKey,
-  ticketCode,
-  emailed,
-  status
-}) {
-  await fetch(
-    `${supabaseUrl}/rest/v1/registrations?ticket_code=eq.${encodeURIComponent(ticketCode)}`,
-    {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${serviceRoleKey}`,
-        apikey: serviceRoleKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        emailed,
-        status
-      })
-    }
-  );
-}
-
-function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, tickets }) {
-  const ticketCards = tickets.map((ticket) => `
-    <div style="margin-top:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
-      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
-        <tr>
-          <td valign="top" style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);width:55%;">
-            <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-              Bilet ${ticket.ticketIndex}
-            </div>
-
-            <div style="margin-bottom:16px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
-            </div>
-
-            <div style="margin-bottom:16px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticket.ticketCode)}</div>
-            </div>
-
-            <div>
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Giriş Notu</div>
-              <div style="color:#c9bfd8;font-size:14px;line-height:1.6;">
-                Girişte bu QR kodu ve bilet kodunu hazır bulundurman yeterli.
-              </div>
-            </div>
-          </td>
-
-          <td valign="top" style="padding:22px;text-align:center;background:rgba(255,255,255,.03);width:45%;">
-            <div style="font-size:12px;color:#f4c56c;text-transform:uppercase;letter-spacing:.14em;font-weight:700;margin-bottom:12px;">
-              QR Giriş Kodu
-            </div>
-
-            <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
-              <img src="${ticket.qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-  `).join("");
-
-  return `
-  <div style="margin:0;padding:0;background:#0b0c12;font-family:Inter,Arial,sans-serif;color:#f7f3ea;">
-    <div style="max-width:760px;margin:0 auto;padding:32px 16px;">
-      <div style="text-align:center;margin-bottom:24px;">
-        <div style="display:inline-block;padding:8px 14px;border-radius:999px;background:#1a1c25;color:#f4c56c;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">
-          YUDANSK Bilet
-        </div>
-      </div>
-
-      <div style="border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#141626 0%,#0e1018 55%,#17111d 100%);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 50px rgba(0,0,0,.35);">
-        <div style="padding:28px 24px 18px;background:radial-gradient(circle at top left, rgba(245,83,153,.18), transparent 30%),radial-gradient(circle at top right, rgba(143,107,255,.18), transparent 30%);">
-          <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f4c56c;font-weight:700;margin-bottom:10px;">
-            Muhteşem Renkler Müzikali
-          </div>
-          <h1 style="margin:0;font-size:34px;line-height:1;color:#ffffff;letter-spacing:-.04em;">
-            Biletlerin Hazır
-          </h1>
-          <p style="margin:14px 0 0;color:#c9bfd8;font-size:15px;line-height:1.7;">
-            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor.
-          </p>
-
-          <div style="margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);">
-            <div style="margin-bottom:10px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Sipariş Kodu</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(orderCode)}</div>
-            </div>
-
-            <div style="margin-bottom:10px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
-            </div>
-
-            <div>
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Toplam Bilet</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${quantity}</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="padding:18px 24px 28px;">
-          ${ticketCards}
-
-          <div style="margin-top:18px;padding:16px 18px;border-radius:18px;background:rgba(244,197,108,.08);border:1px solid rgba(244,197,108,.18);color:#f3e4bf;font-size:13px;line-height:1.7;">
-            Bu e-posta otomatik olarak oluşturulmuştur. Etkinlik günü değişikliği veya destek taleplerin için YUDANSK organizasyon ekibiyle iletişime geçebilirsin.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  `;
-}
-
-function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function encodeStoragePath(path = "") {
-  return path
-    .split("/")
-    .map(part => encodeURIComponent(part))
-    .join("/");
-}
-
-function sendJson(res, statusCode, data) {
-  res.statusCode = statusCode;
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.end(JSON.stringify(data));
-}
-
-async function readJsonBody(req) {
-  let raw = "";
-  for await (const chunk of req) {
-    raw += chunk;
-  }
-  return raw ? JSON.parse(raw) : {};
-}
-
-function randomCode(length = 6) {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let output = "";
-  for (let i = 0; i < length; i++) {
-    output += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return output;
-}
-
-function getDayCode(attendanceDate) {
-  const map = {
-    "21 Nisan": "21NIS",
-    "22 Nisan": "22NIS",
-    "23 Nisan": "23NIS",
-    "24 Nisan": "24NIS"
-  };
-  return map[attendanceDate] || "DAY";
-}
+  </script>
+</body>
+</html>
