@@ -231,7 +231,7 @@ export default async function handler(req, res) {
               rep: row.rep,
               receipt_note: row.receipt_note,
               receipt_path: row.receipt_path,
-              receipt_url: "",
+              receipt_url: `${publicBaseUrl}/api/receipt-link?path=${encodeURIComponent(row.receipt_path)}`,
               status: emailError ? "EMAIL_FAILED" : "EMAIL_SENT",
               emailed: !emailError,
               checked_in: false
