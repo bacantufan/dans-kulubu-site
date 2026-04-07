@@ -586,6 +586,52 @@
 
       .mobile-cta{display:none}
     }
+    .photo-gallery-section{
+  padding: 32px 0 88px;
+}
+
+.photo-gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+  margin-top:20px;
+}
+
+.photo-gallery-grid img{
+  width:100%;
+  aspect-ratio: 4 / 5;
+  object-fit:cover;
+  display:block;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 16px 40px rgba(0,0,0,.24);
+  background:rgba(255,255,255,.04);
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+
+.photo-gallery-grid img:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 48px rgba(0,0,0,.30);
+}
+
+@media (max-width: 1024px){
+  .photo-gallery-grid{
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+  }
+}
+
+@media (max-width: 768px){
+  .photo-gallery-grid{
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px;
+  }
+
+  .photo-gallery-grid img{
+    border-radius:18px;
+    aspect-ratio: 1 / 1.15;
+  }
+}
   </style>
 </head>
 <body>
@@ -878,7 +924,36 @@
         </div>
       </div>
     </section>
+    
+    <section class="photo-gallery-section">
+  <div class="container">
+    <div class="section-head">
+      <span class="mini">Geçmişten Kareler</span>
+      <h2>Oyundan Kareler</h2>
+      <p>
+        YUDANSK sahnesinden öne çıkan anlar ve oyunun atmosferini yansıtan seçilmiş kareler.
+      </p>
+    </div>
 
+    <div class="photo-gallery-grid">
+      <img src="images/yudansk1.jpg" alt="YUDANSK oyundan kare 1" loading="lazy">
+      <img src="images/yudansk2.jpg" alt="YUDANSK oyundan kare 2" loading="lazy">
+      <img src="images/yudansk3.jpg" alt="YUDANSK oyundan kare 3" loading="lazy">
+      <img src="images/yudansk4.jpg" alt="YUDANSK oyundan kare 4" loading="lazy">
+      <img src="images/yudansk5.jpg" alt="YUDANSK oyundan kare 5" loading="lazy">
+      <img src="images/yudansk6.jpg" alt="YUDANSK oyundan kare 6" loading="lazy">
+      <img src="images/yudansk7.jpg" alt="YUDANSK oyundan kare 7" loading="lazy">
+      <img src="images/yudansk8.jpg" alt="YUDANSK oyundan kare 8" loading="lazy">
+      <img src="images/yudansk9.jpg" alt="YUDANSK oyundan kare 9" loading="lazy">
+      <img src="images/yudansk10.jpg" alt="YUDANSK oyundan kare 10" loading="lazy">
+      <img src="images/yudansk11.jpg" alt="YUDANSK oyundan kare 11" loading="lazy">
+      <img src="images/yudansk12.jpg" alt="YUDANSK oyundan kare 12" loading="lazy">
+      <img src="images/yudansk13.jpg" alt="YUDANSK oyundan kare 13" loading="lazy">
+      <img src="images/yudansk14.jpg" alt="YUDANSK oyundan kare 14" loading="lazy">
+      <img src="images/yudansk15.jpg" alt="YUDANSK oyundan kare 15" loading="lazy">
+    </div>
+  </div>
+</section>
 
     <section class="section">
       <div class="container">
