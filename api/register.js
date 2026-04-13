@@ -172,7 +172,8 @@ export default async function handler(req, res) {
       ticketCode: row.ticket_code,
       ticketIndex: row.ticket_index,
       attendeeName: row.attendee_name,
-      qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(row.ticket_code)}`
+      qrImageUrl: `${publicBaseUrl}/api/qr?ticket=${encodeURIComponent(row.ticket_code)}`,
+      ticketPageUrl: `${publicBaseUrl}/ticket-view.html?code=${encodeURIComponent(row.ticket_code)}`
     }));
 
     const emailHtml = buildTicketEmail({
@@ -319,6 +320,12 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
             <div style="display:inline-block;background:#ffffff;padding:14px;border-radius:20px;">
               <img src="${ticket.qrImageUrl}" alt="QR Kod" width="220" height="220" style="display:block;width:220px;height:220px;border:0;outline:none;text-decoration:none;" />
             </div>
+
+            <div style="margin-top:14px;text-align:center;">
+              <a href="${ticket.ticketPageUrl}" style="display:inline-block;padding:12px 16px;border-radius:14px;background:#f4c56c;color:#17120a;font-weight:800;text-decoration:none;">
+                Biletimi Gör
+              </a>
+            </div>
           </td>
         </tr>
       </table>
@@ -343,7 +350,7 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
             Biletlerin Hazır
           </h1>
           <p style="margin:14px 0 0;color:#c9bfd8;font-size:15px;line-height:1.7;">
-            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor.
+            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor. QR görseli mail içinde görünmüyorsa her bilet için “Biletimi Gör” bağlantısını kullanabilirsin.
           </p>
 
           <div style="margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);">
