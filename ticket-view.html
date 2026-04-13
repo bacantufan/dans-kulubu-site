@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YUDANSK | Bilet Görüntüle</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
       --bg:#08080d;
@@ -119,21 +118,6 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
-
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-          detectSessionInUrl: false
-        }
-      }
-    );
-
     const params = new URLSearchParams(window.location.search);
     const ticketCode = params.get("code");
     const content = document.getElementById("content");
@@ -144,52 +128,48 @@
         return;
       }
 
-      const { data, error } = await supabaseClient
-        .from("registrations")
-        .select("ticket_code, attendee_name, full_name, attendance_date, status, checked_in")
-        .eq("ticket_code", ticketCode)
-        .limit(1)
-        .maybeSingle();
+      try {
+        const response = await fetch(`/api/ticket-view?code=${encodeURIComponent(ticketCode)}`);
+        const result = await response.json();
 
-      if (error || !data) {
-        content.innerHTML = '<div class="error">Bilet bulunamadı.</div>';
-        return;
+        if (!response.ok || !result.success || !result.ticket) {
+          content.innerHTML = `<div class="error">${escapeHtml(result.error || "Bilet bulunamadı.")}</div>`;
+          return;
+        }
+
+        const data = result.ticket;
+        const qrUrl = `/api/qr?ticket=${encodeURIComponent(data.ticket_code)}`;
+
+        content.innerHTML = `
+          <div class="info">
+            <div class="row">
+              <small>Bilet Kodu</small>
+              <strong>${escapeHtml(data.ticket_code)}</strong>
+            </div>
+            <div class="row">
+              <small>Bilet Sahibi</small>
+              <strong>${escapeHtml(data.attendee_name || data.full_name || "-")}</strong>
+            </div>
+            <div class="row">
+              <small>Temsil Günü</small>
+              <strong>${escapeHtml(data.attendance_date || "-")}</strong>
+            </div>
+            <div class="row">
+              <small>Durum</small>
+              <strong>${data.checked_in ? "Kullanıldı" : "Geçerli"}</strong>
+            </div>
+          </div>
+
+          <div class="qr-wrap">
+            <div class="mini" style="margin-bottom:0;">QR Giriş Kodu</div>
+            <div class="qr-box">
+              <img src="${qrUrl}" alt="QR Kod">
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        content.innerHTML = '<div class="error">Bilet bilgileri alınamadı.</div>';
       }
-
-      if (data.status === "CANCELLED") {
-        content.innerHTML = '<div class="error">Bu bilet iptal edilmiş.</div>';
-        return;
-      }
-
-      const qrUrl = `/api/qr?ticket=${encodeURIComponent(data.ticket_code)}`;
-
-      content.innerHTML = `
-        <div class="info">
-          <div class="row">
-            <small>Bilet Kodu</small>
-            <strong>${escapeHtml(data.ticket_code)}</strong>
-          </div>
-          <div class="row">
-            <small>Bilet Sahibi</small>
-            <strong>${escapeHtml(data.attendee_name || data.full_name || "-")}</strong>
-          </div>
-          <div class="row">
-            <small>Temsil Günü</small>
-            <strong>${escapeHtml(data.attendance_date || "-")}</strong>
-          </div>
-          <div class="row">
-            <small>Durum</small>
-            <strong>${data.checked_in ? "Kullanıldı" : "Geçerli"}</strong>
-          </div>
-        </div>
-
-        <div class="qr-wrap">
-          <div class="mini" style="margin-bottom:0;">QR Giriş Kodu</div>
-          <div class="qr-box">
-            <img src="${qrUrl}" alt="QR Kod">
-          </div>
-        </div>
-      `;
     }
 
     function escapeHtml(value = "") {
