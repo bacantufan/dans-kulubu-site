@@ -720,7 +720,7 @@
                 Lütfen aşağıdaki bilgileri eksiksiz doldur. Aynı e-posta ile aynı temsil gününe ikinci sipariş açılamaz; ancak tek sipariş içinde birden fazla bilet alabilirsin.
               </p>
 
-            <form id="ticketForm">
+   <form id="ticketForm">
   <div class="form-grid two">
     <div class="field">
       <label for="fullName">Ad Soyad <span class="req">*</span></label>
@@ -739,26 +739,24 @@
       <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
     </div>
 
-   <div class="field">
-  <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
-  <select id="attendanceDate" name="attendanceDate" required>
-    <option value="">Temsil günü seçiniz</option>
-    <option>22 Nisan</option>
-    <option>23 Nisan</option>
-    <option>24 Nisan</option>
-  </select>
-</div>
+    <div class="field">
+      <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
+      <select id="attendanceDate" name="attendanceDate" required>
+        <option value="">Temsil günü seçiniz</option>
+        <option>22 Nisan</option>
+        <option>23 Nisan</option>
+        <option>24 Nisan</option>
+      </select>
+    </div>
   </div>
 
   <div class="form-grid two">
     <div class="field">
-      <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
+      <label for="ticketQuantity">Kaç ücretli bilet almak istiyorsunuz? <span class="req">*</span></label>
       <select id="ticketQuantity" name="ticketQuantity" required>
-        <option value="1">1 Bilet</option>
-        <option value="2">2 Bilet</option>
-        <option value="3">3 Bilet</option>
-        <option value="4">4 Bilet</option>
-        <option value="5">5 Bilet</option>
+        <option value="1">1 Ücretli Bilet</option>
+        <option value="2">2 Ücretli Bilet</option>
+        <option value="4">4 Ücretli Bilet</option>
       </select>
     </div>
 
@@ -772,13 +770,13 @@
     <label>Diğer katılımcıların ad soyad bilgileri <span class="req">*</span></label>
     <div id="extraAttendeesList" class="form-grid"></div>
     <div class="field-note">
-      Birden fazla bilet seçtiğinde, diğer katılımcıların isimlerini eksiksiz girmen gerekir.
+      Birden fazla veya kampanyalı bilet seçtiğinde, tüm ek katılımcıların isimlerini eksiksiz girmen gerekir.
     </div>
   </div>
 
   <div class="field">
-    <label for="receiptNote">Not <span class="req">*</span></label>
-    <textarea id="receiptNote" name="receiptNote" placeholder="Eklemek veya sormak istediklerinizi yazabilirsiniz." required></textarea>
+    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
+    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
   </div>
 
   <div class="field" style="margin-top:12px;">
