@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { success: false, error: "Onay kutusu zorunlu." });
     }
 
-    const allowedDates = new Set(["21 Nisan", "22 Nisan", "23 Nisan", "24 Nisan"]);
+    const allowedDates = new Set(["22 Nisan", "23 Nisan", "24 Nisan"]);
     if (!allowedDates.has(attendance_date)) {
       return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
     }
