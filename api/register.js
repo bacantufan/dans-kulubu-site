@@ -15,6 +15,8 @@ export default async function handler(req, res) {
       phone,
       email,
       attendance_date,
+      paid_ticket_quantity,
+      bonus_ticket_quantity,
       ticket_quantity,
       attendee_names,
       rep,
@@ -47,17 +49,54 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { success: false, error: "Onay kutusu zorunlu." });
     }
 
+    // 21 Nisan kapalı
     const allowedDates = new Set(["22 Nisan", "23 Nisan", "24 Nisan"]);
     if (!allowedDates.has(attendance_date)) {
-      return sendJson(res, 400, { success: false, error: "Geçersiz temsil günü." });
+      return sendJson(res, 400, { success: false, error: "Seçtiğiniz gün için kayıt alınmıyor." });
     }
 
-    const quantity = Number(ticket_quantity || 1);
+    function getTicketSummary(date, paidQty) {
+      let bonusQty = 0;
 
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 5) {
+      if (date === "23 Nisan") {
+        if (paidQty === 2) bonusQty = 1;
+        if (paidQty === 4) bonusQty = 2;
+      }
+
+      return {
+        paidQty,
+        bonusQty,
+        totalQty: paidQty + bonusQty
+      };
+    }
+
+    const paidQty = Number(paid_ticket_quantity || 1);
+
+    if (!Number.isInteger(paidQty) || paidQty < 1) {
       return sendJson(res, 400, {
         success: false,
-        error: "Bilet adedi 1 ile 5 arasında olmalıdır."
+        error: "Geçersiz ücretli bilet adedi."
+      });
+    }
+
+    // 23 Nisan kampanyasında sadece 1 / 2 / 4 ücretli paket kullandıralım
+    if (attendance_date === "23 Nisan" && ![1, 2, 4].includes(paidQty)) {
+      return sendJson(res, 400, {
+        success: false,
+        error: "23 Nisan için sadece 1, 2 veya 4 ücretli bilet seçilebilir."
+      });
+    }
+
+    const summary = getTicketSummary(attendance_date, paidQty);
+    const quantity = summary.totalQty;
+
+    if (
+      Number(ticket_quantity) !== summary.totalQty ||
+      Number(bonus_ticket_quantity || 0) !== summary.bonusQty
+    ) {
+      return sendJson(res, 400, {
+        success: false,
+        error: "Bilet kampanya bilgisi doğrulanamadı."
       });
     }
 
@@ -88,6 +127,7 @@ export default async function handler(req, res) {
     const emailLower = email.trim().toLowerCase();
     const trimmedDate = attendance_date.trim();
 
+    // Aynı email aynı gün için ikinci sipariş açamasın
     const existingResponse = await fetch(
       `${supabaseUrl}/rest/v1/registrations?select=id&email=eq.${encodeURIComponent(emailLower)}&attendance_date=eq.${encodeURIComponent(trimmedDate)}&limit=1`,
       {
@@ -132,7 +172,9 @@ export default async function handler(req, res) {
         phone: phone.trim(),
         email: emailLower,
         attendance_date: trimmedDate,
-        ticket_quantity: quantity,
+        paid_ticket_quantity: summary.paidQty,
+        bonus_ticket_quantity: summary.bonusQty,
+        ticket_quantity: summary.totalQty,
         ticket_index: index + 1,
         rep: rep.trim(),
         receipt_note: receipt_note.trim(),
@@ -181,6 +223,8 @@ export default async function handler(req, res) {
       attendanceDate: trimmedDate,
       orderCode,
       quantity,
+      paidQty: summary.paidQty,
+      bonusQty: summary.bonusQty,
       tickets
     });
 
@@ -221,7 +265,9 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
               order_code: row.order_code || orderCode,
-              ticket_quantity: row.ticket_quantity || quantity,
+              paid_ticket_quantity: row.paid_ticket_quantity || summary.paidQty,
+              bonus_ticket_quantity: row.bonus_ticket_quantity || summary.bonusQty,
+              ticket_quantity: row.ticket_quantity || summary.totalQty,
               ticket_index: row.ticket_index,
               ticket_code: row.ticket_code,
               attendee_name: row.attendee_name || "",
@@ -251,7 +297,9 @@ export default async function handler(req, res) {
         : "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
       order_code: orderCode,
       attendance_date: trimmedDate,
-      ticket_quantity: quantity
+      paid_ticket_quantity: summary.paidQty,
+      bonus_ticket_quantity: summary.bonusQty,
+      ticket_quantity: summary.totalQty
     });
   } catch (error) {
     console.error("REGISTER API ERROR:", error);
@@ -286,7 +334,7 @@ async function updateRegistrationStatus({
   );
 }
 
-function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, tickets }) {
+function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQty, bonusQty, tickets }) {
   const ticketCards = tickets.map((ticket) => `
     <div style="margin-top:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
@@ -332,6 +380,10 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
     </div>
   `).join("");
 
+  const promoText = bonusQty > 0
+    ? `${paidQty} ücretli bilet + ${bonusQty} ücretsiz bilet`
+    : `${paidQty} ücretli bilet`;
+
   return `
   <div style="margin:0;padding:0;background:#0b0c12;font-family:Inter,Arial,sans-serif;color:#f7f3ea;">
     <div style="max-width:760px;margin:0 auto;padding:32px 16px;">
@@ -362,6 +414,11 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, ticke
             <div style="margin-bottom:10px;">
               <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Paket</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${promoText}</div>
             </div>
 
             <div>
@@ -418,7 +475,6 @@ function randomCode(length = 6) {
 
 function getDayCode(attendanceDate) {
   const map = {
-    "21 Nisan": "21NIS",
     "22 Nisan": "22NIS",
     "23 Nisan": "23NIS",
     "24 Nisan": "24NIS"
