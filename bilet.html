@@ -739,15 +739,15 @@
       <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
     </div>
 
-    <div class="field">
-      <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
-      <select id="attendanceDate" name="attendanceDate" required>
-        <option value="">Temsil günü seçiniz</option>
-        <option>22 Nisan</option>
-        <option>23 Nisan</option>
-        <option>24 Nisan</option>
-      </select>
-    </div>
+   <div class="field">
+  <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
+  <select id="attendanceDate" name="attendanceDate" required>
+    <option value="">Temsil günü seçiniz</option>
+    <option>22 Nisan</option>
+    <option>23 Nisan</option>
+    <option>24 Nisan</option>
+  </select>
+</div>
   </div>
 
   <div class="form-grid two">
@@ -826,8 +826,8 @@
   </div>
 
   <script>
-  const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
+  const SUPABASE_URL = "https://qhuayxwvucbiaczhieiy.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0CWHB-oGYYn49_Hq2XiuPQ_z600s0hQ";
 
   const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
@@ -843,6 +843,7 @@
 
   const copyButtons = document.querySelectorAll(".copy-btn");
   const ticketQuantity = document.getElementById("ticketQuantity");
+  const attendanceDate = document.getElementById("attendanceDate");
   const amountText1 = document.getElementById("copy-amount");
   const amountText2 = document.getElementById("copy-amount-2");
   const extraAttendeesWrap = document.getElementById("extraAttendeesWrap");
@@ -852,25 +853,89 @@
     localStorage.removeItem("supabase.auth.token");
   } catch (e) {}
 
+  function getTicketSummary(date, paidQty) {
+    let bonusQty = 0;
+
+    if (date === "23 Nisan") {
+      if (paidQty === 2) bonusQty = 1;
+      if (paidQty === 4) bonusQty = 2;
+    }
+
+    return {
+      paidQty,
+      bonusQty,
+      totalQty: paidQty + bonusQty
+    };
+  }
+
+  function refreshTicketOptions() {
+    const selectedDate = attendanceDate.value.trim();
+    const currentValue = ticketQuantity.value;
+
+    ticketQuantity.innerHTML = "";
+
+    const addOption = (value, label) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      ticketQuantity.appendChild(option);
+    };
+
+    if (selectedDate === "23 Nisan") {
+      addOption("1", "1 Ücretli Bilet");
+      addOption("2", "2 Ücretli Bilet (+1 Bedava)");
+      addOption("4", "4 Ücretli Bilet (+2 Bedava)");
+    } else {
+      addOption("1", "1 Bilet");
+      addOption("2", "2 Bilet");
+      addOption("3", "3 Bilet");
+      addOption("4", "4 Bilet");
+      addOption("5", "5 Bilet");
+    }
+
+    const validValues = Array.from(ticketQuantity.options).map(opt => opt.value);
+    ticketQuantity.value = validValues.includes(currentValue) ? currentValue : validValues[0];
+  }
+
   function updateTotalAmount() {
-    const quantity = Number(ticketQuantity.value || 1);
-    const total = quantity * 600;
+    const paidQty = Number(ticketQuantity.value || 1);
+    const selectedDate = attendanceDate.value.trim();
+    const summary = getTicketSummary(selectedDate, paidQty);
+
+    const total = summary.paidQty * 600;
+
     amountText1.innerText = `${total}₺`;
     amountText2.innerText = `${total}₺`;
+
+    const existingPromoNote = document.getElementById("promoNote");
+    if (existingPromoNote) existingPromoNote.remove();
+
+    if (selectedDate === "23 Nisan" && summary.bonusQty > 0) {
+      const note = document.createElement("div");
+      note.id = "promoNote";
+      note.className = "field-note";
+      note.style.marginTop = "8px";
+      note.style.color = "#ffd7a0";
+      note.innerText = `${summary.paidQty} ücretli bilet için ${summary.bonusQty} ücretsiz bilet eklendi. Toplam bilet: ${summary.totalQty}`;
+      ticketQuantity.parentElement.appendChild(note);
+    }
   }
 
   function renderExtraAttendees() {
-    const quantity = Number(ticketQuantity.value || 1);
+    const paidQty = Number(ticketQuantity.value || 1);
+    const selectedDate = attendanceDate.value.trim();
+    const summary = getTicketSummary(selectedDate, paidQty);
+
     extraAttendeesList.innerHTML = "";
 
-    if (quantity <= 1) {
+    if (summary.totalQty <= 1) {
       extraAttendeesWrap.style.display = "none";
       return;
     }
 
     extraAttendeesWrap.style.display = "grid";
 
-    for (let i = 2; i <= quantity; i++) {
+    for (let i = 2; i <= summary.totalQty; i++) {
       const field = document.createElement("div");
       field.className = "field";
       field.innerHTML = `
@@ -879,6 +944,12 @@
       `;
       extraAttendeesList.appendChild(field);
     }
+  }
+
+  function refreshTicketUI() {
+    refreshTicketOptions();
+    updateTotalAmount();
+    renderExtraAttendees();
   }
 
   copyButtons.forEach((button) => {
@@ -905,13 +976,13 @@
     });
   });
 
+  attendanceDate.addEventListener("change", refreshTicketUI);
   ticketQuantity.addEventListener("change", () => {
     updateTotalAmount();
     renderExtraAttendees();
   });
 
-  updateTotalAmount();
-  renderExtraAttendees();
+  refreshTicketUI();
 
   const ticketForm = document.getElementById("ticketForm");
   const fakeSuccess = document.getElementById("fakeSuccess");
@@ -967,7 +1038,7 @@
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
 
-      const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
+      const attendanceDateValue = attendanceDate.value.trim();
       const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
       const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
 
@@ -982,10 +1053,12 @@
         throw new Error(uploadError.message || "Dekont yüklenemedi.");
       }
 
-      const quantityValue = Number(document.getElementById("ticketQuantity").value || 1);
+      const paidQtyValue = Number(ticketQuantity.value || 1);
+      const summary = getTicketSummary(attendanceDateValue, paidQtyValue);
+
       const attendeeNames = [];
 
-      for (let i = 2; i <= quantityValue; i++) {
+      for (let i = 2; i <= summary.totalQty; i++) {
         const input = document.getElementById(`attendee_${i}`);
         if (!input || !input.value.trim()) {
           throw new Error(`${i}. bilet sahibi için ad soyad bilgisi zorunlu.`);
@@ -997,8 +1070,10 @@
         full_name: document.getElementById("fullName").value.trim(),
         phone: document.getElementById("phone").value.trim(),
         email: document.getElementById("email").value.trim(),
-        attendance_date: document.getElementById("attendanceDate").value.trim(),
-        ticket_quantity: quantityValue,
+        attendance_date: attendanceDateValue,
+        paid_ticket_quantity: summary.paidQty,
+        bonus_ticket_quantity: summary.bonusQty,
+        ticket_quantity: summary.totalQty,
         attendee_names: attendeeNames,
         rep: document.getElementById("rep").value.trim(),
         receipt_note: document.getElementById("receiptNote").value.trim(),
@@ -1030,13 +1105,12 @@
       }
 
       showMessage(
-        `${result.attendance_date} için ${result.ticket_quantity} adet bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
+        `${result.attendance_date} için ${result.paid_ticket_quantity} ücretli bilet ve ${result.bonus_ticket_quantity} ücretsiz bilet olmak üzere toplam ${result.ticket_quantity} bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
         true
       );
 
       ticketForm.reset();
-      updateTotalAmount();
-      renderExtraAttendees();
+      refreshTicketUI();
     } catch (error) {
       showMessage(error.message || "Bir hata oluştu.", false);
     } finally {
