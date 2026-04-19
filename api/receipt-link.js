@@ -49,47 +49,41 @@ function buildCandidatePaths(path) {
     }
   };
 
-  add(path);
-
-  try {
-    add(decodeURIComponent(path));
-  } catch (e) {}
-
-  const variants = [
-    ["21 Nisan/", "21-Nisan/"],
-    ["22 Nisan/", "22-Nisan/"],
-    ["23 Nisan/", "23-Nisan/"],
-    ["24 Nisan/", "24-Nisan/"],
-
-    ["21-Nisan/", "21 Nisan/"],
-    ["22-Nisan/", "22 Nisan/"],
-    ["23-Nisan/", "23 Nisan/"],
-    ["24-Nisan/", "24 Nisan/"],
-
-    ["April-22/", "22-Nisan/"],
-    ["April-23/", "23-Nisan/"],
-    ["April-24/", "24-Nisan/"],
-
-    ["22-Nisan/", "April-22/"],
-    ["23-Nisan/", "April-23/"],
-    ["24-Nisan/", "April-24/"]
-  ];
-
-  const baseValues = [path];
-  try {
-    baseValues.push(decodeURIComponent(path));
-  } catch (e) {}
-
-  for (const base of baseValues) {
+  const tryBase = (base) => {
     add(base);
-    add(base.replace(/\s+/g, "-"));
 
-    for (const [from, to] of variants) {
-      if (base.includes(from)) {
-        add(base.replace(from, to));
-      }
+    const parts = base.split("/");
+    if (parts.length < 2) return;
+
+    const folder = parts[0];
+    const fileName = parts.slice(1).join("/");
+
+    const folderMap = {
+      "21-Nisan": ["21-Nisan"],
+      "22-Nisan": ["22-Nisan", "April-22"],
+      "23-Nisan": ["23-Nisan", "April-23"],
+      "24-Nisan": ["24-Nisan", "April-24"],
+      "April-22": ["April-22", "22-Nisan"],
+      "April-23": ["April-23", "23-Nisan"],
+      "April-24": ["April-24", "24-Nisan"],
+      "21 Nisan": ["21 Nisan", "21-Nisan"],
+      "22 Nisan": ["22 Nisan", "22-Nisan", "April-22"],
+      "23 Nisan": ["23 Nisan", "23-Nisan", "April-23"],
+      "24 Nisan": ["24 Nisan", "24-Nisan", "April-24"]
+    };
+
+    const variants = folderMap[folder] || [folder];
+
+    for (const variantFolder of variants) {
+      add(`${variantFolder}/${fileName}`);
     }
-  }
+  };
+
+  tryBase(path);
+
+  try {
+    tryBase(decodeURIComponent(path));
+  } catch (e) {}
 
   return Array.from(candidates);
 }
