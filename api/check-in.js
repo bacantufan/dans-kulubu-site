@@ -54,6 +54,36 @@ export default async function handler(req, res) {
         });
       }
 
+      if (mode === "list") {
+        if (!selectedDay) {
+          return sendJson(res, 400, { success: false, error: "selected_day zorunlu." });
+        }
+
+        const response = await fetch(
+          `${supabaseUrl}/rest/v1/registrations?select=ticket_code,attendee_name,full_name,attendance_date,checked_in_at,checked_in_by,ticket_index,order_code&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true&order=checked_in_at.desc`,
+          {
+            method: "GET",
+            headers: buildHeaders(serviceRoleKey)
+          }
+        );
+
+        const rawText = await response.text();
+
+        if (!response.ok) {
+          return sendJson(res, 500, {
+            success: false,
+            error: rawText || "Liste alınamadı."
+          });
+        }
+
+        const rows = JSON.parse(rawText);
+
+        return sendJson(res, 200, {
+          success: true,
+          items: Array.isArray(rows) ? rows : []
+        });
+      }
+
       const rawCode = String(req.query?.code || "").trim();
       const code = normalizeScannedValue(rawCode);
 
@@ -127,6 +157,75 @@ export default async function handler(req, res) {
 
     if (req.method === "POST") {
       const body = await readJsonBody(req);
+      const action = String(body?.action || "").trim();
+
+      if (action === "undo_last") {
+        const selectedDay = String(body?.selected_day || "").trim();
+
+        if (!selectedDay) {
+          return sendJson(res, 400, {
+            success: false,
+            error: "selected_day zorunlu."
+          });
+        }
+
+        const lookupResponse = await fetch(
+          `${supabaseUrl}/rest/v1/registrations?select=id,ticket_code,attendee_name,attendance_date,checked_in,checked_in_at&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true&order=checked_in_at.desc&limit=1`,
+          {
+            method: "GET",
+            headers: buildHeaders(serviceRoleKey)
+          }
+        );
+
+        const lookupText = await lookupResponse.text();
+
+        if (!lookupResponse.ok) {
+          return sendJson(res, 500, {
+            success: false,
+            error: lookupText || "Son giriş bulunamadı."
+          });
+        }
+
+        const rows = JSON.parse(lookupText);
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+          return sendJson(res, 404, {
+            success: false,
+            error: "Geri alınacak check-in bulunamadı."
+          });
+        }
+
+        const lastTicket = rows[0];
+
+        const patchResponse = await fetch(
+          `${supabaseUrl}/rest/v1/registrations?ticket_code=eq.${encodeURIComponent(lastTicket.ticket_code)}`,
+          {
+            method: "PATCH",
+            headers: buildHeaders(serviceRoleKey),
+            body: JSON.stringify({
+              checked_in: false,
+              checked_in_at: null,
+              checked_in_by: null
+            })
+          }
+        );
+
+        const patchText = await patchResponse.text();
+
+        if (!patchResponse.ok) {
+          return sendJson(res, 500, {
+            success: false,
+            error: patchText || "Son check-in geri alınamadı."
+          });
+        }
+
+        return sendJson(res, 200, {
+          success: true,
+          message: `Son check-in geri alındı: ${lastTicket.ticket_code}`,
+          ticket: lastTicket
+        });
+      }
+
       const rawCode = String(body?.code || "").trim();
       const code = normalizeScannedValue(rawCode);
       const checkedInBy = String(body?.checked_in_by || "").trim();
@@ -246,6 +345,8 @@ function normalizeScannedValue(value = "") {
   const raw = String(value).trim();
   if (!raw) return "";
 
+  if (raw.startsWith("MRM-")) return raw;
+
   if (raw.startsWith("http://") || raw.startsWith("https://")) {
     try {
       const url = new URL(raw);
@@ -256,9 +357,9 @@ function normalizeScannedValue(value = "") {
       const ticketParam = url.searchParams.get("ticket");
       if (ticketParam) return ticketParam.trim();
 
-      const pathParts = url.pathname.split("/").filter(Boolean);
-      const lastPart = pathParts[pathParts.length - 1];
-      if (lastPart && lastPart.startsWith("MRM-")) return lastPart.trim();
+      const allParams = Array.from(url.searchParams.values());
+      const mrmValue = allParams.find(v => String(v).trim().startsWith("MRM-"));
+      if (mrmValue) return String(mrmValue).trim();
     } catch (e) {}
   }
 
@@ -273,8 +374,6 @@ function sendJson(res, statusCode, data) {
 
 async function readJsonBody(req) {
   let raw = "";
-  for await (const chunk of req) {
-    raw += chunk;
-  }
+  for await (const chunk of req) raw += chunk;
   return raw ? JSON.parse(raw) : {};
 }
