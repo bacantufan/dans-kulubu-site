@@ -7,9 +7,6 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root{
-      --bg:#08080d;
-      --card:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
       --text:#f8f6f2;
       --muted:#c6bfd3;
       --gold:#f4c56c;
@@ -207,9 +204,41 @@
       opacity:.95;
       letter-spacing:0;
     }
+    .auth-overlay{
+      position:fixed;
+      inset:0;
+      z-index:100000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:rgba(4,4,8,.92);
+      backdrop-filter:blur(8px);
+    }
+    .auth-card{
+      width:min(100%,420px);
+      background:#11131a;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+    }
   </style>
 </head>
 <body>
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="mini">YUDANSK Check-in</div>
+      <h1 style="font-size:28px;">Yetkili Girişi</h1>
+      <p style="margin-bottom:14px;">Bu sayfayı kullanmak için check-in şifresini girin.</p>
+      <input id="checkinPassword" class="input" type="password" placeholder="Şifre" />
+      <div class="btns">
+        <button id="loginBtn" class="primary" type="button">Giriş Yap</button>
+      </div>
+      <div id="loginStatus" class="status" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
   <div id="flashGreen" class="flash-screen flash-green">
     <div>
       GEÇERLİ BİLET
@@ -235,6 +264,7 @@
       <div class="day-card">
         <small style="display:block;color:#c6bfd3;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Giriş Alınan Gün</small>
         <select id="selectedDay" class="select">
+          <option value="21 Nisan">21 Nisan</option>
           <option value="22 Nisan">22 Nisan</option>
           <option value="23 Nisan">23 Nisan</option>
           <option value="24 Nisan">24 Nisan</option>
@@ -305,6 +335,11 @@
   </div>
 
   <script>
+    const authOverlay = document.getElementById("authOverlay");
+    const checkinPasswordInput = document.getElementById("checkinPassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginStatus = document.getElementById("loginStatus");
+
     const selectedDayInput = document.getElementById("selectedDay");
     const manualCodeInput = document.getElementById("manualCode");
     const operatorNameInput = document.getElementById("operatorName");
@@ -330,6 +365,21 @@
     let lastScannedCode = "";
     let currentTicket = null;
     let audioCtx = null;
+
+    function getStoredPassword() {
+      return sessionStorage.getItem("checkin_password") || "";
+    }
+
+    function authHeaders() {
+      return {
+        "x-checkin-password": getStoredPassword()
+      };
+    }
+
+    function setLoginStatus(message, isOk) {
+      loginStatus.className = "status " + (isOk ? "ok" : "bad");
+      loginStatus.textContent = message;
+    }
 
     function beep(freq = 880, duration = 160, type = "sine") {
       try {
@@ -405,7 +455,11 @@
     async function refreshStats() {
       try {
         const selectedDay = selectedDayInput.value.trim();
-        const response = await fetch(`/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDay)}`);
+        const response = await fetch(
+          `/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDay)}`,
+          { headers: authHeaders() }
+        );
+
         const result = await response.json();
 
         if (response.ok && result.success) {
@@ -421,7 +475,8 @@
         const selectedDay = selectedDayInput.value.trim();
 
         const response = await fetch(
-          `/api/check-in?code=${encodeURIComponent(code)}&selected_day=${encodeURIComponent(selectedDay)}`
+          `/api/check-in?code=${encodeURIComponent(code)}&selected_day=${encodeURIComponent(selectedDay)}`,
+          { headers: authHeaders() }
         );
 
         const result = await response.json();
@@ -449,14 +504,8 @@
         }
 
         renderTicket(result.ticket);
-
-        if (result.ticket.checked_in) {
-          setStatus("Bu bilet daha önce kullanılmış.", "bad");
-          showFlash("red", "Daha önce kullanılmış");
-        } else {
-          setStatus(`${selectedDay} için geçerli bilet bulundu. Bilgileri kontrol edip girişi onaylayabilirsin.`, "ok");
-          showFlash("green", `${selectedDay} için geçerli`);
-        }
+        setStatus(`${selectedDay} için geçerli bilet bulundu. Bilgileri kontrol edip girişi onaylayabilirsin.`, "ok");
+        showFlash("green", `${selectedDay} için geçerli`);
       } catch (error) {
         setStatus("Bilet sorgulanamadı.", "bad");
         showFlash("red", "Sorgu hatası");
@@ -474,7 +523,8 @@
         const response = await fetch("/api/check-in", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            ...authHeaders()
           },
           body: JSON.stringify({
             code: currentTicket.ticket_code,
@@ -533,6 +583,43 @@
       }
     }
 
+    async function doLogin() {
+      const password = checkinPasswordInput.value.trim();
+      if (!password) {
+        setLoginStatus("Şifre giriniz.", false);
+        return;
+      }
+
+      sessionStorage.setItem("checkin_password", password);
+
+      try {
+        const response = await fetch(
+          `/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDayInput.value.trim())}`,
+          { headers: authHeaders() }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setLoginStatus(result.error || "Şifre hatalı.", false);
+          sessionStorage.removeItem("checkin_password");
+          return;
+        }
+
+        authOverlay.style.display = "none";
+        await refreshStats();
+        await startScanner();
+      } catch (error) {
+        setLoginStatus("Giriş doğrulanamadı.", false);
+        sessionStorage.removeItem("checkin_password");
+      }
+    }
+
+    loginBtn.addEventListener("click", doLogin);
+    checkinPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+
     lookupBtn.addEventListener("click", async () => {
       const code = manualCodeInput.value.trim();
       if (!code) {
@@ -548,8 +635,6 @@
     selectedDayInput.addEventListener("change", refreshStats);
 
     resetTicketBox();
-    refreshStats();
-    startScanner();
   </script>
 </body>
 </html>
