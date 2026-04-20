@@ -1,37 +1,39 @@
 export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const checkinPassword = process.env.CHECKIN_PASSWORD;
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !serviceRoleKey || !checkinPassword) {
     return sendJson(res, 500, {
       success: false,
-      error: "Supabase environment variable eksik."
+      error: "Server environment variable eksik."
+    });
+  }
+
+  const providedPassword = String(req.headers["x-checkin-password"] || "").trim();
+
+  if (providedPassword !== checkinPassword) {
+    return sendJson(res, 401, {
+      success: false,
+      error: "Yetkisiz erişim."
     });
   }
 
   try {
     if (req.method === "GET") {
-      const code = String(req.query?.code || "").trim();
-      const selectedDay = String(req.query?.selected_day || "").trim();
       const mode = String(req.query?.mode || "").trim();
+      const selectedDay = String(req.query?.selected_day || "").trim();
 
       if (mode === "stats") {
         if (!selectedDay) {
-          return sendJson(res, 400, {
-            success: false,
-            error: "selected_day zorunlu."
-          });
+          return sendJson(res, 400, { success: false, error: "selected_day zorunlu." });
         }
 
         const response = await fetch(
           `${supabaseUrl}/rest/v1/registrations?select=id&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true`,
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${serviceRoleKey}`,
-              apikey: serviceRoleKey,
-              "Content-Type": "application/json"
-            }
+            headers: buildHeaders(serviceRoleKey)
           }
         );
 
@@ -52,6 +54,9 @@ export default async function handler(req, res) {
         });
       }
 
+      const rawCode = String(req.query?.code || "").trim();
+      const code = normalizeScannedValue(rawCode);
+
       if (!code) {
         return sendJson(res, 400, {
           success: false,
@@ -63,11 +68,7 @@ export default async function handler(req, res) {
         `${supabaseUrl}/rest/v1/registrations?select=id,ticket_code,attendee_name,full_name,attendance_date,status,checked_in,checked_in_at,checked_in_by,order_code,ticket_index&ticket_code=eq.${encodeURIComponent(code)}&limit=1`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${serviceRoleKey}`,
-            apikey: serviceRoleKey,
-            "Content-Type": "application/json"
-          }
+          headers: buildHeaders(serviceRoleKey)
         }
       );
 
@@ -109,6 +110,15 @@ export default async function handler(req, res) {
         });
       }
 
+      if (ticket.checked_in === true) {
+        return sendJson(res, 400, {
+          success: false,
+          error: "Bu bilet daha önce kullanılmış.",
+          reason: "already_used",
+          ticket
+        });
+      }
+
       return sendJson(res, 200, {
         success: true,
         ticket
@@ -117,7 +127,8 @@ export default async function handler(req, res) {
 
     if (req.method === "POST") {
       const body = await readJsonBody(req);
-      const code = String(body?.code || "").trim();
+      const rawCode = String(body?.code || "").trim();
+      const code = normalizeScannedValue(rawCode);
       const checkedInBy = String(body?.checked_in_by || "").trim();
       const selectedDay = String(body?.selected_day || "").trim();
 
@@ -132,11 +143,7 @@ export default async function handler(req, res) {
         `${supabaseUrl}/rest/v1/registrations?select=id,ticket_code,attendee_name,full_name,attendance_date,status,checked_in,checked_in_at,checked_in_by&ticket_code=eq.${encodeURIComponent(code)}&limit=1`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${serviceRoleKey}`,
-            apikey: serviceRoleKey,
-            "Content-Type": "application/json"
-          }
+          headers: buildHeaders(serviceRoleKey)
         }
       );
 
@@ -191,11 +198,7 @@ export default async function handler(req, res) {
         `${supabaseUrl}/rest/v1/registrations?ticket_code=eq.${encodeURIComponent(code)}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${serviceRoleKey}`,
-            apikey: serviceRoleKey,
-            "Content-Type": "application/json"
-          },
+          headers: buildHeaders(serviceRoleKey),
           body: JSON.stringify({
             checked_in: true,
             checked_in_at: new Date().toISOString(),
@@ -229,6 +232,30 @@ export default async function handler(req, res) {
       error: error.message || "Beklenmeyen hata."
     });
   }
+}
+
+function buildHeaders(serviceRoleKey) {
+  return {
+    Authorization: `Bearer ${serviceRoleKey}`,
+    apikey: serviceRoleKey,
+    "Content-Type": "application/json"
+  };
+}
+
+function normalizeScannedValue(value = "") {
+  const raw = String(value).trim();
+  if (!raw) return "";
+
+  // QR bazen doğrudan ticket code, bazen ticket-view linki olabilir
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    try {
+      const url = new URL(raw);
+      const code = url.searchParams.get("code");
+      if (code) return code.trim();
+    } catch (e) {}
+  }
+
+  return raw;
 }
 
 function sendJson(res, statusCode, data) {
