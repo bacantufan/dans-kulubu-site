@@ -19,7 +19,7 @@
       color:var(--text);
     }
     .wrap{
-      width:min(1120px, calc(100% - 24px));
+      width:min(1180px, calc(100% - 24px));
       margin:0 auto;
       padding:24px 0 40px;
     }
@@ -71,7 +71,7 @@
       display:grid;
       gap:16px;
     }
-    @media (min-width: 960px){
+    @media (min-width: 1040px){
       .grid{
         grid-template-columns:1.05fr .95fr;
       }
@@ -144,6 +144,10 @@
       color:#fff;
       border:1px solid rgba(255,255,255,.10);
     }
+    .danger{
+      background:linear-gradient(135deg,#ff8d8d,#ff5f5f);
+      color:#fff;
+    }
     .status{
       margin-top:14px;
       padding:14px;
@@ -212,6 +216,33 @@
       border-radius:24px;
       padding:22px;
       box-shadow:0 20px 50px rgba(0,0,0,.35);
+    }
+    .list-wrap{
+      margin-top:16px;
+      max-height:420px;
+      overflow:auto;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+    th, td{
+      text-align:left;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      vertical-align:top;
+    }
+    th{
+      color:#f4c56c;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      background:rgba(255,255,255,.03);
+      position:sticky;
+      top:0;
     }
   </style>
 </head>
@@ -285,9 +316,26 @@
           <button id="lookupBtn" class="secondary" type="button">Bileti Sorgula</button>
           <button id="confirmBtn" class="primary" type="button" disabled>Girişi Onayla</button>
           <button id="restartBtn" class="secondary" type="button">Tarayıcıyı Yeniden Başlat</button>
+          <button id="viewListBtn" class="secondary" type="button">Listeyi Görüntüle</button>
+          <button id="downloadListBtn" class="secondary" type="button">CSV İndir</button>
+          <button id="undoLastBtn" class="danger" type="button">Son Girişi Geri Al</button>
         </div>
 
         <div id="statusBox" class="status"></div>
+
+        <div id="listContainer" class="list-wrap" style="display:none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Saat</th>
+                <th>Bilet Kodu</th>
+                <th>Bilet Sahibi</th>
+                <th>Görevli</th>
+              </tr>
+            </thead>
+            <tbody id="listTableBody"></tbody>
+          </table>
+        </div>
       </div>
 
       <div class="card">
@@ -336,8 +384,14 @@
     const lookupBtn = document.getElementById("lookupBtn");
     const confirmBtn = document.getElementById("confirmBtn");
     const restartBtn = document.getElementById("restartBtn");
+    const viewListBtn = document.getElementById("viewListBtn");
+    const downloadListBtn = document.getElementById("downloadListBtn");
+    const undoLastBtn = document.getElementById("undoLastBtn");
+
     const statusBox = document.getElementById("statusBox");
     const checkedInCountEl = document.getElementById("checkedInCount");
+    const listContainer = document.getElementById("listContainer");
+    const listTableBody = document.getElementById("listTableBody");
 
     const ticketCodeValue = document.getElementById("ticketCodeValue");
     const attendeeValue = document.getElementById("attendeeValue");
@@ -361,9 +415,7 @@
     }
 
     function authHeaders() {
-      return {
-        "x-checkin-password": getStoredPassword()
-      };
+      return { "x-checkin-password": getStoredPassword() };
     }
 
     function setLoginStatus(message, isOk) {
@@ -373,9 +425,7 @@
 
     function beep(freq = 880, duration = 160, type = "sine") {
       try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
@@ -448,13 +498,101 @@
           `/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDay)}`,
           { headers: authHeaders() }
         );
-
         const result = await response.json();
-
         if (response.ok && result.success) {
           checkedInCountEl.textContent = result.checked_in_count ?? 0;
         }
       } catch (e) {}
+    }
+
+    async function loadList() {
+      try {
+        const selectedDay = selectedDayInput.value.trim();
+        const response = await fetch(
+          `/api/check-in?mode=list&selected_day=${encodeURIComponent(selectedDay)}`,
+          { headers: authHeaders() }
+        );
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setStatus(result.error || "Liste alınamadı.", "bad");
+          return;
+        }
+
+        const items = result.items || [];
+        listTableBody.innerHTML = "";
+
+        items.forEach(item => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(item.checked_in_at || "-")}</td>
+            <td>${escapeHtml(item.ticket_code || "-")}</td>
+            <td>${escapeHtml(item.attendee_name || item.full_name || "-")}</td>
+            <td>${escapeHtml(item.checked_in_by || "-")}</td>
+          `;
+          listTableBody.appendChild(tr);
+        });
+
+        listContainer.style.display = "block";
+      } catch (error) {
+        setStatus("Liste alınamadı.", "bad");
+      }
+    }
+
+    async function undoLastCheckIn() {
+      const selectedDay = selectedDayInput.value.trim();
+
+      if (!confirm(`${selectedDay} için son check-in geri alınsın mı?`)) return;
+
+      try {
+        const response = await fetch("/api/check-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders()
+          },
+          body: JSON.stringify({
+            action: "undo_last",
+            selected_day: selectedDay
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setStatus(result.error || "Son giriş geri alınamadı.", "bad");
+          showFlash("red", "Geri alma hatası");
+          return;
+        }
+
+        setStatus(result.message || "Son giriş geri alındı.", "ok");
+        showFlash("green", "Son giriş geri alındı");
+        await refreshStats();
+        await loadList();
+      } catch (error) {
+        setStatus("Son giriş geri alınamadı.", "bad");
+        showFlash("red", "Geri alma hatası");
+      }
+    }
+
+    function downloadCsv() {
+      const rows = [["Saat", "Bilet Kodu", "Bilet Sahibi", "Görevli"]];
+
+      Array.from(listTableBody.querySelectorAll("tr")).forEach(tr => {
+        const cols = Array.from(tr.querySelectorAll("td")).map(td => td.innerText.trim());
+        rows.push(cols);
+      });
+
+      const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"', '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${selectedDayInput.value.trim()}-checkin-listesi.csv`;
+      a.click();
+
+      URL.revokeObjectURL(url);
     }
 
     async function lookupTicket(code) {
@@ -532,6 +670,7 @@
         showFlash("green", "Giriş onaylandı");
         await lookupTicket(currentTicket.ticket_code);
         await refreshStats();
+        await loadList();
       } catch (error) {
         setStatus("Giriş onayı sırasında hata oluştu.", "bad");
         showFlash("red", "Onay hatası");
@@ -595,6 +734,15 @@
       }
     }
 
+    function escapeHtml(value = "") {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
     loginBtn.addEventListener("click", doLogin);
     checkinPasswordInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") doLogin();
@@ -612,7 +760,13 @@
 
     confirmBtn.addEventListener("click", confirmCheckIn);
     restartBtn.addEventListener("click", startScanner);
-    selectedDayInput.addEventListener("change", refreshStats);
+    viewListBtn.addEventListener("click", loadList);
+    downloadListBtn.addEventListener("click", downloadCsv);
+    undoLastBtn.addEventListener("click", undoLastCheckIn);
+    selectedDayInput.addEventListener("change", async () => {
+      await refreshStats();
+      listContainer.style.display = "none";
+    });
 
     resetTicketBox();
   </script>
