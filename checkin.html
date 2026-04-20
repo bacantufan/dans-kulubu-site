@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUDANSK | Check-in</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    :root{
+      --bg:#08080d;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.10);
+      --text:#f8f6f2;
+      --muted:#c6bfd3;
+      --gold:#f4c56c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
+      color:var(--text);
+    }
+    .wrap{
+      width:min(1120px, calc(100% - 24px));
+      margin:0 auto;
+      padding:24px 0 40px;
+    }
+    .head{
+      margin-bottom:18px;
+    }
+    .mini{
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--gold);
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    h1{
+      margin:0 0 8px;
+      font-size:34px;
+      letter-spacing:-.04em;
+    }
+    p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+    }
+    .topbar{
+      display:grid;
+      gap:16px;
+      margin:18px 0 16px;
+    }
+    @media (min-width: 900px){
+      .topbar{
+        grid-template-columns:1fr auto;
+        align-items:stretch;
+      }
+    }
+    .stats-card, .day-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,.22);
+    }
+    .stats-number{
+      font-size:40px;
+      font-weight:900;
+      letter-spacing:-.04em;
+      color:#fff;
+      margin-top:8px;
+    }
+    .grid{
+      display:grid;
+      gap:16px;
+    }
+    @media (min-width: 960px){
+      .grid{
+        grid-template-columns:1.05fr .95fr;
+      }
+    }
+    .card{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 20px 50px rgba(0,0,0,.25);
+    }
+    #reader{
+      width:100%;
+      overflow:hidden;
+      border-radius:20px;
+      background:#000;
+    }
+    .row{
+      margin-top:12px;
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .row small{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:4px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .row strong{
+      display:block;
+      font-size:16px;
+      word-break:break-word;
+    }
+    .input, .select{
+      width:100%;
+      min-height:50px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      outline:none;
+      font-size:15px;
+    }
+    .btns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    button{
+      border:none;
+      cursor:pointer;
+      min-height:48px;
+      padding:0 16px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:14px;
+    }
+    .primary{
+      background:linear-gradient(135deg,#f4c56c,#ffb04a);
+      color:#17120a;
+    }
+    .secondary{
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .status{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      display:none;
+      line-height:1.6;
+      font-weight:700;
+    }
+    .ok{
+      display:block;
+      background:rgba(132,246,183,.12);
+      border:1px solid rgba(132,246,183,.24);
+      color:#cffff0;
+    }
+    .bad{
+      display:block;
+      background:rgba(255,127,127,.12);
+      border:1px solid rgba(255,127,127,.24);
+      color:#ffd6d6;
+    }
+    .warn{
+      display:block;
+      background:rgba(255,211,122,.12);
+      border:1px solid rgba(255,211,122,.24);
+      color:#ffe7b2;
+    }
+    .flash-screen{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+      padding:24px;
+      text-align:center;
+      font-weight:900;
+      font-size:clamp(34px, 9vw, 80px);
+      letter-spacing:-.04em;
+    }
+    .flash-screen.show{
+      display:flex;
+    }
+    .flash-green{
+      background:rgba(10,120,60,.96);
+      color:#fff;
+    }
+    .flash-red{
+      background:rgba(160,25,25,.96);
+      color:#fff;
+    }
+    .subline{
+      display:block;
+      margin-top:12px;
+      font-size:clamp(14px, 3vw, 24px);
+      font-weight:700;
+      opacity:.95;
+      letter-spacing:0;
+    }
+  </style>
+</head>
+<body>
+  <div id="flashGreen" class="flash-screen flash-green">
+    <div>
+      GEÇERLİ BİLET
+      <span id="flashGreenSub" class="subline"></span>
+    </div>
+  </div>
+
+  <div id="flashRed" class="flash-screen flash-red">
+    <div>
+      GEÇERSİZ / HATALI
+      <span id="flashRedSub" class="subline"></span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="head">
+      <div class="mini">YUDANSK Check-in</div>
+      <h1>Bilet Okuma ve Giriş Onayı</h1>
+      <p>Önce günü seç, QR okut, bileti kontrol et, ardından girişi onayla.</p>
+    </div>
+
+    <div class="topbar">
+      <div class="day-card">
+        <small style="display:block;color:#c6bfd3;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Giriş Alınan Gün</small>
+        <select id="selectedDay" class="select">
+          <option value="22 Nisan">22 Nisan</option>
+          <option value="23 Nisan">23 Nisan</option>
+          <option value="24 Nisan">24 Nisan</option>
+        </select>
+      </div>
+
+      <div class="stats-card">
+        <small style="display:block;color:#c6bfd3;font-size:12px;text-transform:uppercase;letter-spacing:.08em;">Aktif Giriş Sayısı</small>
+        <div id="checkedInCount" class="stats-number">0</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div id="reader"></div>
+
+        <div class="row">
+          <small>Manuel Bilet Kodu</small>
+          <input id="manualCode" class="input" placeholder="Örn: MRM-23NIS-ABC123" />
+        </div>
+
+        <div class="row">
+          <small>Görevli Adı (Opsiyonel)</small>
+          <input id="operatorName" class="input" placeholder="Check-in yapan görevli adı" />
+        </div>
+
+        <div class="btns">
+          <button id="lookupBtn" class="secondary" type="button">Bileti Sorgula</button>
+          <button id="confirmBtn" class="primary" type="button" disabled>Girişi Onayla</button>
+          <button id="restartBtn" class="secondary" type="button">Tarayıcıyı Yeniden Başlat</button>
+        </div>
+
+        <div id="statusBox" class="status"></div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-top:0;">
+          <small>Bilet Kodu</small>
+          <strong id="ticketCodeValue">-</strong>
+        </div>
+
+        <div class="row">
+          <small>Bilet Sahibi</small>
+          <strong id="attendeeValue">-</strong>
+        </div>
+
+        <div class="row">
+          <small>Temsil Günü</small>
+          <strong id="dateValue">-</strong>
+        </div>
+
+        <div class="row">
+          <small>Durum</small>
+          <strong id="ticketStatusValue">-</strong>
+        </div>
+
+        <div class="row">
+          <small>Daha Önce Kullanım</small>
+          <strong id="checkedInValue">-</strong>
+        </div>
+
+        <div class="row">
+          <small>Kullanım Zamanı</small>
+          <strong id="checkedInAtValue">-</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const selectedDayInput = document.getElementById("selectedDay");
+    const manualCodeInput = document.getElementById("manualCode");
+    const operatorNameInput = document.getElementById("operatorName");
+    const lookupBtn = document.getElementById("lookupBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const statusBox = document.getElementById("statusBox");
+    const checkedInCountEl = document.getElementById("checkedInCount");
+
+    const ticketCodeValue = document.getElementById("ticketCodeValue");
+    const attendeeValue = document.getElementById("attendeeValue");
+    const dateValue = document.getElementById("dateValue");
+    const ticketStatusValue = document.getElementById("ticketStatusValue");
+    const checkedInValue = document.getElementById("checkedInValue");
+    const checkedInAtValue = document.getElementById("checkedInAtValue");
+
+    const flashGreen = document.getElementById("flashGreen");
+    const flashRed = document.getElementById("flashRed");
+    const flashGreenSub = document.getElementById("flashGreenSub");
+    const flashRedSub = document.getElementById("flashRedSub");
+
+    let html5QrCode = null;
+    let lastScannedCode = "";
+    let currentTicket = null;
+    let audioCtx = null;
+
+    function beep(freq = 880, duration = 160, type = "sine") {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration / 1000);
+      } catch (e) {}
+    }
+
+    function successBeep() {
+      beep(880, 120);
+      setTimeout(() => beep(1174, 140), 130);
+    }
+
+    function errorBeep() {
+      beep(220, 180, "square");
+      setTimeout(() => beep(160, 220, "square"), 180);
+    }
+
+    function showFlash(type, text) {
+      if (type === "green") {
+        flashGreenSub.textContent = text || "";
+        flashGreen.classList.add("show");
+        successBeep();
+        setTimeout(() => flashGreen.classList.remove("show"), 1800);
+      } else {
+        flashRedSub.textContent = text || "";
+        flashRed.classList.add("show");
+        errorBeep();
+        setTimeout(() => flashRed.classList.remove("show"), 2200);
+      }
+    }
+
+    function setStatus(message, type = "ok") {
+      statusBox.className = "status " + type;
+      statusBox.textContent = message;
+    }
+
+    function resetTicketBox() {
+      currentTicket = null;
+      ticketCodeValue.textContent = "-";
+      attendeeValue.textContent = "-";
+      dateValue.textContent = "-";
+      ticketStatusValue.textContent = "-";
+      checkedInValue.textContent = "-";
+      checkedInAtValue.textContent = "-";
+      confirmBtn.disabled = true;
+    }
+
+    function renderTicket(ticket) {
+      currentTicket = ticket;
+      ticketCodeValue.textContent = ticket.ticket_code || "-";
+      attendeeValue.textContent = ticket.attendee_name || ticket.full_name || "-";
+      dateValue.textContent = ticket.attendance_date || "-";
+      ticketStatusValue.textContent = ticket.status || "REGISTERED";
+      checkedInValue.textContent = ticket.checked_in ? "Evet" : "Hayır";
+      checkedInAtValue.textContent = ticket.checked_in_at || "-";
+
+      confirmBtn.disabled = !!ticket.checked_in || ticket.status === "CANCELLED";
+    }
+
+    async function refreshStats() {
+      try {
+        const selectedDay = selectedDayInput.value.trim();
+        const response = await fetch(`/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDay)}`);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          checkedInCountEl.textContent = result.checked_in_count ?? 0;
+        }
+      } catch (e) {}
+    }
+
+    async function lookupTicket(code) {
+      resetTicketBox();
+
+      try {
+        const selectedDay = selectedDayInput.value.trim();
+
+        const response = await fetch(
+          `/api/check-in?code=${encodeURIComponent(code)}&selected_day=${encodeURIComponent(selectedDay)}`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          if (result.ticket) {
+            renderTicket(result.ticket);
+          }
+
+          if (result.reason === "wrong_day") {
+            setStatus(result.error || "Yanlış gün bileti.", "bad");
+            showFlash("red", "Yanlış gün bileti");
+          } else if (result.reason === "cancelled") {
+            setStatus(result.error || "İptal edilmiş bilet.", "bad");
+            showFlash("red", "İptal edilmiş");
+          } else if (result.reason === "already_used") {
+            setStatus(result.error || "Daha önce kullanılmış bilet.", "bad");
+            showFlash("red", "Daha önce kullanılmış");
+          } else {
+            setStatus(result.error || "Bilet bulunamadı.", "bad");
+            showFlash("red", result.error || "Bilet bulunamadı");
+          }
+
+          return;
+        }
+
+        renderTicket(result.ticket);
+
+        if (result.ticket.checked_in) {
+          setStatus("Bu bilet daha önce kullanılmış.", "bad");
+          showFlash("red", "Daha önce kullanılmış");
+        } else {
+          setStatus(`${selectedDay} için geçerli bilet bulundu. Bilgileri kontrol edip girişi onaylayabilirsin.`, "ok");
+          showFlash("green", `${selectedDay} için geçerli`);
+        }
+      } catch (error) {
+        setStatus("Bilet sorgulanamadı.", "bad");
+        showFlash("red", "Sorgu hatası");
+      }
+    }
+
+    async function confirmCheckIn() {
+      if (!currentTicket || !currentTicket.ticket_code) {
+        setStatus("Önce geçerli bir bilet sorgula.", "bad");
+        showFlash("red", "Önce bilet sorgula");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/check-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            code: currentTicket.ticket_code,
+            checked_in_by: operatorNameInput.value.trim(),
+            selected_day: selectedDayInput.value.trim()
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setStatus(result.error || "Giriş onaylanamadı.", "bad");
+          showFlash("red", result.error || "Onay hatası");
+          return;
+        }
+
+        setStatus(result.message || "Giriş başarıyla onaylandı.", "ok");
+        showFlash("green", "Giriş onaylandı");
+        await lookupTicket(currentTicket.ticket_code);
+        await refreshStats();
+      } catch (error) {
+        setStatus("Giriş onayı sırasında hata oluştu.", "bad");
+        showFlash("red", "Onay hatası");
+      }
+    }
+
+    async function startScanner() {
+      if (html5QrCode) {
+        try {
+          await html5QrCode.stop();
+        } catch (e) {}
+      }
+
+      html5QrCode = new Html5Qrcode("reader");
+
+      try {
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 260, height: 260 }
+          },
+          async (decodedText) => {
+            if (!decodedText || decodedText === lastScannedCode) return;
+            lastScannedCode = decodedText;
+            manualCodeInput.value = decodedText;
+            await lookupTicket(decodedText);
+            setTimeout(() => {
+              lastScannedCode = "";
+            }, 2000);
+          },
+          () => {}
+        );
+      } catch (error) {
+        setStatus("Kamera başlatılamadı. Manuel bilet kodu ile deneyebilirsin.", "warn");
+      }
+    }
+
+    lookupBtn.addEventListener("click", async () => {
+      const code = manualCodeInput.value.trim();
+      if (!code) {
+        setStatus("Önce bilet kodu gir veya QR okut.", "bad");
+        showFlash("red", "Kod gir");
+        return;
+      }
+      await lookupTicket(code);
+    });
+
+    confirmBtn.addEventListener("click", confirmCheckIn);
+    restartBtn.addEventListener("click", startScanner);
+    selectedDayInput.addEventListener("change", refreshStats);
+
+    resetTicketBox();
+    refreshStats();
+    startScanner();
+  </script>
+</body>
+</html>
