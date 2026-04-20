@@ -23,9 +23,7 @@
       margin:0 auto;
       padding:24px 0 40px;
     }
-    .head{
-      margin-bottom:18px;
-    }
+    .head{ margin-bottom:18px; }
     .mini{
       font-size:12px;
       letter-spacing:.16em;
@@ -185,17 +183,9 @@
       font-size:clamp(34px, 9vw, 80px);
       letter-spacing:-.04em;
     }
-    .flash-screen.show{
-      display:flex;
-    }
-    .flash-green{
-      background:rgba(10,120,60,.96);
-      color:#fff;
-    }
-    .flash-red{
-      background:rgba(160,25,25,.96);
-      color:#fff;
-    }
+    .flash-screen.show{ display:flex; }
+    .flash-green{ background:rgba(10,120,60,.96); color:#fff; }
+    .flash-red{ background:rgba(160,25,25,.96); color:#fff; }
     .subline{
       display:block;
       margin-top:12px;
@@ -283,7 +273,7 @@
 
         <div class="row">
           <small>Manuel Bilet Kodu</small>
-          <input id="manualCode" class="input" placeholder="Örn: MRM-23NIS-ABC123" />
+          <input id="manualCode" class="input" placeholder="Örn: MRM-23NIS-ABC123 ya da ticket-view linki" />
         </div>
 
         <div class="row">
@@ -448,7 +438,6 @@
       ticketStatusValue.textContent = ticket.status || "REGISTERED";
       checkedInValue.textContent = ticket.checked_in ? "Evet" : "Hayır";
       checkedInAtValue.textContent = ticket.checked_in_at || "-";
-
       confirmBtn.disabled = !!ticket.checked_in || ticket.status === "CANCELLED";
     }
 
@@ -482,9 +471,7 @@
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          if (result.ticket) {
-            renderTicket(result.ticket);
-          }
+          if (result.ticket) renderTicket(result.ticket);
 
           if (result.reason === "wrong_day") {
             setStatus(result.error || "Yanlış gün bileti.", "bad");
@@ -553,9 +540,7 @@
 
     async function startScanner() {
       if (html5QrCode) {
-        try {
-          await html5QrCode.stop();
-        } catch (e) {}
+        try { await html5QrCode.stop(); } catch (e) {}
       }
 
       html5QrCode = new Html5Qrcode("reader");
@@ -563,18 +548,13 @@
       try {
         await html5QrCode.start(
           { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 260, height: 260 }
-          },
+          { fps: 10, qrbox: { width: 260, height: 260 } },
           async (decodedText) => {
             if (!decodedText || decodedText === lastScannedCode) return;
             lastScannedCode = decodedText;
             manualCodeInput.value = decodedText;
             await lookupTicket(decodedText);
-            setTimeout(() => {
-              lastScannedCode = "";
-            }, 2000);
+            setTimeout(() => { lastScannedCode = ""; }, 2000);
           },
           () => {}
         );
