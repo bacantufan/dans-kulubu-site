@@ -86,7 +86,7 @@ export default async function handler(req, res) {
       if (!Array.isArray(rows) || rows.length === 0) {
         return sendJson(res, 404, {
           success: false,
-          error: "Bilet bulunamadı."
+          error: `Bilet bulunamadı. Aranan kod: ${code}`
         });
       }
 
@@ -161,7 +161,7 @@ export default async function handler(req, res) {
       if (!Array.isArray(rows) || rows.length === 0) {
         return sendJson(res, 404, {
           success: false,
-          error: "Bilet bulunamadı."
+          error: `Bilet bulunamadı. Aranan kod: ${code}`
         });
       }
 
@@ -246,7 +246,6 @@ function normalizeScannedValue(value = "") {
   const raw = String(value).trim();
   if (!raw) return "";
 
-  // QR bazen doğrudan ticket code, bazen ticket-view linki olabilir
   if (raw.startsWith("http://") || raw.startsWith("https://")) {
     try {
       const url = new URL(raw);
