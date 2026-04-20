@@ -249,8 +249,16 @@ function normalizeScannedValue(value = "") {
   if (raw.startsWith("http://") || raw.startsWith("https://")) {
     try {
       const url = new URL(raw);
-      const code = url.searchParams.get("code");
-      if (code) return code.trim();
+
+      const codeParam = url.searchParams.get("code");
+      if (codeParam) return codeParam.trim();
+
+      const ticketParam = url.searchParams.get("ticket");
+      if (ticketParam) return ticketParam.trim();
+
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      const lastPart = pathParts[pathParts.length - 1];
+      if (lastPart && lastPart.startsWith("MRM-")) return lastPart.trim();
     } catch (e) {}
   }
 
