@@ -3,97 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUDANSK | Bilet Görüntüle</title>
+  <title>Yudansk Magazine | Bilet Görüntüle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root{
-      --bg:#08080d;
-      --text:#f8f6f2;
-      --muted:#c6bfd3;
-      --gold:#f4c56c;
+      --bg:#080507;
+      --panel:rgba(255,255,255,.06);
       --line:rgba(255,255,255,.10);
+      --text:#f7f1ea;
+      --muted:#cdbfb8;
+      --red:#c60a10;
+      --bordeaux:#57040f;
+      --gold:#f4c56c;
+      --shadow:0 20px 50px rgba(0,0,0,.35);
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:Inter,system-ui,sans-serif;
-      background:linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
+      font-family:"Inter",system-ui,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(198,10,16,.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(87,4,15,.24), transparent 26%),
+        linear-gradient(180deg,#060407 0%, #0b0609 40%, #070507 100%);
       color:var(--text);
     }
+
     .wrap{
       min-height:100vh;
       display:grid;
       place-items:center;
       padding:24px;
     }
-    .card{
-      width:min(100%,700px);
-      border-radius:28px;
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--line);
-      padding:24px;
-      box-shadow:0 20px 50px rgba(0,0,0,.35);
+
+    .shell{
+      width:min(100%, 820px);
     }
-    .mini{
+
+    .head{
+      text-align:center;
+      margin-bottom:18px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#f0d6cb;
       font-size:12px;
+      font-weight:800;
       letter-spacing:.16em;
       text-transform:uppercase;
-      color:var(--gold);
-      font-weight:800;
-      margin-bottom:8px;
     }
+
     h1{
-      margin:0 0 10px;
-      font-size:34px;
+      margin:18px 0 8px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(44px,7vw,78px);
+      line-height:.92;
       letter-spacing:-.04em;
     }
-    p{
+
+    .lead{
+      margin:0 auto;
+      max-width:620px;
       color:var(--muted);
-      line-height:1.7;
-      margin:0 0 18px;
+      line-height:1.85;
+      font-size:15px;
     }
-    .info{
+
+    .ticket-card{
+      width:100%;
+      border-radius:34px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at top left, rgba(198,10,16,.2), transparent 28%),
+        linear-gradient(135deg,#141626 0%, #0f1018 45%, #57040f 100%);
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:var(--shadow);
+    }
+
+    .ticket-inner{
+      display:grid;
+      gap:0;
+    }
+
+    @media (min-width: 760px){
+      .ticket-inner{
+        grid-template-columns:1.06fr .94fr;
+      }
+    }
+
+    .ticket-left{
+      padding:28px 24px 26px;
+      border-right:1px dashed rgba(255,255,255,.12);
+    }
+
+    .ticket-right{
+      padding:28px 24px 26px;
+      background:rgba(255,255,255,.03);
+      text-align:center;
+    }
+
+    .section-mini{
+      font-size:12px;
+      color:var(--gold);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .ticket-title{
+      margin:0 0 16px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:42px;
+      line-height:.92;
+      letter-spacing:-.04em;
+    }
+
+    .info-grid{
       display:grid;
       gap:12px;
-      margin-bottom:20px;
     }
+
     .row{
-      padding:14px;
+      padding:14px 16px;
       border-radius:18px;
-      background:rgba(255,255,255,.04);
+      background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08);
     }
+
     .row small{
       display:block;
-      color:var(--muted);
-      margin-bottom:4px;
+      color:#b7bdcb;
+      margin-bottom:5px;
       font-size:12px;
       text-transform:uppercase;
       letter-spacing:.08em;
     }
+
     .row strong{
+      display:block;
       font-size:16px;
+      line-height:1.6;
       word-break:break-word;
     }
+
     .qr-wrap{
-      margin-top:18px;
-      text-align:center;
-      padding:20px;
-      border-radius:22px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
+      margin-top:8px;
     }
+
     .qr-box{
       display:inline-block;
       background:#fff;
       padding:14px;
-      border-radius:20px;
+      border-radius:22px;
       margin-top:10px;
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
     }
+
     .qr-box img{
       width:min(100%,280px);
       height:auto;
       display:block;
     }
+
+    .hint{
+      margin-top:14px;
+      color:#ded4da;
+      font-size:13px;
+      line-height:1.8;
+    }
+
     .error{
       color:#ffd2d2;
       background:rgba(255,127,127,.08);
@@ -101,17 +190,24 @@
       padding:14px;
       border-radius:16px;
     }
+
     .loading{
       color:var(--muted);
+      padding:16px 0 0;
+      text-align:center;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <div class="mini">YUDANSK Bilet</div>
-      <h1>Bilet Görüntüleme</h1>
-      <p>QR görünmüyorsa veya mail spam klasörüne düştüyse biletini buradan açabilirsin.</p>
+    <div class="shell">
+      <div class="head">
+        <div class="eyebrow">Yudansk Magazine • 21. Dans Festivali</div>
+        <h1>Bilet Görüntüleme</h1>
+        <p class="lead">
+          QR görünmüyorsa veya mail görselleri eksik yükleniyorsa biletini buradan açabilirsin.
+        </p>
+      </div>
 
       <div id="content" class="loading">Bilet bilgileri yükleniyor...</div>
     </div>
@@ -141,29 +237,56 @@
         const qrUrl = `/api/qr?ticket=${encodeURIComponent(data.ticket_code)}`;
 
         content.innerHTML = `
-          <div class="info">
-            <div class="row">
-              <small>Bilet Kodu</small>
-              <strong>${escapeHtml(data.ticket_code)}</strong>
-            </div>
-            <div class="row">
-              <small>Bilet Sahibi</small>
-              <strong>${escapeHtml(data.attendee_name || data.full_name || "-")}</strong>
-            </div>
-            <div class="row">
-              <small>Temsil Günü</small>
-              <strong>${escapeHtml(data.attendance_date || "-")}</strong>
-            </div>
-            <div class="row">
-              <small>Durum</small>
-              <strong>${data.checked_in ? "Kullanıldı" : "Geçerli"}</strong>
-            </div>
-          </div>
+          <div class="ticket-card">
+            <div class="ticket-inner">
+              <div class="ticket-left">
+                <div class="section-mini">Event Ticket</div>
+                <h2 class="ticket-title">Yudansk Magazine</h2>
 
-          <div class="qr-wrap">
-            <div class="mini" style="margin-bottom:0;">QR Giriş Kodu</div>
-            <div class="qr-box">
-              <img src="${qrUrl}" alt="QR Kod">
+                <div class="info-grid">
+                  <div class="row">
+                    <small>Bilet Kodu</small>
+                    <strong>${escapeHtml(data.ticket_code)}</strong>
+                  </div>
+
+                  <div class="row">
+                    <small>Bilet Sahibi</small>
+                    <strong>${escapeHtml(data.attendee_name || data.full_name || "-")}</strong>
+                  </div>
+
+                  <div class="row">
+                    <small>Etkinlik</small>
+                    <strong>Yudansk Magazine • 21. Dans Festivali</strong>
+                  </div>
+
+                  <div class="row">
+                    <small>Tarih & Saat</small>
+                    <strong>5 Mayıs 2026 • 19.00</strong>
+                  </div>
+
+                  <div class="row">
+                    <small>Mekan</small>
+                    <strong>Yeditepe Üniversitesi İnan Kıraç Salonu</strong>
+                  </div>
+
+                  <div class="row">
+                    <small>Durum</small>
+                    <strong>${data.checked_in ? "Kullanıldı" : "Geçerli"}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ticket-right">
+                <div class="section-mini">QR Giriş Kodu</div>
+                <div class="qr-wrap">
+                  <div class="qr-box">
+                    <img src="${qrUrl}" alt="QR Kod">
+                  </div>
+                </div>
+                <p class="hint">
+                  Etkinlik girişinde bu QR kodu görevliye göstermen yeterlidir.
+                </p>
+              </div>
             </div>
           </div>
         `;
