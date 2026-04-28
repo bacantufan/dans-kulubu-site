@@ -2,6 +2,11 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const EVENT_NAME = "Yudansk Magazine";
+const EVENT_DATE = "5 Mayıs 2026";
+const EVENT_TIME = "19.00";
+const EVENT_LOCATION = "Yeditepe Üniversitesi İnan Kıraç Salonu";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return sendJson(res, 405, { success: false, error: "Sadece POST destekleniyor." });
@@ -14,9 +19,6 @@ export default async function handler(req, res) {
       full_name,
       phone,
       email,
-      attendance_date,
-      paid_ticket_quantity,
-      bonus_ticket_quantity,
       ticket_quantity,
       attendee_names,
       rep,
@@ -31,7 +33,6 @@ export default async function handler(req, res) {
       ["full_name", full_name],
       ["phone", phone],
       ["email", email],
-      ["attendance_date", attendance_date],
       ["rep", rep],
       ["receipt_note", receipt_note],
       ["receipt_path", receipt_path],
@@ -49,54 +50,12 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { success: false, error: "Onay kutusu zorunlu." });
     }
 
-    // 21 Nisan kapalı
-    const allowedDates = new Set(["22 Nisan", "23 Nisan", "24 Nisan"]);
-    if (!allowedDates.has(attendance_date)) {
-      return sendJson(res, 400, { success: false, error: "Seçtiğiniz gün için kayıt alınmıyor." });
-    }
+    const quantity = Number(ticket_quantity || 1);
 
-    function getTicketSummary(date, paidQty) {
-      let bonusQty = 0;
-
-      if (date === "23 Nisan") {
-        if (paidQty === 2) bonusQty = 1;
-        if (paidQty === 4) bonusQty = 2;
-      }
-
-      return {
-        paidQty,
-        bonusQty,
-        totalQty: paidQty + bonusQty
-      };
-    }
-
-    const paidQty = Number(paid_ticket_quantity || 1);
-
-    if (!Number.isInteger(paidQty) || paidQty < 1) {
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 5) {
       return sendJson(res, 400, {
         success: false,
-        error: "Geçersiz ücretli bilet adedi."
-      });
-    }
-
-    // 23 Nisan kampanyasında sadece 1 / 2 / 4 ücretli paket kullandıralım
-    if (attendance_date === "23 Nisan" && ![1, 2, 4].includes(paidQty)) {
-      return sendJson(res, 400, {
-        success: false,
-        error: "23 Nisan için sadece 1, 2 veya 4 ücretli bilet seçilebilir."
-      });
-    }
-
-    const summary = getTicketSummary(attendance_date, paidQty);
-    const quantity = summary.totalQty;
-
-    if (
-      Number(ticket_quantity) !== summary.totalQty ||
-      Number(bonus_ticket_quantity || 0) !== summary.bonusQty
-    ) {
-      return sendJson(res, 400, {
-        success: false,
-        error: "Bilet kampanya bilgisi doğrulanamadı."
+        error: "Bilet adedi 1 ile 5 arasında olmalıdır."
       });
     }
 
@@ -125,9 +84,9 @@ export default async function handler(req, res) {
     }
 
     const emailLower = email.trim().toLowerCase();
-    const trimmedDate = attendance_date.trim();
+    const trimmedDate = EVENT_DATE;
 
-    // Aynı email aynı gün için ikinci sipariş açamasın
+    // Aynı email ile aynı etkinliğe ikinci kayıt açılmasın
     const existingResponse = await fetch(
       `${supabaseUrl}/rest/v1/registrations?select=id&email=eq.${encodeURIComponent(emailLower)}&attendance_date=eq.${encodeURIComponent(trimmedDate)}&limit=1`,
       {
@@ -153,11 +112,11 @@ export default async function handler(req, res) {
     if (Array.isArray(existingRows) && existingRows.length > 0) {
       return sendJson(res, 400, {
         success: false,
-        error: "Aynı e-posta adresi ile aynı güne ikinci kez bilet alınamaz. Farklı bir gün seçebilirsiniz."
+        error: "Aynı e-posta adresi ile bu etkinlik için ikinci kez bilet alınamaz."
       });
     }
 
-    const dayCode = getDayCode(trimmedDate);
+    const dayCode = "05MAY";
     const orderCode = `ORD-${dayCode}-${randomCode(6)}`;
 
     const insertPayload = Array.from({ length: quantity }, (_, index) => {
@@ -172,9 +131,7 @@ export default async function handler(req, res) {
         phone: phone.trim(),
         email: emailLower,
         attendance_date: trimmedDate,
-        paid_ticket_quantity: summary.paidQty,
-        bonus_ticket_quantity: summary.bonusQty,
-        ticket_quantity: summary.totalQty,
+        ticket_quantity: quantity,
         ticket_index: index + 1,
         rep: rep.trim(),
         receipt_note: receipt_note.trim(),
@@ -220,11 +177,9 @@ export default async function handler(req, res) {
 
     const emailHtml = buildTicketEmail({
       fullName: full_name.trim(),
-      attendanceDate: trimmedDate,
+      eventDate: trimmedDate,
       orderCode,
       quantity,
-      paidQty: summary.paidQty,
-      bonusQty: summary.bonusQty,
       tickets
     });
 
@@ -234,7 +189,7 @@ export default async function handler(req, res) {
       const emailResult = await resend.emails.send({
         from: mailFrom,
         to: [emailLower],
-        subject: `Muhteşem Renkler Müzikali Biletlerin • ${trimmedDate}`,
+        subject: `${EVENT_NAME} Biletlerin • ${trimmedDate}`,
         html: emailHtml
       });
 
@@ -265,9 +220,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
               order_code: row.order_code || orderCode,
-              paid_ticket_quantity: row.paid_ticket_quantity || summary.paidQty,
-              bonus_ticket_quantity: row.bonus_ticket_quantity || summary.bonusQty,
-              ticket_quantity: row.ticket_quantity || summary.totalQty,
+              ticket_quantity: row.ticket_quantity || quantity,
               ticket_index: row.ticket_index,
               ticket_code: row.ticket_code,
               attendee_name: row.attendee_name || "",
@@ -297,9 +250,7 @@ export default async function handler(req, res) {
         : "Kayıt oluşturuldu ve bilet e-postası gönderildi.",
       order_code: orderCode,
       attendance_date: trimmedDate,
-      paid_ticket_quantity: summary.paidQty,
-      bonus_ticket_quantity: summary.bonusQty,
-      ticket_quantity: summary.totalQty
+      ticket_quantity: quantity
     });
   } catch (error) {
     console.error("REGISTER API ERROR:", error);
@@ -334,9 +285,9 @@ async function updateRegistrationStatus({
   );
 }
 
-function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQty, bonusQty, tickets }) {
+function buildTicketEmail({ fullName, eventDate, orderCode, quantity, tickets }) {
   const ticketCards = tickets.map((ticket) => `
-    <div style="margin-top:18px;border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
+    <div style="margin-top:18px;border-radius:26px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);overflow:hidden;">
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
         <tr>
           <td valign="top" style="padding:22px;border-right:1px dashed rgba(255,255,255,.12);width:55%;">
@@ -350,11 +301,21 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQ
             </div>
 
             <div style="margin-bottom:16px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Etkinlik</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${EVENT_NAME}</div>
             </div>
 
             <div style="margin-bottom:16px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Tarih</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(eventDate)} • ${EVENT_TIME}</div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Mekan</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${EVENT_LOCATION}</div>
+            </div>
+
+            <div>
               <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Bilet Kodu</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(ticket.ticketCode)}</div>
             </div>
@@ -370,7 +331,7 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQ
             </div>
 
             <div style="margin-top:14px;text-align:center;">
-              <a href="${ticket.ticketPageUrl}" style="display:inline-block;padding:12px 16px;border-radius:14px;background:#f4c56c;color:#17120a;font-weight:800;text-decoration:none;">
+              <a href="${ticket.ticketPageUrl}" style="display:inline-block;padding:12px 16px;border-radius:14px;background:#c60a10;color:#ffffff;font-weight:800;text-decoration:none;">
                 Biletimi Gör
               </a>
             </div>
@@ -380,49 +341,46 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQ
     </div>
   `).join("");
 
-  const promoText = bonusQty > 0
-    ? `${paidQty} ücretli bilet + ${bonusQty} ücretsiz bilet`
-    : `${paidQty} ücretli bilet`;
-
   return `
   <div style="margin:0;padding:0;background:#0b0c12;font-family:Inter,Arial,sans-serif;color:#f7f3ea;">
     <div style="max-width:760px;margin:0 auto;padding:32px 16px;">
       <div style="text-align:center;margin-bottom:24px;">
         <div style="display:inline-block;padding:8px 14px;border-radius:999px;background:#1a1c25;color:#f4c56c;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">
-          YUDANSK Bilet
+          Yudansk Magazine
         </div>
       </div>
 
-      <div style="border-radius:28px;overflow:hidden;background:linear-gradient(135deg,#141626 0%,#0e1018 55%,#17111d 100%);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 50px rgba(0,0,0,.35);">
-        <div style="padding:28px 24px 18px;background:radial-gradient(circle at top left, rgba(245,83,153,.18), transparent 30%),radial-gradient(circle at top right, rgba(143,107,255,.18), transparent 30%);">
+      <div style="border-radius:30px;overflow:hidden;background:linear-gradient(135deg,#141626 0%,#0e1018 45%,#57040f 100%);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 50px rgba(0,0,0,.35);">
+        <div style="padding:30px 24px 18px;background:radial-gradient(circle at top left, rgba(198,10,16,.22), transparent 30%),radial-gradient(circle at top right, rgba(166,166,134,.12), transparent 28%);">
           <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f4c56c;font-weight:700;margin-bottom:10px;">
-            Muhteşem Renkler Müzikali
+            21. Dans Festivali
           </div>
-          <h1 style="margin:0;font-size:34px;line-height:1;color:#ffffff;letter-spacing:-.04em;">
+          <h1 style="margin:0;font-size:38px;line-height:1;color:#ffffff;letter-spacing:-.04em;font-family:Georgia,serif;">
             Biletlerin Hazır
           </h1>
-          <p style="margin:14px 0 0;color:#c9bfd8;font-size:15px;line-height:1.7;">
-            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor. QR görseli mail içinde görünmüyorsa her bilet için “Biletimi Gör” bağlantısını kullanabilirsin.
+          <p style="margin:14px 0 0;color:#d9cfd7;font-size:15px;line-height:1.8;">
+            Merhaba ${escapeHtml(fullName)}, başvurun başarıyla tamamlandı. Aşağıda siparişine ait ${quantity} adet bilet ve QR kodları yer alıyor.
+            QR görseli mail içinde görünmüyorsa her bilet için “Biletimi Gör” bağlantısını kullanabilirsin.
           </p>
 
           <div style="margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);">
             <div style="margin-bottom:10px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Sipariş Kodu</div>
+              <div style="color:#aeb4c4;font-size:12px;margin-bottom:4px;">Sipariş Kodu</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:.08em;">${escapeHtml(orderCode)}</div>
             </div>
 
             <div style="margin-bottom:10px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Temsil Günü</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(attendanceDate)}</div>
+              <div style="color:#aeb4c4;font-size:12px;margin-bottom:4px;">Etkinlik</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${EVENT_NAME}</div>
             </div>
 
             <div style="margin-bottom:10px;">
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Paket</div>
-              <div style="color:#ffffff;font-size:16px;font-weight:700;">${promoText}</div>
+              <div style="color:#aeb4c4;font-size:12px;margin-bottom:4px;">Tarih & Saat</div>
+              <div style="color:#ffffff;font-size:16px;font-weight:700;">${escapeHtml(eventDate)} • ${EVENT_TIME}</div>
             </div>
 
             <div>
-              <div style="color:#8f94a8;font-size:12px;margin-bottom:4px;">Toplam Bilet</div>
+              <div style="color:#aeb4c4;font-size:12px;margin-bottom:4px;">Toplam Bilet</div>
               <div style="color:#ffffff;font-size:16px;font-weight:700;">${quantity}</div>
             </div>
           </div>
@@ -432,7 +390,7 @@ function buildTicketEmail({ fullName, attendanceDate, orderCode, quantity, paidQ
           ${ticketCards}
 
           <div style="margin-top:18px;padding:16px 18px;border-radius:18px;background:rgba(244,197,108,.08);border:1px solid rgba(244,197,108,.18);color:#f3e4bf;font-size:13px;line-height:1.7;">
-            Bu e-posta otomatik olarak oluşturulmuştur. Etkinlik günü değişikliği veya destek taleplerin için YUDANSK organizasyon ekibiyle iletişime geçebilirsin.
+            Bu e-posta otomatik olarak oluşturulmuştur. Etkinlik günü değişikliği veya destek taleplerin için Yudansk organizasyon ekibiyle iletişime geçebilirsin.
           </div>
         </div>
       </div>
@@ -471,13 +429,4 @@ function randomCode(length = 6) {
     output += chars[Math.floor(Math.random() * chars.length)];
   }
   return output;
-}
-
-function getDayCode(attendanceDate) {
-  const map = {
-    "22 Nisan": "22NIS",
-    "23 Nisan": "23NIS",
-    "24 Nisan": "24NIS"
-  };
-  return map[attendanceDate] || "DAY";
 }
