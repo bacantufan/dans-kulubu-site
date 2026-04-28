@@ -1010,7 +1010,23 @@
           .replace(/^-|-$/g, "");
 
         const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
-        const dayFolder = "5-Mayis-2026";
+
+const dayFolder = attendanceDateValue
+  .normalize("NFKD")
+  .replace(/ı/g, "i")
+  .replace(/İ/g, "I")
+  .replace(/ş/g, "s")
+  .replace(/Ş/g, "S")
+  .replace(/ğ/g, "g")
+  .replace(/Ğ/g, "G")
+  .replace(/ü/g, "u")
+  .replace(/Ü/g, "U")
+  .replace(/ö/g, "o")
+  .replace(/Ö/g, "O")
+  .replace(/ç/g, "c")
+  .replace(/Ç/g, "C")
+  .replace(/[^\w.\- ]+/g, "")
+  .replace(/\s+/g, "-");
         const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
 
         const { error: uploadError } = await supabaseClient.storage
