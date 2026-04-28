@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUDANSK | Check-in</title>
+  <title>Yudansk Magazine | Check-in</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root{
@@ -15,7 +15,7 @@
     body{
       margin:0;
       font-family:Inter,system-ui,sans-serif;
-      background:linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
+      background:linear-gradient(180deg,#060407 0%, #0b0609 40%, #070507 100%);
       color:var(--text);
     }
     .wrap{
@@ -109,7 +109,7 @@
       font-size:16px;
       word-break:break-word;
     }
-    .input, .select{
+    .input{
       width:100%;
       min-height:50px;
       padding:12px 14px;
@@ -245,7 +245,7 @@
 <body>
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-card">
-      <div class="mini">YUDANSK Check-in</div>
+      <div class="mini">Yudansk Magazine • Check-in</div>
       <h1 style="font-size:28px;">Yetkili Girişi</h1>
       <p style="margin-bottom:14px;">Bu sayfayı kullanmak için check-in şifresini girin.</p>
       <input id="checkinPassword" class="input" type="password" placeholder="Şifre" />
@@ -272,20 +272,15 @@
 
   <div class="wrap">
     <div class="head">
-      <div class="mini">YUDANSK Check-in</div>
-      <h1>Bilet Okuma ve Giriş Onayı</h1>
-      <p>Önce günü seç, QR okut. Geçerliyse giriş otomatik alınır.</p>
+      <div class="mini">Yudansk Magazine • 5 Mayıs 2026</div>
+      <h1>Bilet Okuma ve Giriş</h1>
+      <p>QR okutulduğunda geçerli biletler otomatik olarak check-in olur.</p>
     </div>
 
     <div class="topbar">
       <div class="day-card">
-        <small style="display:block;color:#c6bfd3;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Giriş Alınan Gün</small>
-        <select id="selectedDay" class="select">
-          <option value="21 Nisan">21 Nisan</option>
-          <option value="22 Nisan">22 Nisan</option>
-          <option value="23 Nisan">23 Nisan</option>
-          <option value="24 Nisan">24 Nisan</option>
-        </select>
+        <small style="display:block;color:#c6bfd3;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Etkinlik</small>
+        <div style="font-size:18px;font-weight:800;">5 Mayıs 2026 • Yudansk Magazine</div>
       </div>
 
       <div class="stats-card">
@@ -300,7 +295,7 @@
 
         <div class="row">
           <small>Manuel Bilet Kodu</small>
-          <input id="manualCode" class="input" placeholder="Örn: MRM-23NIS-ABC123 ya da ticket-view linki" />
+          <input id="manualCode" class="input" placeholder="Örn: MRM-05MAY-ABC123 ya da ticket-view linki" />
         </div>
 
         <div class="row">
@@ -345,7 +340,7 @@
         </div>
 
         <div class="row">
-          <small>Temsil Günü</small>
+          <small>Etkinlik Tarihi</small>
           <strong id="dateValue">-</strong>
         </div>
 
@@ -373,7 +368,6 @@
     const loginBtn = document.getElementById("loginBtn");
     const loginStatus = document.getElementById("loginStatus");
 
-    const selectedDayInput = document.getElementById("selectedDay");
     const manualCodeInput = document.getElementById("manualCode");
     const operatorNameInput = document.getElementById("operatorName");
     const lookupBtn = document.getElementById("lookupBtn");
@@ -485,11 +479,7 @@
 
     async function refreshStats() {
       try {
-        const selectedDay = selectedDayInput.value.trim();
-        const response = await fetch(
-          `/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDay)}`,
-          { headers: authHeaders() }
-        );
+        const response = await fetch(`/api/check-in?mode=stats`, { headers: authHeaders() });
         const result = await response.json();
         if (response.ok && result.success) {
           checkedInCountEl.textContent = result.checked_in_count ?? 0;
@@ -499,11 +489,7 @@
 
     async function loadList() {
       try {
-        const selectedDay = selectedDayInput.value.trim();
-        const response = await fetch(
-          `/api/check-in?mode=list&selected_day=${encodeURIComponent(selectedDay)}`,
-          { headers: authHeaders() }
-        );
+        const response = await fetch(`/api/check-in?mode=list`, { headers: authHeaders() });
         const result = await response.json();
 
         if (!response.ok || !result.success) {
@@ -532,8 +518,7 @@
     }
 
     async function undoLastCheckIn() {
-      const selectedDay = selectedDayInput.value.trim();
-      if (!confirm(`${selectedDay} için son check-in geri alınsın mı?`)) return;
+      if (!confirm("Son check-in geri alınsın mı?")) return;
 
       try {
         const response = await fetch("/api/check-in", {
@@ -543,8 +528,7 @@
             ...authHeaders()
           },
           body: JSON.stringify({
-            action: "undo_last",
-            selected_day: selectedDay
+            action: "undo_last"
           })
         });
 
@@ -580,7 +564,7 @@
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${selectedDayInput.value.trim()}-checkin-listesi.csv`;
+      a.download = `5-Mayis-2026-checkin-listesi.csv`;
       a.click();
 
       URL.revokeObjectURL(url);
@@ -590,10 +574,8 @@
       resetTicketBox();
 
       try {
-        const selectedDay = selectedDayInput.value.trim();
-
         const response = await fetch(
-          `/api/check-in?code=${encodeURIComponent(code)}&selected_day=${encodeURIComponent(selectedDay)}`,
+          `/api/check-in?code=${encodeURIComponent(code)}`,
           { headers: authHeaders() }
         );
 
@@ -629,8 +611,7 @@
           },
           body: JSON.stringify({
             code: result.ticket.ticket_code,
-            checked_in_by: operatorNameInput.value.trim(),
-            selected_day: selectedDay
+            checked_in_by: operatorNameInput.value.trim()
           })
         });
 
@@ -646,8 +627,8 @@
         checkedInValue.textContent = "Evet";
         checkedInAtValue.textContent = new Date().toISOString();
 
-        setStatus(`${selectedDay} için geçerli bilet bulundu ve giriş alındı.`, "ok");
-        showFlash("green", `${selectedDay} için giriş alındı`);
+        setStatus("Geçerli bilet bulundu ve giriş alındı.", "ok");
+        showFlash("green", "Giriş alındı");
 
         await refreshStats();
         await loadList();
@@ -692,11 +673,7 @@
       sessionStorage.setItem("checkin_password", password);
 
       try {
-        const response = await fetch(
-          `/api/check-in?mode=stats&selected_day=${encodeURIComponent(selectedDayInput.value.trim())}`,
-          { headers: authHeaders() }
-        );
-
+        const response = await fetch(`/api/check-in?mode=stats`, { headers: authHeaders() });
         const result = await response.json();
 
         if (!response.ok || !result.success) {
@@ -742,10 +719,6 @@
     viewListBtn.addEventListener("click", loadList);
     downloadListBtn.addEventListener("click", downloadCsv);
     undoLastBtn.addEventListener("click", undoLastCheckIn);
-    selectedDayInput.addEventListener("change", async () => {
-      await refreshStats();
-      listContainer.style.display = "none";
-    });
 
     resetTicketBox();
   </script>
