@@ -1,3 +1,5 @@
+const EVENT_DATE = "5 Mayıs 2026";
+
 export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -22,15 +24,10 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const mode = String(req.query?.mode || "").trim();
-      const selectedDay = String(req.query?.selected_day || "").trim();
 
       if (mode === "stats") {
-        if (!selectedDay) {
-          return sendJson(res, 400, { success: false, error: "selected_day zorunlu." });
-        }
-
         const response = await fetch(
-          `${supabaseUrl}/rest/v1/registrations?select=id&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true`,
+          `${supabaseUrl}/rest/v1/registrations?select=id&attendance_date=eq.${encodeURIComponent(EVENT_DATE)}&checked_in=is.true`,
           {
             method: "GET",
             headers: buildHeaders(serviceRoleKey)
@@ -55,12 +52,8 @@ export default async function handler(req, res) {
       }
 
       if (mode === "list") {
-        if (!selectedDay) {
-          return sendJson(res, 400, { success: false, error: "selected_day zorunlu." });
-        }
-
         const response = await fetch(
-          `${supabaseUrl}/rest/v1/registrations?select=ticket_code,attendee_name,full_name,attendance_date,checked_in_at,checked_in_by,ticket_index,order_code&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true&order=checked_in_at.desc`,
+          `${supabaseUrl}/rest/v1/registrations?select=ticket_code,attendee_name,full_name,attendance_date,checked_in_at,checked_in_by,ticket_index,order_code&attendance_date=eq.${encodeURIComponent(EVENT_DATE)}&checked_in=is.true&order=checked_in_at.desc`,
           {
             method: "GET",
             headers: buildHeaders(serviceRoleKey)
@@ -131,10 +124,10 @@ export default async function handler(req, res) {
         });
       }
 
-      if (selectedDay && ticket.attendance_date !== selectedDay) {
+      if (ticket.attendance_date !== EVENT_DATE) {
         return sendJson(res, 400, {
           success: false,
-          error: `Bu bilet ${ticket.attendance_date} için geçerli. Seçili gün: ${selectedDay}.`,
+          error: `Bu bilet ${ticket.attendance_date} için geçerli. Bu giriş ekranı sadece ${EVENT_DATE} için kullanılabilir.`,
           reason: "wrong_day",
           ticket
         });
@@ -160,17 +153,8 @@ export default async function handler(req, res) {
       const action = String(body?.action || "").trim();
 
       if (action === "undo_last") {
-        const selectedDay = String(body?.selected_day || "").trim();
-
-        if (!selectedDay) {
-          return sendJson(res, 400, {
-            success: false,
-            error: "selected_day zorunlu."
-          });
-        }
-
         const lookupResponse = await fetch(
-          `${supabaseUrl}/rest/v1/registrations?select=id,ticket_code,attendee_name,attendance_date,checked_in,checked_in_at&attendance_date=eq.${encodeURIComponent(selectedDay)}&checked_in=is.true&order=checked_in_at.desc&limit=1`,
+          `${supabaseUrl}/rest/v1/registrations?select=id,ticket_code,attendee_name,attendance_date,checked_in,checked_in_at&attendance_date=eq.${encodeURIComponent(EVENT_DATE)}&checked_in=is.true&order=checked_in_at.desc&limit=1`,
           {
             method: "GET",
             headers: buildHeaders(serviceRoleKey)
@@ -229,7 +213,6 @@ export default async function handler(req, res) {
       const rawCode = String(body?.code || "").trim();
       const code = normalizeScannedValue(rawCode);
       const checkedInBy = String(body?.checked_in_by || "").trim();
-      const selectedDay = String(body?.selected_day || "").trim();
 
       if (!code) {
         return sendJson(res, 400, {
@@ -275,10 +258,10 @@ export default async function handler(req, res) {
         });
       }
 
-      if (selectedDay && ticket.attendance_date !== selectedDay) {
+      if (ticket.attendance_date !== EVENT_DATE) {
         return sendJson(res, 400, {
           success: false,
-          error: `Bu bilet ${ticket.attendance_date} için geçerli. Seçili gün: ${selectedDay}.`,
+          error: `Bu bilet ${ticket.attendance_date} için geçerli. Bu giriş ekranı sadece ${EVENT_DATE} için kullanılabilir.`,
           reason: "wrong_day",
           ticket
         });
