@@ -3,56 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUDANSK | Muhteşem Renkler Müzikali Bilet</title>
-  <meta name="description" content="Muhteşem Renkler Müzikali bilet ve kayıt sayfası" />
+  <title>Yudansk Magazine | Bilet Al</title>
+  <meta
+    name="description"
+    content="Yudansk Magazine için biletini al. 5 Mayıs 2026, 19.00, Yeditepe Üniversitesi İnan Kıraç Salonu."
+  />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root{
-      --bg:#08080d;
-      --bg2:#11111a;
-      --text:#f8f6f2;
-      --muted:#c6bfd3;
-      --gold:#f4c56c;
-      --gold2:#ff9f43;
-      --pink:#f55399;
-      --violet:#8f6bff;
-      --green:#84f6b7;
-      --card:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --shadow:0 20px 50px rgba(0,0,0,.35);
-      --max:1180px;
+      --bg:#070405;
+      --bg-soft:#10070a;
+      --panel:rgba(255,255,255,.06);
+      --panel-2:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.12);
+      --text:#f7f1ea;
+      --muted:#ccbdb7;
+      --red:#c60a10;
+      --bordeaux:#57040f;
+      --olive:#a6a686;
+      --cream:#f3e7d7;
+      --shadow:0 24px 70px rgba(0,0,0,.35);
     }
 
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
       margin:0;
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-family:"Inter",system-ui,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at 15% 10%, rgba(245,83,153,.18), transparent 25%),
-        radial-gradient(circle at 85% 15%, rgba(143,107,255,.18), transparent 25%),
-        radial-gradient(circle at 50% 100%, rgba(244,197,108,.10), transparent 35%),
-        linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
-      overflow-x:hidden;
+        radial-gradient(circle at top left, rgba(198,10,16,.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(87,4,15,.26), transparent 25%),
+        linear-gradient(180deg,#050304 0%,#0d0508 34%,#070405 100%);
     }
 
+    img{max-width:100%;display:block}
     a{text-decoration:none;color:inherit}
-    .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
 
-    .topbar{
-      position:sticky;top:0;z-index:30;
-      backdrop-filter:blur(16px);
-      background:rgba(8,8,13,.72);
+    .container{
+      width:min(1180px, calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter:blur(18px);
+      background:rgba(7,4,6,.64);
       border-bottom:1px solid rgba(255,255,255,.08);
     }
 
-    .topbar-inner{
-      min-height:72px;
+    .header-inner{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      gap:16px;
+      padding:14px 0;
     }
 
     .brand{
@@ -63,18 +76,25 @@
     }
 
     .brand-mark{
-      width:42px;height:42px;border-radius:14px;
-      display:grid;place-items:center;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--red),#ff4949);
+      display:grid;
+      place-items:center;
+      color:#fff;
       font-weight:900;
-      background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      flex-shrink:0;
+      font-size:14px;
+      box-shadow:0 10px 28px rgba(198,10,16,.35);
+      flex:0 0 auto;
     }
 
     .brand-text strong{
       display:block;
       font-size:14px;
-      letter-spacing:.12em;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      white-space:nowrap;
     }
 
     .brand-text span{
@@ -82,314 +102,242 @@
       font-size:12px;
       color:var(--muted);
       white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
 
-    .btn{
-      display:inline-flex;
+    .nav{
+      display:flex;
       align-items:center;
-      justify-content:center;
       gap:10px;
-      padding:14px 18px;
-      border-radius:16px;
-      font-weight:800;
-      font-size:14px;
-      transition:.2s ease;
-      border:1px solid rgba(255,255,255,.12);
-      cursor:pointer;
-      white-space:nowrap;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
-    .btn:hover{transform:translateY(-1px)}
-
-    .btn-primary{
-      color:#130f08;
-      background:linear-gradient(135deg,var(--gold),var(--gold2));
-      border:none;
-      box-shadow:0 12px 30px rgba(244,197,108,.22);
+    .nav-link{
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--muted);
+      transition:.25s ease;
     }
 
-    .btn-secondary{
+    .nav-link:hover{
       background:rgba(255,255,255,.06);
       color:#fff;
     }
 
-    .hero{
-      padding:24px 0 18px;
-    }
-
-    .hero-card{
-      border-radius:30px;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
-        linear-gradient(135deg, rgba(244,197,108,.10), rgba(245,83,153,.08), rgba(143,107,255,.08));
-      padding:24px 18px;
-      box-shadow:var(--shadow);
-    }
-
-    .pill-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-bottom:16px;
-    }
-
-    .pill{
-      padding:8px 12px;
+    .nav-cta{
+      padding:12px 18px;
       border-radius:999px;
-      font-size:12px;
+      background:linear-gradient(135deg,var(--red),#ff4a4a);
+      color:#fff;
+      font-size:13px;
       font-weight:800;
-      color:var(--muted);
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 14px 30px rgba(198,10,16,.25);
     }
 
-    .pill-live{
-      color:#130f08;
-      background:linear-gradient(135deg,var(--gold),var(--gold2));
-      border:none;
+    .page{
+      padding:28px 0 44px;
     }
 
-    .hero h1{
-      margin:0;
-      font-size:clamp(34px, 9vw, 58px);
-      line-height:.96;
-      letter-spacing:-.05em;
-    }
-
-    .hero p{
-      margin:14px 0 0;
-      max-width:58ch;
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.7;
-    }
-
-    .hero-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin-top:20px;
-    }
-
-    .section{padding:18px 0 80px}
-
-    .section-head{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
+    .hero{
+      display:grid;
+      gap:18px;
+      align-items:stretch;
       margin-bottom:18px;
     }
 
-    .section-head .mini{
-      font-size:12px;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      font-weight:800;
-      color:var(--gold);
+    @media (min-width: 980px){
+      .hero{
+        grid-template-columns:1.02fr .98fr;
+      }
     }
 
-    .section-head h2{
+    .hero-copy,
+    .hero-visual,
+    .panel,
+    .payment-card{
+      border-radius:30px;
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .hero-copy{
+      padding:30px;
+      background:
+        radial-gradient(circle at top left, rgba(198,10,16,.18), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      color:#f0d7cb;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .hero-copy h1{
+      margin:18px 0 12px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(52px,8vw,92px);
+      line-height:.9;
+      letter-spacing:-.05em;
+      font-weight:700;
+    }
+
+    .hero-copy p{
       margin:0;
-      font-size:clamp(28px,7vw,42px);
-      line-height:1.04;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.88;
+      max-width:620px;
+    }
+
+    .hero-meta{
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      margin:24px 0 0;
+    }
+
+    @media (max-width: 600px){
+      .hero-meta{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .meta-card{
+      padding:16px;
+      border-radius:20px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .meta-card small{
+      display:block;
+      margin-bottom:6px;
+      color:#e5cfc4;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:900;
+    }
+
+    .meta-card strong{
+      display:block;
+      font-size:18px;
+      line-height:1.5;
+    }
+
+    .hero-visual{
+      min-height:540px;
+      position:relative;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.28)),
+        url("assets/magazine-hero.jpeg") center/cover no-repeat;
+    }
+
+    .hero-price{
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      width:min(84%, 280px);
+      padding:18px;
+      border-radius:26px;
+      background:linear-gradient(180deg, rgba(87,4,15,.88), rgba(198,10,16,.72));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .hero-price small{
+      display:block;
+      color:#f5d6d6;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:8px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .hero-price strong{
+      display:block;
+      font-size:36px;
+      font-weight:900;
+      line-height:1;
+    }
+
+    .hero-price p{
+      margin:10px 0 0;
+      color:#f3d9d9;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .layout{
+      display:grid;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media (min-width: 1040px){
+      .layout{
+        grid-template-columns:1.08fr .92fr;
+      }
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      padding:24px;
+    }
+
+    .section-kicker{
+      display:block;
+      margin-bottom:8px;
+      color:#ffb7b7;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-weight:900;
+    }
+
+    .panel h2{
+      margin:0 0 10px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(38px,4.6vw,62px);
+      line-height:.95;
       letter-spacing:-.04em;
     }
 
-    .section-head p{
-      margin:0;
+    .panel-intro{
       color:var(--muted);
       font-size:15px;
-      line-height:1.7;
-      max-width:65ch;
-    }
-
-    .ticket-grid{
-      display:grid;
-      gap:14px;
-    }
-
-    .box{
-      border-radius:24px;
-      padding:18px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:var(--shadow);
-    }
-
-    .price-card{
-      border-radius:24px;
-      padding:18px;
-      background:
-        linear-gradient(135deg, rgba(244,197,108,.18), rgba(255,159,67,.12)),
-        rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      margin-bottom:14px;
-      box-shadow:var(--shadow);
-    }
-
-    .price-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .price-top h3{
-      margin:0;
-      font-size:20px;
-      line-height:1.1;
-    }
-
-    .price-pill{
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:800;
-      letter-spacing:.08em;
-      color:#1b1202;
-      background:linear-gradient(135deg, #ffe29d, #ffbe61);
-      text-transform:uppercase;
-      white-space:nowrap;
-    }
-
-    .price-value{
-      display:flex;
-      align-items:flex-end;
-      gap:8px;
-      margin-bottom:8px;
-    }
-
-    .price-value strong{
-      font-size:clamp(36px, 9vw, 52px);
-      line-height:.9;
-      letter-spacing:-.05em;
-    }
-
-    .price-value span{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:4px;
-    }
-
-    .benefits{
-      display:grid;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .benefit{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-
-    .benefit i{
-      font-style:normal;
-      color:var(--gold);
-      margin-top:1px;
-    }
-
-    .box h3{
-      margin:0 0 10px;
-      font-size:20px;
-    }
-
-    .box p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.65;
-    }
-
-    .steps{
-      display:grid;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .step{
-      padding:14px;
-      border-radius:16px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .copy-list{
-      display:grid;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .copy-row{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      align-items:center;
-      padding:12px;
-      border-radius:16px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .copy-row small{
-      display:block;
-      color:var(--muted);
-      font-size:11px;
-      margin-bottom:4px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .copy-row strong{
-      display:block;
-      font-size:14px;
-      line-height:1.45;
-      word-break:break-word;
-    }
-
-    .copy-btn{
-      min-width:92px;
-      height:42px;
-      border:none;
-      border-radius:12px;
-      font-weight:800;
-      background:rgba(255,255,255,.08);
-      color:white;
-      border:1px solid rgba(255,255,255,.12);
-      cursor:pointer;
-    }
-
-    .copy-btn.done{
-      background:rgba(132,246,183,.14);
-      border-color:rgba(132,246,183,.28);
-      color:#b8ffd6;
-    }
-
-    .warning{
-      margin-top:14px;
-      padding:14px;
-      border-radius:16px;
-      background:rgba(255,127,127,.08);
-      border:1px solid rgba(255,127,127,.16);
-      color:#ffd2d2;
-      font-size:13px;
-      line-height:1.6;
+      line-height:1.85;
+      margin-bottom:22px;
+      max-width:760px;
     }
 
     .form-grid{
       display:grid;
-      gap:12px;
-      margin-top:14px;
+      gap:14px;
+    }
+
+    .form-grid.two{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    @media (max-width: 760px){
+      .form-grid.two{
+        grid-template-columns:1fr;
+      }
     }
 
     .field{
@@ -399,723 +347,746 @@
 
     .field label{
       font-size:13px;
-      font-weight:700;
-      color:#fff;
+      font-weight:800;
+      color:#f1e4dd;
+      letter-spacing:.02em;
     }
 
-    .field .req{color:var(--gold)}
+    .req{
+      color:#ff8f8f;
+    }
 
     .field input,
     .field select,
     .field textarea{
       width:100%;
-      min-height:52px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
+      min-height:54px;
+      padding:14px 15px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.05);
       color:#fff;
-      padding:14px;
-      font-size:15px;
       outline:none;
+      font-size:15px;
+      transition:.2s ease;
     }
 
     .field textarea{
-      min-height:120px;
+      min-height:118px;
       resize:vertical;
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder{
-      color:#9d95ac;
+      font-family:inherit;
     }
 
     .field input:focus,
     .field select:focus,
     .field textarea:focus{
-      border-color:rgba(244,197,108,.45);
-      box-shadow:0 0 0 4px rgba(244,197,108,.08);
+      border-color:rgba(255,255,255,.26);
+      background:rgba(255,255,255,.07);
     }
 
     .field-note{
       color:var(--muted);
       font-size:12px;
-      line-height:1.55;
+      line-height:1.7;
     }
 
     .upload-box{
-      padding:16px;
-      border-radius:20px;
+      padding:14px;
+      border-radius:22px;
       border:1px dashed rgba(255,255,255,.18);
-      background:rgba(255,255,255,.04);
-    }
-
-    .upload-box input[type="file"]{
-      border:none;
-      background:transparent;
-      padding:0;
-      min-height:auto;
+      background:rgba(255,255,255,.03);
     }
 
     .consent{
       display:flex;
       align-items:flex-start;
-      gap:10px;
-      padding:14px;
-      border-radius:16px;
+      gap:12px;
+      margin-top:16px;
+      padding:16px;
+      border-radius:20px;
       background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.07);
-      color:var(--muted);
+      border:1px solid rgba(255,255,255,.1);
+      color:#eadbd4;
       font-size:13px;
-      line-height:1.6;
-      margin-top:12px;
+      line-height:1.8;
     }
 
     .consent input{
       margin-top:3px;
-      transform:scale(1.12);
+      accent-color:var(--red);
+      width:18px;
+      height:18px;
+      flex:0 0 auto;
     }
 
     .submit-row{
-      display:grid;
-      gap:12px;
-      margin-top:14px;
+      margin-top:18px;
+    }
+
+    .btn{
+      min-height:56px;
+      padding:0 22px;
+      border:none;
+      border-radius:18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      transition:.25s ease;
+      text-decoration:none;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,var(--red),#ff4a4a);
+      color:#fff;
+      box-shadow:0 18px 36px rgba(198,10,16,.28);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-2px);
+    }
+
+    .submit-main-btn{
+      width:100%;
     }
 
     .submit-note{
-      text-align:center;
+      margin-top:12px;
       color:var(--muted);
       font-size:12px;
-      line-height:1.6;
+      line-height:1.7;
+    }
+
+    .refund-note{
+      margin-top:12px;
+      color:#f1ddd2;
+      font-size:13px;
+      line-height:1.7;
+      font-weight:800;
     }
 
     .fake-success{
       display:none;
-      margin-top:14px;
-      padding:14px;
-      border-radius:16px;
-      background:rgba(132,246,183,.1);
-      border:1px solid rgba(132,246,183,.2);
-      color:#cffff0;
+      margin-top:16px;
+      padding:16px 18px;
+      border-radius:18px;
+      font-size:14px;
+      line-height:1.75;
+      font-weight:700;
+    }
+
+    .payment-card{
+      background:
+        radial-gradient(circle at top left, rgba(198,10,16,.18), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      padding:24px;
+      position:sticky;
+      top:88px;
+    }
+
+    .payment-card h3{
+      margin:0 0 10px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:42px;
+      line-height:.95;
+      letter-spacing:-.04em;
+    }
+
+    .payment-card p{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.85;
+    }
+
+    .payment-box{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      margin-bottom:14px;
+    }
+
+    .payment-box small{
+      display:block;
+      color:#f0d6cb;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:8px;
+      font-weight:900;
+    }
+
+    .copy-line{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .copy-line:last-child{
+      border-bottom:none;
+      padding-bottom:0;
+    }
+
+    .copy-line:first-child{
+      padding-top:0;
+    }
+
+    .copy-text{
+      min-width:0;
+    }
+
+    .copy-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .copy-text strong{
+      display:block;
       font-size:14px;
       line-height:1.6;
+      word-break:break-word;
     }
 
-    .mobile-cta{
-      position:fixed;
-      left:12px;
-      right:12px;
-      bottom:12px;
-      z-index:50;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      align-items:center;
-      padding:10px;
-      border-radius:18px;
-      background:rgba(10,10,14,.92);
-      backdrop-filter:blur(16px);
+    .copy-btn{
+      border:none;
+      cursor:pointer;
+      min-height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      flex:0 0 auto;
+      transition:.2s ease;
+    }
+
+    .copy-btn:hover{
+      background:rgba(255,255,255,.14);
+    }
+
+    .copy-btn.done{
+      background:linear-gradient(135deg,var(--red),#ff4a4a);
+    }
+
+    .price-card{
+      margin-top:16px;
+      padding:18px;
+      border-radius:24px;
+      background:linear-gradient(135deg, rgba(87,4,15,.82), rgba(198,10,16,.7));
       border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 18px 50px rgba(0,0,0,.35);
     }
 
-    .mobile-cta small{
+    .price-card small{
       display:block;
-      color:var(--muted);
-      font-size:11px;
+      color:#f5d6d6;
+      font-size:12px;
       text-transform:uppercase;
-      letter-spacing:.08em;
-      margin-bottom:2px;
+      letter-spacing:.12em;
+      font-weight:900;
+      margin-bottom:8px;
     }
 
-    .mobile-cta strong{
+    .price-card strong{
       display:block;
-      font-size:15px;
-      line-height:1.1;
-    }
-    .submit-main-btn{
-  width:min(100%, 420px);
-  min-height:56px;
-  margin:0 auto;
-  display:flex;
-  font-size:16px;
-  font-weight:900;
-  border-radius:18px;
-}
-
-.refund-note{
-  text-align:center;
-  font-size:13px;
-  line-height:1.7;
-  font-weight:800;
-  color:#ffd7a0;
-  margin-top:2px;
-}
-    .submit-main-btn{
-  width:min(100%, 420px);
-  min-height:56px;
-  margin:0 auto;
-  display:flex;
-  font-size:16px;
-  font-weight:900;
-  border-radius:18px;
-}
-
-.refund-note{
-  text-align:center;
-  font-size:13px;
-  line-height:1.7;
-  font-weight:800;
-  color:#ffd7a0;
-  margin-top:2px;
-}
-
-    @media (min-width:760px){
-      .container{width:min(var(--max),calc(100% - 40px))}
-      .ticket-grid{
-        grid-template-columns:.94fr 1.06fr;
-        gap:18px;
-      }
-      .form-grid.two{
-        grid-template-columns:repeat(2,1fr);
-      }
+      font-size:38px;
+      font-weight:900;
+      line-height:1;
     }
 
-    @media (min-width:1024px){
-      .mobile-cta{display:none}
+    .price-card p{
+      margin:10px 0 0;
+      color:#f1d8d1;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .poster-grid{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .poster-grid img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 760px){
+      .header-inner{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .nav{
+        width:100%;
+        justify-content:flex-start;
+      }
+
+      .hero-visual{
+        min-height:420px;
+      }
+
+      .payment-card{
+        position:static;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container">
-      <div class="topbar-inner">
-        <a href="index.html" class="brand">
-          <div class="brand-mark">YD</div>
-          <div class="brand-text">
-            <strong>YUDANSK</strong>
-            <span>Muhteşem Renkler Müzikali • Bilet</span>
-          </div>
-        </a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-mark">YD</div>
+        <div class="brand-text">
+          <strong>Yudansk Magazine</strong>
+          <span>21. Dans Festivali</span>
+        </div>
+      </a>
 
-        <a href="index.html" class="btn btn-secondary">Ana Sayfa</a>
-      </div>
+      <nav class="nav">
+        <a class="nav-link" href="index.html#festival">Festival</a>
+        <a class="nav-link" href="index.html#spotlight">Spotlight</a>
+        <a class="nav-link" href="index.html#gallery">Galeri</a>
+        <a class="nav-cta" href="index.html">Ana Sayfa</a>
+      </nav>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-card">
-          <div class="pill-row">
-            <span class="pill pill-live">Bilet Satışı</span>
-            <span class="pill">22 • 23 • 24 Nisan</span>
-            <span class="pill">QR ile Giriş</span>
-          </div>
-
-          <h1>Yerini Ayır.</h1>
+  <main class="page">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Biletleme • Dışarıdan Katılıma Açık</div>
+          <h1>Yudansk<br />Magazine</h1>
           <p>
-            Muhteşem Renkler Müzikali için katılmak istediğin temsil gününü seçebilir, aynı sipariş içinde birden fazla bilet oluşturabilirsin.
+            21. yılımızda, stilin ritimle buluştuğu bu gece için yerini ayırt.
+            Biletleme altyapısı aynı kalıyor; sadece bu sayfa yeni etkinliğin
+            editorial estetiğiyle yeniden tasarlandı.
           </p>
 
-          <div class="hero-actions">
-            <a href="#formAlani" class="btn btn-primary">Kayıt Formuna Git</a>
-            <a href="index.html" class="btn btn-secondary">Tanıtım Sayfasına Dön</a>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <small>Tarih & Saat</small>
+              <strong>5 Mayıs 2026<br />19.00</strong>
+            </div>
+            <div class="meta-card">
+              <small>Mekan</small>
+              <strong>Yeditepe Üniversitesi<br />İnan Kıraç Salonu</strong>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="section-head">
-          <span class="mini">Bilet / Kayıt</span>
-          <h2>Bilet ve temsil günü seçimi</h2>
-          <p>
-            Aşağıda etkinlik bilet bilgisi, ödeme detayları ve kayıt formu yer alıyor. Kaç bilet almak istediğini seçebilir, toplam tutarı otomatik olarak görebilirsin.
+        <div class="hero-visual">
+          <div class="hero-price">
+            <small>Bilet Bedeli</small>
+            <strong>450 TL</strong>
+            <p>
+              Etkinliğimiz biletlidir. Dışarıdan katılıma açıktır.
+              Dekont yükleyerek başvurunu tamamlayabilirsin.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="layout">
+        <section class="panel">
+          <span class="section-kicker">Kayıt Formu</span>
+          <h2>Biletini şimdi ayırt.</h2>
+          <p class="panel-intro">
+            Formu eksiksiz doldur, ödeme dekontunu yükle ve bilet başvurunu tamamla.
+            Çoklu bilet alımında her katılımcı için ayrı isim girmen gerekir.
           </p>
-        </div>
 
-        <div class="ticket-grid">
-          <div>
-            <div class="price-card">
-              <div class="price-top">
-                <div>
-                  <h3>Genel Katılım Bileti</h3>
-                  <p style="margin-top:8px;color:var(--muted);font-size:14px;line-height:1.6;">
-                    Seçtiğin temsil günü için geçerli olacak şekilde çoklu bilet alımı yapabilirsin. Her bilet için ayrı QR kod üretilecektir.
-                  </p>
-                </div>
-                <span class="price-pill">Satışta</span>
+          <form id="ticketForm">
+            <input id="attendanceDate" name="attendanceDate" type="hidden" value="5 Mayıs 2026" />
+
+            <div class="form-grid two">
+              <div class="field">
+                <label for="fullName">Ad Soyad <span class="req">*</span></label>
+                <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required />
               </div>
 
-              <div class="price-value">
-                <strong id="copy-amount">600₺</strong>
-                <span>/ toplam</span>
-              </div>
-
-              <div class="benefits">
-                <div class="benefit"><i>•</i><span>Etkinliğe giriş hakkı</span></div>
-                <div class="benefit"><i>•</i><span>Her bilet için ayrı QR kayıt</span></div>
-                <div class="benefit"><i>•</i><span>Tek mail içinde tüm biletlerin gönderimi</span></div>
+              <div class="field">
+                <label for="phone">Telefon <span class="req">*</span></label>
+                <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required />
               </div>
             </div>
 
-            <div class="box">
-              <h3>Ödeme adımları</h3>
-              <p>
-                Lütfen ödemeni aşağıdaki hesap bilgileri üzerinden tamamla ve ardından dekontunu forma ekleyerek kayıt sürecini bitir.
-              </p>
-
-              <div class="steps">
-                <div class="step">1) Aşağıdaki hesap bilgilerine havale / EFT yap.</div>
-                <div class="step">2) Açıklama kısmına <strong>Ad Soyad - Katılım Gösterilecek Gün</strong> yaz.</div>
-                <div class="step">3) Dekontunu kaydet ve kayıt formuna yükle.</div>
-                <div class="step">4) Formda katılacağın günü ve bilet adedini seçerek başvurunu tamamla.</div>
+            <div class="form-grid two">
+              <div class="field">
+                <label for="email">E-posta <span class="req">*</span></label>
+                <input id="email" name="email" type="email" placeholder="ornek@mail.com" required />
               </div>
 
-              <div class="copy-list">
-                <div class="copy-row">
-                  <div>
-                    <small>Alıcı Adı</small>
-                    <strong id="copy-name">Yeditepe Üniversitesi Rektörlüğü Döner Sermaye İşletmesi</strong>
-                  </div>
-                  <button type="button" class="copy-btn" data-copy-target="copy-name">Kopyala</button>
-                </div>
-
-                <div class="copy-row">
-                  <div>
-                    <small>IBAN</small>
-                    <strong id="copy-iban">TR81 0006 7010 0000 0092 8550 91</strong>
-                  </div>
-                  <button type="button" class="copy-btn" data-copy-target="copy-iban">Kopyala</button>
-                </div>
-
-                <div class="copy-row">
-                  <div>
-                    <small>Tutar</small>
-                    <strong id="copy-amount-2">600₺</strong>
-                  </div>
-                  <button type="button" class="copy-btn" data-copy-target="copy-amount-2">Kopyala</button>
-                </div>
-
-                <div class="copy-row">
-                  <div>
-                    <small>Açıklama</small>
-                    <strong id="copy-desc">Ad Soyad - Katılım Gösterilecek Gün</strong>
-                  </div>
-                  <button type="button" class="copy-btn" data-copy-target="copy-desc">Kopyala</button>
-                </div>
-              </div>
-
-              <div class="warning">
-                Ödeme yaptıktan sonra dekontunu yüklemeden form gönderimi yapma. Her bilet için ayrı QR kod oluşturulacaktır.
+              <div class="field">
+                <label for="ticketQuantity">Kaç bilet almak istiyorsunuz? <span class="req">*</span></label>
+                <select id="ticketQuantity" name="ticketQuantity" required>
+                  <option value="1">1 Bilet</option>
+                  <option value="2">2 Bilet</option>
+                  <option value="3">3 Bilet</option>
+                  <option value="4">4 Bilet</option>
+                  <option value="5">5 Bilet</option>
+                </select>
               </div>
             </div>
-          </div>
 
-          <div id="formAlani">
-            <div class="box">
-              <h3>Kayıt formu</h3>
-              <p>
-                Lütfen aşağıdaki bilgileri eksiksiz doldur. Aynı e-posta ile aynı temsil gününe ikinci sipariş açılamaz; ancak tek sipariş içinde birden fazla bilet alabilirsin.
-              </p>
+            <div class="form-grid two">
+              <div class="field">
+                <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
+                <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required />
+              </div>
 
-   <form id="ticketForm">
-  <div class="form-grid two">
-    <div class="field">
-      <label for="fullName">Ad Soyad <span class="req">*</span></label>
-      <input id="fullName" name="fullName" type="text" placeholder="Adınızı ve soyadınızı yazın" required>
-    </div>
+              <div class="field">
+                <label for="eventInfo">Etkinlik Bilgisi</label>
+                <input id="eventInfo" type="text" value="5 Mayıs 2026 • 19.00 • İnan Kıraç Salonu" readonly />
+              </div>
+            </div>
 
-    <div class="field">
-      <label for="phone">Telefon <span class="req">*</span></label>
-      <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required>
-    </div>
-  </div>
+            <div id="extraAttendeesWrap" class="field" style="display:none; margin-top:12px;">
+              <label>Diğer katılımcıların ad soyad bilgileri <span class="req">*</span></label>
+              <div id="extraAttendeesList" class="form-grid"></div>
+              <div class="field-note">
+                Birden fazla bilet seçtiğinde, tüm ek katılımcıların isimlerini eksiksiz girmen gerekir.
+              </div>
+            </div>
 
-  <div class="form-grid two">
-    <div class="field">
-      <label for="email">E-posta <span class="req">*</span></label>
-      <input id="email" name="email" type="email" placeholder="ornek@mail.com" required>
-    </div>
+            <div class="field">
+              <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
+              <textarea
+                id="receiptNote"
+                name="receiptNote"
+                placeholder="Dekont açıklamasında yazan adı / notu girin"
+                required
+              ></textarea>
+            </div>
 
-    <div class="field">
-      <label for="attendanceDate">Hangi gün katılacaksınız? <span class="req">*</span></label>
-      <select id="attendanceDate" name="attendanceDate" required>
-        <option value="">Temsil günü seçiniz</option>
-        <option>22 Nisan</option>
-        <option>23 Nisan</option>
-        <option>24 Nisan</option>
-      </select>
-    </div>
-  </div>
+            <div class="field" style="margin-top:12px;">
+              <label>Dekont Yükle <span class="req">*</span></label>
+              <div class="upload-box">
+                <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required />
+                <div class="field-note">
+                  JPG, PNG veya PDF yükleyebilirsin. Maksimum 10 MB.
+                </div>
+              </div>
+            </div>
 
-  <div class="form-grid two">
-    <div class="field">
-      <label for="ticketQuantity">Kaç ücretli bilet almak istiyorsunuz? <span class="req">*</span></label>
-      <select id="ticketQuantity" name="ticketQuantity" required>
-        <option value="1">1 Ücretli Bilet</option>
-        <option value="2">2 Ücretli Bilet</option>
-        <option value="4">4 Ücretli Bilet</option>
-      </select>
-    </div>
+            <label class="consent">
+              <input id="consentApproved" type="checkbox" required />
+              <span>
+                Girdiğim bilgilerin biletleme, etkinlik iletişimi ve giriş işlemleri amacıyla kullanılmasını kabul ediyorum.
+              </span>
+            </label>
 
-    <div class="field">
-      <label for="rep">Temsilci / Yönlendiren Kişi <span class="req">*</span></label>
-      <input id="rep" name="rep" type="text" placeholder="Yoksa - yazın" required>
-    </div>
-  </div>
+            <div class="submit-row">
+              <button id="submitBtn" type="submit" class="btn btn-primary submit-main-btn">Başvuruyu Tamamla</button>
+              <div class="submit-note">
+                Formu göndermeden önce iletişim bilgilerini, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
+              </div>
+              <div class="refund-note">
+                NOT: Satın alınan biletlerde iptal, iade ve değişiklik yapılamamaktadır.
+              </div>
+            </div>
 
-  <div id="extraAttendeesWrap" class="field" style="display:none; margin-top:12px;">
-    <label>Diğer katılımcıların ad soyad bilgileri <span class="req">*</span></label>
-    <div id="extraAttendeesList" class="form-grid"></div>
-    <div class="field-note">
-      Birden fazla veya kampanyalı bilet seçtiğinde, tüm ek katılımcıların isimlerini eksiksiz girmen gerekir.
-    </div>
-  </div>
+            <div class="fake-success" id="fakeSuccess"></div>
+          </form>
+        </section>
 
-  <div class="field">
-    <label for="receiptNote">Dekont Açıklaması / Not <span class="req">*</span></label>
-    <textarea id="receiptNote" name="receiptNote" placeholder="Açıklama kısmına yazdığınız ifadeyi girin" required></textarea>
-  </div>
+        <aside class="payment-card">
+          <span class="section-kicker">Ödeme Bilgileri</span>
+          <h3>Ödemeyi yap, dekontu yükle.</h3>
+          <p>
+            Havale/EFT sonrası dekontunu forma yükleyerek başvurunu tamamlayabilirsin.
+            Aşağıdaki bilgileri kopyalayarak işlemini hızlıca tamamla.
+          </p>
 
-  <div class="field" style="margin-top:12px;">
-    <label>Dekont Yükle <span class="req">*</span></label>
-    <div class="upload-box">
-      <input id="receiptFile" name="receiptFile" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
-      <div class="field-note">
-        JPG, PNG veya PDF yükleyebilirsin.
-      </div>
-    </div>
-  </div>
+          <div class="payment-box">
+            <small>Hesap Bilgileri</small>
 
-  <label class="consent">
-    <input id="consentApproved" type="checkbox" required>
-    <span>
-      Girdiğim bilgilerin biletleme, temsil günü planlaması ve etkinlik iletişimi amacıyla kullanılmasını kabul ediyorum.
-    </span>
-  </label>
+            <div class="copy-line">
+              <div class="copy-text">
+                <span>Alıcı</span>
+                <strong id="copy-recipient">Yeditepe Üniversitesi Rektörlüğü Döner Sermaye İşletmesi</strong>
+              </div>
+              <button class="copy-btn" data-copy-target="copy-recipient" type="button">Kopyala</button>
+            </div>
 
-  <div class="submit-row">
-    <button id="submitBtn" type="submit" class="btn btn-primary submit-main-btn">Kaydı Tamamla</button>
-    <div class="submit-note">
-      Formu göndermeden önce iletişim bilgilerini, temsil gününü, bilet adedini ve dekont dosyanı kontrol etmeyi unutma.
-    </div>
-    <div class="refund-note">
-      NOT: Satın alınan biletlerde iptal, iade ve değişiklik yapılamamaktadır.
-    </div>
-  </div>
+            <div class="copy-line">
+              <div class="copy-text">
+                <span>IBAN</span>
+                <strong id="copy-iban">TR81 0006 7010 0000 0092 8550 91</strong>
+              </div>
+              <button class="copy-btn" data-copy-target="copy-iban" type="button">Kopyala</button>
+            </div>
 
-  <div class="fake-success" id="fakeSuccess"></div>
-</form>
+            <div class="copy-line">
+              <div class="copy-text">
+                <span>Ödenecek Tutar</span>
+                <strong id="copy-amount">450₺</strong>
+              </div>
+              <button class="copy-btn" data-copy-target="copy-amount" type="button">Kopyala</button>
+            </div>
+
+            <div class="copy-line">
+              <div class="copy-text">
+                <span>Dekont Açıklaması</span>
+                <strong id="copy-note">Yudansk Magazine Bilet</strong>
+              </div>
+              <button class="copy-btn" data-copy-target="copy-note" type="button">Kopyala</button>
             </div>
           </div>
-        </div>
+
+          <div class="price-card">
+            <small>Toplam Tutar</small>
+            <strong id="copy-amount-2">450₺</strong>
+            <p>
+              Çoklu bilet seçiminde toplam tutar otomatik güncellenir. Her bilet için ayrı giriş kodu oluşturulur.
+            </p>
+          </div>
+
+          <div class="poster-grid">
+            <img src="assets/high-heels-red.jpeg" alt="High Heels kırmızı görsel" />
+            <img src="assets/open-style-bordeaux.jpeg" alt="Open Style bordo görsel" />
+            <img src="assets/high-heels-green.jpeg" alt="High Heels green görsel" />
+            <img src="assets/magazine-pin.jpeg" alt="Yudansk pin görseli" />
+          </div>
+        </aside>
       </div>
-    </section>
+    </div>
   </main>
 
-  <div class="mobile-cta">
-    <div>
-      <small>Muhteşem Renkler Müzikali</small>
-      <strong>Formu aşağıda doldur</strong>
-    </div>
-    <a href="#formAlani" class="btn btn-primary">Forma Git</a>
-  </div>
-
   <script>
-  const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
+    const SUPABASE_URL = "https://aslwragnzivojorpyuas.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_D9C-flgUHSMEk68O2UfmHQ_eE_ZQyAw";
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
+        }
       }
-    }
-  );
+    );
 
-  const copyButtons = document.querySelectorAll(".copy-btn");
-  const ticketQuantity = document.getElementById("ticketQuantity");
-  const attendanceDate = document.getElementById("attendanceDate");
-  const amountText1 = document.getElementById("copy-amount");
-  const amountText2 = document.getElementById("copy-amount-2");
-  const extraAttendeesWrap = document.getElementById("extraAttendeesWrap");
-  const extraAttendeesList = document.getElementById("extraAttendeesList");
-
-  try {
-    localStorage.removeItem("supabase.auth.token");
-  } catch (e) {}
-
-  function getTicketSummary(date, paidQty) {
-    let bonusQty = 0;
-
-    if (date === "23 Nisan") {
-      if (paidQty === 2) bonusQty = 1;
-      if (paidQty === 4) bonusQty = 2;
-    }
-
-    return {
-      paidQty,
-      bonusQty,
-      totalQty: paidQty + bonusQty
-    };
-  }
-
-  function refreshTicketOptions() {
-    const selectedDate = attendanceDate.value.trim();
-    const currentValue = ticketQuantity.value;
-
-    ticketQuantity.innerHTML = "";
-
-    const addOption = (value, label) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
-      ticketQuantity.appendChild(option);
-    };
-
-    if (selectedDate === "23 Nisan") {
-      addOption("1", "1 Ücretli Bilet");
-      addOption("2", "2 Ücretli Bilet (+1 Bedava)");
-      addOption("4", "4 Ücretli Bilet (+2 Bedava)");
-    } else {
-      addOption("1", "1 Bilet");
-      addOption("2", "2 Bilet");
-      addOption("3", "3 Bilet");
-      addOption("4", "4 Bilet");
-      addOption("5", "5 Bilet");
-    }
-
-    const validValues = Array.from(ticketQuantity.options).map(opt => opt.value);
-    ticketQuantity.value = validValues.includes(currentValue) ? currentValue : validValues[0];
-  }
-
-  function updateTotalAmount() {
-    const paidQty = Number(ticketQuantity.value || 1);
-    const selectedDate = attendanceDate.value.trim();
-    const summary = getTicketSummary(selectedDate, paidQty);
-
-    const total = summary.paidQty * 600;
-
-    amountText1.innerText = `${total}₺`;
-    amountText2.innerText = `${total}₺`;
-
-    const existingPromoNote = document.getElementById("promoNote");
-    if (existingPromoNote) existingPromoNote.remove();
-
-    if (selectedDate === "23 Nisan" && summary.bonusQty > 0) {
-      const note = document.createElement("div");
-      note.id = "promoNote";
-      note.className = "field-note";
-      note.style.marginTop = "8px";
-      note.style.color = "#ffd7a0";
-      note.innerText = `${summary.paidQty} ücretli bilet için ${summary.bonusQty} ücretsiz bilet eklendi. Toplam bilet: ${summary.totalQty}`;
-      ticketQuantity.parentElement.appendChild(note);
-    }
-  }
-
-  function renderExtraAttendees() {
-    const paidQty = Number(ticketQuantity.value || 1);
-    const selectedDate = attendanceDate.value.trim();
-    const summary = getTicketSummary(selectedDate, paidQty);
-
-    extraAttendeesList.innerHTML = "";
-
-    if (summary.totalQty <= 1) {
-      extraAttendeesWrap.style.display = "none";
-      return;
-    }
-
-    extraAttendeesWrap.style.display = "grid";
-
-    for (let i = 2; i <= summary.totalQty; i++) {
-      const field = document.createElement("div");
-      field.className = "field";
-      field.innerHTML = `
-        <label for="attendee_${i}">${i}. Bilet Sahibi Ad Soyad <span class="req">*</span></label>
-        <input id="attendee_${i}" name="attendee_${i}" type="text" placeholder="${i}. katılımcının adı soyadı" required>
-      `;
-      extraAttendeesList.appendChild(field);
-    }
-  }
-
-  function refreshTicketUI() {
-    refreshTicketOptions();
-    updateTotalAmount();
-    renderExtraAttendees();
-  }
-
-  copyButtons.forEach((button) => {
-    button.addEventListener("click", async () => {
-      const targetId = button.getAttribute("data-copy-target");
-      const target = document.getElementById(targetId);
-      if (!target) return;
-
-      const text = target.innerText.trim();
-
-      try {
-        await navigator.clipboard.writeText(text);
-        const original = button.innerText;
-        button.innerText = "Kopyalandı";
-        button.classList.add("done");
-
-        setTimeout(() => {
-          button.innerText = original;
-          button.classList.remove("done");
-        }, 1500);
-      } catch (err) {
-        alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
-      }
-    });
-  });
-
-  attendanceDate.addEventListener("change", refreshTicketUI);
-  ticketQuantity.addEventListener("change", () => {
-    updateTotalAmount();
-    renderExtraAttendees();
-  });
-
-  refreshTicketUI();
-
-  const ticketForm = document.getElementById("ticketForm");
-  const fakeSuccess = document.getElementById("fakeSuccess");
-  const submitBtn = document.getElementById("submitBtn");
-
-  function showMessage(message, isSuccess = true) {
-    fakeSuccess.style.display = "block";
-    fakeSuccess.innerText = message;
-
-    if (isSuccess) {
-      fakeSuccess.style.background = "rgba(132,246,183,.1)";
-      fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
-      fakeSuccess.style.color = "#cffff0";
-    } else {
-      fakeSuccess.style.background = "rgba(255,127,127,.1)";
-      fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
-      fakeSuccess.style.color = "#ffd2d2";
-    }
-
-    fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  ticketForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    fakeSuccess.style.display = "none";
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Gönderiliyor...";
+    const copyButtons = document.querySelectorAll(".copy-btn");
+    const ticketQuantity = document.getElementById("ticketQuantity");
+    const amountText1 = document.getElementById("copy-amount");
+    const amountText2 = document.getElementById("copy-amount-2");
+    const extraAttendeesWrap = document.getElementById("extraAttendeesWrap");
+    const extraAttendeesList = document.getElementById("extraAttendeesList");
 
     try {
-      const receiptFile = document.getElementById("receiptFile").files[0];
-      const consentApproved = document.getElementById("consentApproved").checked;
+      localStorage.removeItem("supabase.auth.token");
+    } catch (e) {}
 
-      if (!receiptFile) {
-        throw new Error("Dekont dosyası zorunlu.");
+    function updateTotalAmount() {
+      const quantity = Number(ticketQuantity.value || 1);
+      const total = quantity * 450;
+      amountText1.innerText = `${total}₺`;
+      amountText2.innerText = `${total}₺`;
+    }
+
+    function renderExtraAttendees() {
+      const quantity = Number(ticketQuantity.value || 1);
+      extraAttendeesList.innerHTML = "";
+
+      if (quantity <= 1) {
+        extraAttendeesWrap.style.display = "none";
+        return;
       }
 
-      const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-      if (!allowedTypes.includes(receiptFile.type)) {
-        throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
+      extraAttendeesWrap.style.display = "grid";
+
+      for (let i = 2; i <= quantity; i++) {
+        const field = document.createElement("div");
+        field.className = "field";
+        field.innerHTML = `
+          <label for="attendee_${i}">${i}. Bilet Sahibi Ad Soyad <span class="req">*</span></label>
+          <input id="attendee_${i}" name="attendee_${i}" type="text" placeholder="${i}. katılımcının adı soyadı" required>
+        `;
+        extraAttendeesList.appendChild(field);
+      }
+    }
+
+    copyButtons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        const targetId = button.getAttribute("data-copy-target");
+        const target = document.getElementById(targetId);
+        if (!target) return;
+
+        const text = target.innerText.trim();
+
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = button.innerText;
+          button.innerText = "Kopyalandı";
+          button.classList.add("done");
+
+          setTimeout(() => {
+            button.innerText = original;
+            button.classList.remove("done");
+          }, 1500);
+        } catch (err) {
+          alert("Kopyalama başarısız oldu. Lütfen manuel kopyalayın.");
+        }
+      });
+    });
+
+    ticketQuantity.addEventListener("change", () => {
+      updateTotalAmount();
+      renderExtraAttendees();
+    });
+
+    updateTotalAmount();
+    renderExtraAttendees();
+
+    const ticketForm = document.getElementById("ticketForm");
+    const fakeSuccess = document.getElementById("fakeSuccess");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function showMessage(message, isSuccess = true) {
+      fakeSuccess.style.display = "block";
+      fakeSuccess.innerText = message;
+
+      if (isSuccess) {
+        fakeSuccess.style.background = "rgba(132,246,183,.1)";
+        fakeSuccess.style.border = "1px solid rgba(132,246,183,.2)";
+        fakeSuccess.style.color = "#cffff0";
+      } else {
+        fakeSuccess.style.background = "rgba(255,127,127,.1)";
+        fakeSuccess.style.border = "1px solid rgba(255,127,127,.2)";
+        fakeSuccess.style.color = "#ffd2d2";
       }
 
-      const maxFileSizeMB = 10;
-      const maxBytes = maxFileSizeMB * 1024 * 1024;
+      fakeSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
 
-      if (receiptFile.size > maxBytes) {
-        throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
-      }
+    ticketForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-      const safeFileName = receiptFile.name
-        .normalize("NFKD")
-        .replace(/[^\w.\-]+/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
+      fakeSuccess.style.display = "none";
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Gönderiliyor...";
 
-      const attendanceDateValue = attendanceDate.value.trim();
-      const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
-      const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
+      try {
+        const receiptFile = document.getElementById("receiptFile").files[0];
+        const consentApproved = document.getElementById("consentApproved").checked;
 
-      const { error: uploadError } = await supabaseClient.storage
-        .from("receipts")
-        .upload(uploadPath, receiptFile, {
-          contentType: receiptFile.type,
-          upsert: false
+        if (!receiptFile) {
+          throw new Error("Dekont dosyası zorunlu.");
+        }
+
+        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+        if (!allowedTypes.includes(receiptFile.type)) {
+          throw new Error("Sadece JPG, PNG veya PDF yükleyebilirsin.");
+        }
+
+        const maxFileSizeMB = 10;
+        const maxBytes = maxFileSizeMB * 1024 * 1024;
+
+        if (receiptFile.size > maxBytes) {
+          throw new Error(`Dekont dosyası çok büyük. Lütfen ${maxFileSizeMB} MB veya daha küçük bir dosya yükle.`);
+        }
+
+        const safeFileName = receiptFile.name
+          .normalize("NFKD")
+          .replace(/[^\w.\-]+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+
+        const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
+        const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
+        const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from("receipts")
+          .upload(uploadPath, receiptFile, {
+            contentType: receiptFile.type,
+            upsert: false
+          });
+
+        if (uploadError) {
+          throw new Error(uploadError.message || "Dekont yüklenemedi.");
+        }
+
+        const quantityValue = Number(document.getElementById("ticketQuantity").value || 1);
+        const attendeeNames = [];
+
+        for (let i = 2; i <= quantityValue; i++) {
+          const input = document.getElementById(`attendee_${i}`);
+          if (!input || !input.value.trim()) {
+            throw new Error(`${i}. bilet sahibi için ad soyad bilgisi zorunlu.`);
+          }
+          attendeeNames.push(input.value.trim());
+        }
+
+        const payload = {
+          full_name: document.getElementById("fullName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          attendance_date: attendanceDateValue,
+          ticket_quantity: quantityValue,
+          attendee_names: attendeeNames,
+          rep: document.getElementById("rep").value.trim(),
+          receipt_note: document.getElementById("receiptNote").value.trim(),
+          receipt_path: uploadPath,
+          receipt_file_name: receiptFile.name,
+          receipt_file_mime: receiptFile.type,
+          consent_approved: consentApproved
+        };
+
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
         });
 
-      if (uploadError) {
-        throw new Error(uploadError.message || "Dekont yüklenemedi.");
-      }
+        const rawText = await response.text();
 
-      const paidQtyValue = Number(ticketQuantity.value || 1);
-      const summary = getTicketSummary(attendanceDateValue, paidQtyValue);
-
-      const attendeeNames = [];
-
-      for (let i = 2; i <= summary.totalQty; i++) {
-        const input = document.getElementById(`attendee_${i}`);
-        if (!input || !input.value.trim()) {
-          throw new Error(`${i}. bilet sahibi için ad soyad bilgisi zorunlu.`);
+        let result;
+        try {
+          result = JSON.parse(rawText);
+        } catch {
+          throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
         }
-        attendeeNames.push(input.value.trim());
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Kayıt oluşturulamadı.");
+        }
+
+        showMessage(
+          `${result.attendance_date} için başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
+          true
+        );
+
+        ticketForm.reset();
+        document.getElementById("attendanceDate").value = "5 Mayıs 2026";
+        updateTotalAmount();
+        renderExtraAttendees();
+      } catch (error) {
+        showMessage(error.message || "Bir hata oluştu.", false);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Başvuruyu Tamamla";
       }
-
-      const payload = {
-        full_name: document.getElementById("fullName").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        attendance_date: attendanceDateValue,
-        paid_ticket_quantity: summary.paidQty,
-        bonus_ticket_quantity: summary.bonusQty,
-        ticket_quantity: summary.totalQty,
-        attendee_names: attendeeNames,
-        rep: document.getElementById("rep").value.trim(),
-        receipt_note: document.getElementById("receiptNote").value.trim(),
-        receipt_path: uploadPath,
-        receipt_file_name: receiptFile.name,
-        receipt_file_mime: receiptFile.type,
-        consent_approved: consentApproved
-      };
-
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const rawText = await response.text();
-
-      let result;
-      try {
-        result = JSON.parse(rawText);
-      } catch {
-        throw new Error(rawText || "Sunucudan geçersiz cevap döndü.");
-      }
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || "Kayıt oluşturulamadı.");
-      }
-
-      showMessage(
-        `${result.attendance_date} için ${result.paid_ticket_quantity} ücretli bilet ve ${result.bonus_ticket_quantity} ücretsiz bilet olmak üzere toplam ${result.ticket_quantity} bilet başvurun alındı. Sipariş kodun: ${result.order_code}. Biletlerin e-posta üzerinden paylaşılacaktır.`,
-        true
-      );
-
-      ticketForm.reset();
-      refreshTicketUI();
-    } catch (error) {
-      showMessage(error.message || "Bir hata oluştu.", false);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Kaydı Tamamla";
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
