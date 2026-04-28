@@ -3,59 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YUDANSK | Muhteşem Renkler Müzikali</title>
+  <title>Yudansk Magazine | 21. Dans Festivali</title>
   <meta
     name="description"
-    content="YUDANSK tarafından sahnelenen Muhteşem Renkler Müzikali resmi etkinlik sayfası."
+    content="Yeditepe Üniversitesi Dans Kulübü 21. Dans Festivali: Yudansk Magazine. 5 Mayıs 2026, 19.00, İnan Kıraç Salonu."
+  />
+  <meta property="og:title" content="Yudansk Magazine | 21. Dans Festivali" />
+  <meta
+    property="og:description"
+    content="Şıklar yansın, flaşlar patlasın. Yudansk Magazine ile yılın en çok konuşulan dans gecesine hazır olun."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/magazine-hero.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
   />
   <style>
     :root{
-      --bg:#08080d;
-      --bg2:#11111a;
-      --text:#f8f6f2;
-      --muted:#c6bfd3;
-      --gold:#f4c56c;
-      --gold2:#ff9f43;
-      --pink:#f55399;
-      --violet:#8f6bff;
-      --card:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --shadow:0 20px 50px rgba(0,0,0,.35);
-      --max:1180px;
+      --bg:#080507;
+      --bg-soft:#12080c;
+      --panel:rgba(255,255,255,.06);
+      --panel-2:rgba(255,255,255,.08);
+      --line:rgba(255,255,255,.12);
+      --text:#f7f1ea;
+      --muted:#cdbfb8;
+      --red:#c60a10;
+      --bordeaux:#57040f;
+      --olive:#a6a686;
+      --cream:#f3e7d7;
+      --shadow:0 24px 70px rgba(0,0,0,.35);
     }
 
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
       margin:0;
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-family:"Inter",system-ui,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at 15% 10%, rgba(245,83,153,.18), transparent 25%),
-        radial-gradient(circle at 85% 15%, rgba(143,107,255,.18), transparent 25%),
-        radial-gradient(circle at 50% 100%, rgba(244,197,108,.10), transparent 35%),
-        linear-gradient(180deg,#06070b 0%, #0b0c13 40%, #08090d 100%);
-      overflow-x:hidden;
+        radial-gradient(circle at top left, rgba(198,10,16,.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(87,4,15,.28), transparent 25%),
+        linear-gradient(180deg, #050304 0%, #0c0508 30%, #080507 100%);
     }
 
+    img{max-width:100%;display:block}
     a{text-decoration:none;color:inherit}
-    .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
 
-    .topbar{
+    .container{
+      width:min(1180px, calc(100% - 28px));
+      margin:0 auto;
+    }
+
+    .site-header{
       position:sticky;
       top:0;
-      z-index:30;
-      backdrop-filter:blur(16px);
-      background:rgba(8,8,13,.72);
+      z-index:50;
+      backdrop-filter:blur(18px);
+      background:rgba(7,4,6,.62);
       border-bottom:1px solid rgba(255,255,255,.08);
     }
 
-    .topbar-inner{
-      min-height:72px;
+    .header-inner{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      gap:16px;
+      padding:14px 0;
     }
 
     .brand{
@@ -68,19 +84,27 @@
     .brand-mark{
       width:42px;
       height:42px;
-      border-radius:14px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--red),#ff4a4a);
       display:grid;
       place-items:center;
+      color:#fff;
       font-weight:900;
-      background:linear-gradient(135deg, rgba(244,197,108,.18), rgba(245,83,153,.18)), rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      flex-shrink:0;
+      font-size:14px;
+      box-shadow:0 10px 28px rgba(198,10,16,.35);
+      flex:0 0 auto;
+    }
+
+    .brand-text{
+      min-width:0;
     }
 
     .brand-text strong{
       display:block;
       font-size:14px;
-      letter-spacing:.12em;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      white-space:nowrap;
     }
 
     .brand-text span{
@@ -88,913 +112,854 @@
       font-size:12px;
       color:var(--muted);
       white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
 
     .nav{
-      display:none;
-      gap:18px;
+      display:flex;
       align-items:center;
-      color:var(--muted);
-      font-size:14px;
-    }
-
-    .nav a:hover{color:#fff}
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
       gap:10px;
-      padding:14px 18px;
-      border-radius:16px;
-      font-weight:800;
-      font-size:14px;
-      transition:.2s ease;
-      border:1px solid rgba(255,255,255,.12);
-      white-space:nowrap;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
-    .btn:hover{transform:translateY(-1px)}
-
-    .btn-primary{
-      color:#130f08;
-      background:linear-gradient(135deg,var(--gold),var(--gold2));
-      border:none;
-      box-shadow:0 12px 30px rgba(244,197,108,.22);
+    .nav-link{
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--muted);
+      transition:.25s ease;
     }
 
-    .btn-secondary{
+    .nav-link:hover{
       background:rgba(255,255,255,.06);
       color:#fff;
     }
 
-    .hero{
-      padding:26px 0 24px;
+    .nav-cta{
+      padding:12px 18px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--red),#ff4747);
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
+      box-shadow:0 14px 30px rgba(198,10,16,.25);
     }
 
-    .hero-card{
+    .hero{
       position:relative;
       overflow:hidden;
-      border-radius:30px;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
-        linear-gradient(135deg, rgba(245,83,153,.10), rgba(143,107,255,.08), rgba(244,197,108,.08));
-      padding:26px 18px 22px;
-      box-shadow:var(--shadow);
+      padding:34px 0 28px;
     }
 
     .hero-grid{
       display:grid;
-      gap:18px;
+      gap:22px;
+      align-items:stretch;
     }
 
-    .pill-row{
-      display:flex;
-      flex-wrap:wrap;
+    @media (min-width: 980px){
+      .hero-grid{
+        grid-template-columns:1.05fr .95fr;
+      }
+    }
+
+    .hero-copy{
+      position:relative;
+      padding:24px 0 10px;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
       gap:10px;
-      margin-bottom:16px;
-    }
-
-    .pill{
-      padding:8px 12px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.1);
       border-radius:999px;
+      background:rgba(255,255,255,.04);
+      color:#f0d7cb;
       font-size:12px;
       font-weight:800;
-      color:var(--muted);
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.10);
+      letter-spacing:.16em;
+      text-transform:uppercase;
     }
 
-    .pill-live{
-      color:#130f08;
-      background:linear-gradient(135deg,var(--gold),var(--gold2));
-      border:none;
-    }
-
-    .hero-copy h1{
-      margin:0;
-      font-size:clamp(34px, 10vw, 72px);
-      line-height:.94;
+    .hero h1{
+      margin:18px 0 16px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(58px,9vw,118px);
+      line-height:.88;
       letter-spacing:-.05em;
+      font-weight:700;
     }
 
-    .hero-copy h1 .accent{
-      display:block;
-      background:linear-gradient(135deg,#fff0c6,var(--gold),#ffb7d8);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-
-    .hero-copy p{
-      margin:16px 0 0;
-      font-size:15px;
-      line-height:1.72;
+    .hero-lead{
+      max-width:640px;
       color:var(--muted);
-      max-width:64ch;
+      font-size:17px;
+      line-height:1.85;
+    }
+
+    .hero-info{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin:24px 0 26px;
+      max-width:620px;
+    }
+
+    @media (max-width: 640px){
+      .hero-info{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .info-card{
+      padding:16px;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:var(--shadow);
+    }
+
+    .info-card small{
+      display:block;
+      margin-bottom:6px;
+      color:#e5cfc4;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .info-card strong{
+      display:block;
+      font-size:18px;
+      line-height:1.5;
     }
 
     .hero-actions{
       display:flex;
       flex-wrap:wrap;
       gap:12px;
-      margin-top:22px;
     }
 
-    .metrics{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin-top:22px;
-    }
-
-    .metric{
-      padding:14px 12px;
+    .btn{
+      min-height:54px;
+      padding:0 22px;
+      border:none;
       border-radius:18px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .metric strong{
-      display:block;
-      font-size:20px;
-      margin-bottom:8px;
-      line-height:1;
-    }
-
-    .metric span{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.45;
-    }
-
-    .poster{
-      min-height:360px;
-      border-radius:26px;
-      overflow:hidden;
-      position:relative;
-      display:flex;
-      align-items:flex-end;
+      display:inline-flex;
+      align-items:center;
       justify-content:center;
-      padding:20px;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        radial-gradient(circle at 50% 8%, rgba(255,255,255,.50), transparent 16%),
-        radial-gradient(circle at 20% 0%, rgba(245,83,153,.35), transparent 18%),
-        radial-gradient(circle at 80% 0%, rgba(143,107,255,.35), transparent 18%),
-        linear-gradient(180deg,#130d1f 0%, #0e0e14 40%, #07070b 100%);
-      box-shadow:inset 0 -40px 100px rgba(0,0,0,.5);
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      transition:.25s ease;
     }
 
-    .poster::before,
-    .poster::after{
-      content:"";
-      position:absolute;
-      top:-10%;
-      width:40%;
-      height:120%;
-      background:linear-gradient(180deg, rgba(77,18,70,.95), rgba(30,8,27,.96));
+    .btn-primary{
+      background:linear-gradient(135deg,var(--red),#ff4a4a);
+      color:#fff;
+      box-shadow:0 18px 36px rgba(198,10,16,.28);
     }
 
-    .poster::before{
-      left:-12%;
-      transform:skewX(-8deg);
-      border-radius:0 0 40px 0;
+    .btn-primary:hover{
+      transform:translateY(-2px);
     }
 
-    .poster::after{
-      right:-12%;
-      transform:skewX(8deg);
-      border-radius:0 0 0 40px;
+    .btn-secondary{
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.12);
     }
 
-    .poster-inner{
+    .btn-secondary:hover{
+      background:rgba(255,255,255,.1);
+    }
+
+    .hero-visual{
       position:relative;
-      z-index:2;
-      width:100%;
-      padding:26px 18px;
-      text-align:center;
-      border-radius:22px;
-      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)), rgba(0,0,0,.34);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter:blur(8px);
+      min-height:540px;
+      border-radius:34px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.1);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.28)),
+        url("assets/magazine-hero.jpeg") center/cover no-repeat;
+      box-shadow:var(--shadow);
     }
 
-    .poster-inner small{
-      display:inline-block;
-      margin-bottom:10px;
-      font-size:11px;
-      letter-spacing:.18em;
-      color:#ffdcc1;
+    .hero-badge{
+      position:absolute;
+      left:18px;
+      top:18px;
+      max-width:230px;
+      padding:16px 16px 14px;
+      border-radius:24px;
+      background:rgba(7,4,6,.72);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter:blur(10px);
+    }
+
+    .hero-badge span{
+      display:block;
+      color:#f2dfd4;
+      font-size:12px;
+      letter-spacing:.14em;
       text-transform:uppercase;
+      margin-bottom:8px;
+      font-weight:800;
     }
 
-    .poster-inner h2{
-      margin:0;
-      font-size:clamp(26px,8vw,48px);
+    .hero-badge strong{
+      display:block;
+      font-family:"Cormorant Garamond",serif;
+      font-size:33px;
+      line-height:.95;
+    }
+
+    .hero-ticket{
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      width:min(86%, 280px);
+      padding:18px;
+      border-radius:26px;
+      background:linear-gradient(180deg, rgba(87,4,15,.88), rgba(198,10,16,.72));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .hero-ticket small{
+      display:block;
+      color:#f5d6d6;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:8px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .hero-ticket strong{
+      display:block;
+      font-size:36px;
+      font-weight:900;
       line-height:1;
-      letter-spacing:-.04em;
     }
 
-    .poster-inner p{
-      margin:12px auto 0;
-      max-width:30ch;
-      color:var(--muted);
+    .hero-ticket p{
+      margin:10px 0 0;
+      color:#f3d9d9;
       font-size:13px;
       line-height:1.6;
     }
 
-    .section{
-      padding:24px 0;
+    section{
+      padding:72px 0;
     }
 
     .section-head{
       display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-bottom:18px;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:28px;
+      flex-wrap:wrap;
     }
 
-    .section-head .mini{
+    .section-kicker{
+      display:block;
+      margin-bottom:8px;
+      color:#ffb7b7;
       font-size:12px;
-      letter-spacing:.16em;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-weight:900;
+    }
+
+    .section-title{
+      margin:0;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(38px,5.2vw,68px);
+      line-height:.95;
+      letter-spacing:-.04em;
+    }
+
+    .section-desc{
+      max-width:560px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.85;
+    }
+
+    .manifesto-grid{
+      display:grid;
+      gap:18px;
+    }
+
+    @media (min-width: 900px){
+      .manifesto-grid{
+        grid-template-columns:1.1fr .9fr;
+      }
+    }
+
+    .manifesto-card,
+    .quote-card,
+    .spot-card,
+    .gallery-card,
+    .cta-panel{
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.1);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+    }
+
+    .manifesto-card{
+      padding:28px;
+    }
+
+    .manifesto-card p{
+      margin:0;
+      font-size:17px;
+      line-height:1.95;
+      color:#ece1da;
+    }
+
+    .quote-card{
+      position:relative;
+      overflow:hidden;
+      min-height:100%;
+      padding:28px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45)),
+        url("assets/magazine-pin.jpeg") center/cover no-repeat;
+    }
+
+    .quote-card blockquote{
+      margin:0;
+      font-family:"Cormorant Garamond",serif;
+      font-size:40px;
+      line-height:1.02;
+      max-width:380px;
+    }
+
+    .quote-card span{
+      display:block;
+      margin-top:18px;
+      color:#f4ddd0;
+      font-size:13px;
+      letter-spacing:.14em;
       text-transform:uppercase;
       font-weight:800;
-      color:var(--gold);
     }
 
-    .section-head h3{
-      margin:0;
-      font-size:clamp(28px,7vw,44px);
-      line-height:1.04;
-      letter-spacing:-.04em;
-    }
-
-    .section-head p{
-      margin:0;
-      font-size:15px;
-      color:var(--muted);
-      line-height:1.7;
-      max-width:70ch;
-    }
-
-    .two-col,
-    .dates-grid,
-    .cast-grid,
-    .team-grid{
+    .info-grid{
       display:grid;
-      gap:14px;
+      gap:16px;
+      grid-template-columns:repeat(4,minmax(0,1fr));
     }
 
-    .card{
-      border-radius:24px;
-      padding:18px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
+    @media (max-width: 980px){
+      .info-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 580px){
+      .info-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .event-card{
+      padding:22px;
+      border-radius:26px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.1);
       box-shadow:var(--shadow);
     }
 
-    .card h4{
-      margin:0 0 10px;
-      font-size:18px;
-    }
-
-    .card p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.65;
-    }
-
-    .tags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:16px;
-    }
-
-    .tag{
-      padding:10px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      color:var(--muted);
+    .event-card small{
+      display:block;
+      color:#f0d6cb;
       font-size:12px;
-      font-weight:700;
-    }
-
-    .date-card{
-      border-radius:22px;
-      padding:18px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:var(--shadow);
-    }
-
-    .date-card strong{
-      display:block;
-      font-size:26px;
-      line-height:1;
+      letter-spacing:.14em;
+      text-transform:uppercase;
       margin-bottom:10px;
-      color:var(--gold);
-      letter-spacing:-.04em;
+      font-weight:900;
     }
 
-    .date-card span{
+    .event-card strong{
       display:block;
-      font-size:13px;
-      color:#fff;
-      margin-bottom:6px;
-      font-weight:700;
+      font-size:24px;
+      line-height:1.2;
+      margin-bottom:8px;
     }
 
-    .date-card small{
-      display:block;
+    .event-card p{
+      margin:0;
+      font-size:14px;
+      line-height:1.75;
       color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
     }
 
-    .team-item{
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      padding:14px 0;
-      border-bottom:1px solid rgba(255,255,255,.08);
+    .spots{
+      display:grid;
+      gap:18px;
     }
 
-    .team-item:last-child{
-      border-bottom:none;
-      padding-bottom:0;
+    @media (min-width: 960px){
+      .spots{
+        grid-template-columns:1fr 1fr;
+      }
     }
 
-    .team-role{
-      color:#fff;
-      font-size:14px;
-      font-weight:700;
+    .spot-card{
+      overflow:hidden;
+      position:relative;
     }
 
-    .team-name{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.5;
-      text-align:right;
-      max-width:60%;
+    .spot-media{
+      height:300px;
+      position:relative;
     }
 
-    .cast-grid{
-      grid-template-columns:1fr;
-    }
-
-    .cast-name{
-      padding:12px 14px;
-      border-radius:16px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      color:#f5f1ea;
-      font-size:14px;
-      line-height:1.5;
-    }
-
-    .cta-box{
-      border-radius:28px;
-      padding:20px;
+    .spot-media.red{
       background:
-        linear-gradient(135deg, rgba(244,197,108,.14), rgba(245,83,153,.08), rgba(143,107,255,.08)),
-        rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:var(--shadow);
+        linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.3)),
+        url("assets/high-heels-red.jpeg") center/cover no-repeat;
     }
 
-    .cta-box h3{
+    .spot-media.bordeaux{
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.38)),
+        url("assets/open-style-bordeaux.jpeg") center/cover no-repeat;
+    }
+
+    .spot-body{
+      padding:24px;
+    }
+
+    .spot-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      color:#f4ddd0;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-weight:800;
+    }
+
+    .spot-body h3{
       margin:0 0 10px;
-      font-size:clamp(28px,7vw,42px);
-      line-height:1.04;
-      letter-spacing:-.04em;
+      font-family:"Cormorant Garamond",serif;
+      font-size:44px;
+      line-height:.95;
     }
 
-    .cta-box p{
+    .spot-meta{
+      margin-bottom:14px;
+      color:#f0d0c6;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .spot-body p{
       margin:0;
       color:var(--muted);
+      line-height:1.85;
       font-size:15px;
-      line-height:1.7;
-      max-width:60ch;
     }
 
-    .cta-actions{
+    .gallery-grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns:1.3fr .7fr;
+    }
+
+    @media (max-width: 960px){
+      .gallery-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .gallery-main{
+      min-height:540px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.2)),
+        url("assets/magazine-hero.jpeg") center/cover no-repeat;
+    }
+
+    .gallery-side{
+      display:grid;
+      gap:16px;
+    }
+
+    .gallery-card{
+      overflow:hidden;
+      min-height:170px;
+      background:rgba(255,255,255,.05);
+    }
+
+    .gallery-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .cta-panel{
+      position:relative;
+      overflow:hidden;
+      padding:34px;
+      background:
+        radial-gradient(circle at top left, rgba(198,10,16,.24), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(166,166,134,.12), transparent 32%),
+        linear-gradient(135deg, rgba(87,4,15,.84), rgba(12,7,9,.94));
+    }
+
+    .cta-panel h2{
+      margin:0 0 14px;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(40px,5vw,72px);
+      line-height:.94;
+      letter-spacing:-.04em;
+      max-width:760px;
+    }
+
+    .cta-panel p{
+      max-width:760px;
+      color:#ead5cf;
+      font-size:16px;
+      line-height:1.9;
+    }
+
+    .cta-meta{
       display:flex;
       flex-wrap:wrap;
       gap:12px;
-      margin-top:18px;
+      margin:22px 0 24px;
     }
 
-    .footer{
-      padding:10px 0 90px;
-    }
-
-    .footer-card{
-      border-radius:26px;
-      padding:18px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .footer-card p{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.65;
-    }
-
-    .copyright{
-      margin-top:18px;
-      padding-top:16px;
-      border-top:1px solid rgba(255,255,255,.08);
-      color:#9d95ab;
-      font-size:12px;
-    }
-
-    .mobile-cta{
-      position:fixed;
-      left:12px;
-      right:12px;
-      bottom:12px;
-      z-index:50;
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-      align-items:center;
-      padding:10px;
-      border-radius:18px;
-      background:rgba(10,10,14,.92);
-      backdrop-filter:blur(16px);
+    .cta-chip{
+      padding:12px 15px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 18px 50px rgba(0,0,0,.35);
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
     }
 
-    .mobile-cta small{
-      display:block;
-      color:var(--muted);
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      margin-bottom:2px;
+    .site-footer{
+      padding:34px 0 46px;
+      color:#bdaea8;
+      font-size:13px;
+      border-top:1px solid rgba(255,255,255,.08);
+      margin-top:8px;
     }
 
-    .mobile-cta strong{
-      display:block;
-      font-size:15px;
-      line-height:1.1;
+    .footer-inner{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
     }
 
-    @media (min-width:720px){
-      .container{width:min(var(--max),calc(100% - 40px))}
-      .nav{display:flex}
-
-      .hero-card{padding:32px 28px 28px}
-
-      .hero-grid,
-      .two-col{
-        grid-template-columns:1.05fr .95fr;
+    @media (max-width: 760px){
+      .header-inner{
+        align-items:flex-start;
+        flex-direction:column;
       }
 
-      .dates-grid{
-        grid-template-columns:repeat(2,1fr);
+      .nav{
+        width:100%;
+        justify-content:flex-start;
       }
 
-      .team-grid{
-        grid-template-columns:repeat(2,1fr);
+      .hero{
+        padding-top:20px;
       }
 
-      .cast-grid{
-        grid-template-columns:repeat(2,1fr);
+      .hero-visual{
+        min-height:440px;
+      }
+
+      .quote-card blockquote{
+        font-size:32px;
       }
     }
-
-    @media (min-width:1024px){
-      .dates-grid{
-        grid-template-columns:repeat(4,1fr);
-      }
-
-      .cast-grid{
-        grid-template-columns:repeat(3,1fr);
-      }
-
-      .mobile-cta{display:none}
-    }
-    .photo-gallery-section{
-  padding: 32px 0 88px;
-}
-
-.photo-gallery-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:14px;
-  margin-top:20px;
-}
-
-.photo-gallery-grid img{
-  width:100%;
-  aspect-ratio: 4 / 5;
-  object-fit:cover;
-  display:block;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 16px 40px rgba(0,0,0,.24);
-  background:rgba(255,255,255,.04);
-  transition:transform .22s ease, box-shadow .22s ease;
-}
-
-.photo-gallery-grid img:hover{
-  transform:translateY(-2px);
-  box-shadow:0 20px 48px rgba(0,0,0,.30);
-}
-
-@media (max-width: 1024px){
-  .photo-gallery-grid{
-    grid-template-columns:repeat(3, 1fr);
-    gap:12px;
-  }
-}
-
-@media (max-width: 768px){
-  .photo-gallery-grid{
-    grid-template-columns:repeat(2, 1fr);
-    gap:10px;
-  }
-
-  .photo-gallery-grid img{
-    border-radius:18px;
-    aspect-ratio: 1 / 1.15;
-  }
-}
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container">
-      <div class="topbar-inner">
-        <a href="index.html" class="brand">
-          <div class="brand-mark">YD</div>
-          <div class="brand-text">
-            <strong>YUDANSK</strong>
-            <span>Muhteşem Renkler Müzikali</span>
-          </div>
-        </a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand">
+        <div class="brand-mark">YD</div>
+        <div class="brand-text">
+          <strong>Yudansk Magazine</strong>
+          <span>21. Dans Festivali</span>
+        </div>
+      </a>
 
-        <nav class="nav">
-          <a href="#hikaye">Hikâye</a>
-          <a href="#tarihler">Tarihler</a>
-          <a href="#ekip">Ekip</a>
-          <a href="#dans-kadrosu">Dans Kadrosu</a>
-          <a href="bilet.html">Bilet</a>
-        </nav>
-
-        <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
-      </div>
+      <nav class="nav">
+        <a class="nav-link" href="#festival">Festival</a>
+        <a class="nav-link" href="#spotlight">Spotlight</a>
+        <a class="nav-link" href="#gallery">Galeri</a>
+        <a class="nav-cta" href="bilet.html">Bilet Al</a>
+      </nav>
     </div>
   </header>
 
   <main>
     <section class="hero">
-      <div class="container">
-        <div class="hero-card">
-          <div class="pill-row">
-            <span class="pill pill-live">YUDANSK Sunar</span>
-            <span class="pill">22 • 23 • 24 Nisan</span>
-            <span class="pill">120 Dakika</span>
-            <span class="pill">Yeditepe Üniversitesi İnan Kıraç Konferans Salonu</span>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Yeditepe Üniversitesi Dans Kulübü • 21. Yıl</div>
+
+          <h1>Yudansk<br />Magazine</h1>
+
+          <p class="hero-lead">
+            Şıklar yansın, flaşlar patlasın. Bu yıl 21. Dans Festivalimizi
+            <strong>Magazine</strong> temasıyla kutluyoruz. Podyumun asaletini,
+            sokağın ritmini ve dansın en ikonik hallerini tek gecede buluşturan bu
+            sahne; stilin, estetiğin ve hareketin en güçlü sayfasını açıyor.
+          </p>
+
+          <div class="hero-info">
+            <div class="info-card">
+              <small>Tarih & Saat</small>
+              <strong>5 Mayıs 2026<br />19.00</strong>
+            </div>
+            <div class="info-card">
+              <small>Mekan</small>
+              <strong>Yeditepe Üniversitesi<br />İnan Kıraç Salonu</strong>
+            </div>
           </div>
 
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <h1>
-                Muhteşem
-                <span class="accent">Renkler Müzikali</span>
-              </h1>
-            
+          <div class="hero-actions">
+            <a href="bilet.html" class="btn btn-primary">Biletini Al</a>
+            <a href="#festival" class="btn btn-secondary">Detayları Keşfet</a>
+          </div>
+        </div>
 
-              <div class="hero-actions">
-                <a href="bilet.html" class="btn btn-primary">Şimdi Bilet Al</a>
-                <a href="#hikaye" class="btn btn-secondary">Etkinliği Keşfet</a>
-              </div>
+        <div class="hero-visual">
+          <div class="hero-badge">
+            <span>Cover Story</span>
+            <strong>21.<br />Dans Festivali</strong>
+          </div>
 
-              <div class="metrics">
-                <div class="metric">
-                  <strong>3 Gün</strong>
-                  <span>22, 23 ve 24 Nisan’da sahnede</span>
-                </div>
-                <div class="metric">
-                  <strong>120 DK</strong>
-                  <span>Yüksek tempolu, tek solukta geçen sahne deneyimi</span>
-                </div>
-                <div class="metric">
-                  <strong>YUDANSK</strong>
-                  <span>Yeditepe Üniversitesi Dans Kulübü prodüksiyonu</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="poster">
-              <div class="poster-inner">
-                <small>YUDANSK presents</small>
-                <h2>Muhteşem<br>Renkler Müzikali</h2>
-                <p>
-                  Işık, ritim, sahne ve renklerin buluştuğu büyülü bir müzikal gece.
-                </p>
-              </div>
-            </div>
+          <div class="hero-ticket">
+            <small>Bilet Bilgisi</small>
+            <strong>450 TL</strong>
+            <p>
+              Etkinliğimiz biletlidir. Dışarıdan katılıma açıktır.
+              Yudansk Magazine’in stil sayfasında yerini al.
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="hikaye">
+    <section id="festival">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Etkinlik Tanıtımı</span>
-          <h3>Sahnenin ışıltısı, müziğin gücü, dansın enerjisi.</h3>
-          <p>
-            Muhteşem Renkler Müzikali; büyük hayallerin, cesaretin, birlik olmanın ve sahnede parlamanın hikâyesini
-            güçlü bir müzikal dille anlatıyor. Renkli görsel dünyası, canlı performansları ve ritmini hiç düşürmeyen
-            akışıyla seyirciyi yalnızca izlemeye değil, o dünyanın bir parçası olmaya davet ediyor.
+          <div>
+            <span class="section-kicker">Festival Manifestosu</span>
+            <h2 class="section-title">Işıklar sizin için yanıyor.</h2>
+          </div>
+          <p class="section-desc">
+            Sahne, Yudansk Magazine temasıyla estetiğin, modanın ve hareketin kusursuz
+            uyumuna ev sahipliği yapıyor. Her performans, zihinlerde stil ve ritmin
+            buluştuğu yeni bir sayfa açacak.
           </p>
         </div>
 
-        <div class="two-col">
-          <article class="card">
-            <h4>Müzikal hakkında</h4>
+        <div class="manifesto-grid">
+          <div class="manifesto-card">
             <p>
-              Bu yapım, gösteri dünyasının büyüsünü ve sahnenin arkasındaki emeği dans, müzik ve toplu performansın gücüyle
-              bir araya getiriyor. Her sahnesinde farklı bir enerji taşıyan Muhteşem Renkler Müzikali; temposu, duygusu ve
-              görsel diliyle izleyici üzerinde uzun süre kalacak bir etki bırakmayı hedefliyor.
+              Yudansk Magazine; sadece bir festival değil, yılın en çok konuşulan
+              gecesine dönüşen bir sahne deneyimi. Ritimle, görsel şovlarla ve bitmek
+              bilmeyen bir enerjiyle bu gece; dikkat çekici, cesur ve unutulmaz
+              performansların bir araya geldiği yaşayan bir kapak hikâyesi olacak.
+              Benzersiz atmosferi ve hafızalara kazınacak görselliğiyle, magazin estetiği
+              bu kez sahnede dans edecek.
             </p>
+          </div>
 
-            <div class="tags">
-              <span class="tag">The Greatest Showman ilhamı</span>
-              <span class="tag">Müzikal prodüksiyon</span>
-              <span class="tag">Dans & sahne enerjisi</span>
-              <span class="tag">YUDANSK</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <h4>Oyun konusu</h4>
-            <p>
-              Muhteşem Renkler Müzikali, baskıcı bir baba ve yoksulluk içinde büyüyen Matthew McCarty’nin büyük bir şovmen olma hayali ile, 
-              toplumun dışladığı “farklı” insanlarla sirk kurma hikayesini anlatır. 
-              En yakın dostu ve ortağı Dave Morgan ile birlikte imkansızlıklar içinden doğan bu renkli dünya kısa sürede büyük başarı yakalar. 
-              Ancak bu başarı Matthew ile Dave arasında derin bir kırılmaya yol açar ve kendilerini sektörün ünlü yapımcısı Patrick Milton’ın oyunları içinde bulurlar.
-
-            </p>
-          </article>
+          <div class="quote-card">
+            <blockquote>
+              “Stilin ritimle buluştuğu,
+              flaşların hiç sönmediği
+              bir gece.”
+            </blockquote>
+            <span>Yudansk Magazine • 5 Mayıs 2026</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="tarihler">
+    <section>
       <div class="container">
         <div class="section-head">
-          <span class="mini">Temsil Günleri</span>
-          <h3>22 • 23 • 24 Nisan</h3>
-          <p>
-            Muhteşem Renkler Müzikali dört farklı günde sahnelenecek. Her gün için ayrı bilet ve ayrı QR kayıt akışı kullanılacaktır.
+          <div>
+            <span class="section-kicker">Etkinlik Bilgileri</span>
+            <h2 class="section-title">Takvimine not et.</h2>
+          </div>
+          <p class="section-desc">
+            Yeditepe Üniversitesi Dans Kulübü olarak 21. yılımızda, dansın sahne
+            ışıklarıyla bambaşka bir dille konuştuğu bu geceye herkesi davet ediyoruz.
           </p>
         </div>
 
-        <div class="dates-grid">
-          
-          <article class="date-card">
-            <strong>22</strong>
-            <span>Nisan</span>
-            <small>Muhteşem Renkler Müzikali temsil günü</small>
-          </article>
+        <div class="info-grid">
+          <div class="event-card">
+            <small>Tarih</small>
+            <strong>5 Mayıs 2026</strong>
+            <p>Festival gecesi tek tarihte gerçekleşecektir.</p>
+          </div>
 
-          <article class="date-card">
-            <strong>23</strong>
-            <span>Nisan</span>
-            <small>Muhteşem Renkler Müzikali temsil günü</small>
-          </article>
+          <div class="event-card">
+            <small>Saat</small>
+            <strong>19.00</strong>
+            <p>Kapı ve salon akışı için zamanında gelmenizi öneririz.</p>
+          </div>
 
-          <article class="date-card">
-            <strong>24</strong>
-            <span>Nisan</span>
-            <small>Muhteşem Renkler Müzikali temsil günü</small>
-          </article>
+          <div class="event-card">
+            <small>Yer</small>
+            <strong>İnan Kıraç Salonu</strong>
+            <p>Yeditepe Üniversitesi kampüsü içerisinde yer almaktadır.</p>
+          </div>
+
+          <div class="event-card">
+            <small>Bilet</small>
+            <strong>450 TL</strong>
+            <p>Etkinliğimiz biletlidir ve dışarıdan katılıma açıktır.</p>
+          </div>
         </div>
       </div>
     </section>
-     <section class="section" id="mekan">
-      <div class="container">
-        <div class="section-head">
-          <span class="mini">Lokasyon</span>
-          <h3>Yeditepe Üniversitesi İnan Kıraç Konferans Salonu</h3>
-    </section>
 
-    <section class="section" id="ekip">
+    <section id="spotlight">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Yaratıcı Ekip</span>
-          <h3>Sahne arkasındaki ekip</h3>
-          <p>
-            Muhteşem Renkler Müzikali’nin yaratıcı ve teknik ekibi aşağıdaki gibidir.
+          <div>
+            <span class="section-kicker">Spotlight</span>
+            <h2 class="section-title">Kapak konusu olan ekipler.</h2>
+          </div>
+          <p class="section-desc">
+            Bu yılın stil sayfalarında; feminen güçten sınırsız özgürlüğe uzanan iki
+            güçlü enerji sahneye taşınıyor.
           </p>
         </div>
 
-        <div class="team-grid">
-          <article class="card">
-            <div class="team-item">
-              <div class="team-role">Oyun Adı</div>
-              <div class="team-name">Muhteşem Renkler Müzikali</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Yazan</div>
-              <div class="team-name">Yiğit Keskin</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Çeviren</div>
-              <div class="team-name">Yiğit Keskin</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Yöneten</div>
-              <div class="team-name">Yiğit Keskin</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Dramaturg</div>
-              <div class="team-name">Yiğit Keskin</div>
+        <div class="spots">
+          <article class="spot-card">
+            <div class="spot-media red"></div>
+            <div class="spot-body">
+              <div class="spot-tag">High Heels Green</div>
+              <h3>High Heels</h3>
+              <div class="spot-meta">Koreograf: Pınar Furuncu</div>
+              <p>
+                Podyumun asaletini ve feminen gücünü sahneye taşıyan High Heels ekibi,
+                her adımın bir duruş, her yürüyüşün bir mesaj olduğu unutulmaz bir
+                performans sergiliyor. Gözler üzerinizdeyken yürümeyi bilenlerin gecesi
+                bu. Işıklar yanıyor, topuk sesleri sahneye hükmediyor.
+              </p>
             </div>
           </article>
 
-          <article class="card">
-            <div class="team-item">
-              <div class="team-role">Dekor</div>
-              <div class="team-name">Zeynep Zerrin Erkol / Baran Çiftci</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Kostüm</div>
-              <div class="team-name">Yeditepe Üniversitesi Dans Kulübü</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Işık</div>
-              <div class="team-name">KGF Event Engineering</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Müzik</div>
-              <div class="team-name">Benj Pasek / Justin Paul</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Vokal Koçu</div>
-              <div class="team-name">Nilüfer Özkan</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Müzik Direktörü</div>
-              <div class="team-name">Uğurcan Moroğlu</div>
-            </div>
-            <div class="team-item">
-              <div class="team-role">Koreografi</div>
-              <div class="team-name">Yiğit Dündar</div>
+          <article class="spot-card">
+            <div class="spot-media bordeaux"></div>
+            <div class="spot-body">
+              <div class="spot-tag">Open Style Bordeaux</div>
+              <h3>Open Style</h3>
+              <div class="spot-meta">Koreograf: Aysu Şen</div>
+              <p>
+                Kuralların silindiği, sınırların dağıldığı bu sayfada Open Style ekibi;
+                sokak stilini, farklı tavırları ve ham enerjiyi tek sahnede buluşturuyor.
+                Her anı sürpriz, her hareketi özgün. Kendini en saf ve en sınırsız haliyle
+                ifade edenlerin sahnesi burada başlıyor.
+              </p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="oyuncu-kadrosu">
+    <section id="gallery">
       <div class="container">
         <div class="section-head">
-          <span class="mini">Oyuncu Kadrosu</span>
-          <h3>Sahnedeki oyuncu ekibi</h3>
-          <p>
-            Muhteşem Renkler Müzikali’nin oyuncu kadrosu aşağıdaki isimlerden oluşmaktadır.
+          <div>
+            <span class="section-kicker">Visual Moodboard</span>
+            <h2 class="section-title">Bir sayı boyunca parlayan atmosfer.</h2>
+          </div>
+          <p class="section-desc">
+            Collage estetiği, parlak yüzeyler, editoral ışıklar ve sahne ihtişamı.
+            Yudansk Magazine’in görsel dili; dansı sadece izlenen değil, hissedilen
+            bir deneyime dönüştürüyor.
           </p>
         </div>
 
-        <div class="cast-grid">
-          <div class="cast-name">Adilkaan Yüceer</div>
-          <div class="cast-name">Alper Diker</div>
-          <div class="cast-name">Baran Çiftci</div>
-          <div class="cast-name">Mercan Akbaş</div>
-          <div class="cast-name">Eda Karaosmanoğlu</div>
-          <div class="cast-name">Emre Okul</div>
-          <div class="cast-name">Ceren Candevir</div>
-          <div class="cast-name">Çelen Durugönül</div>
-          <div class="cast-name">Sıla Manaf</div>
-          <div class="cast-name">Alper Yasin Güngördü</div>
-          <div class="cast-name">Sudenur Özgen</div>
-          <div class="cast-name">Sare Demir</div>
-          <div class="cast-name">Mira Güzel</div>
-          <div class="cast-name">Zeynep Sarıbaş</div>
-          <div class="cast-name">Lider Kartbaba</div>
-          <div class="cast-name">Doğa Su Ülker</div>
-          <div class="cast-name">Ata Berk Özkaya</div>
-          <div class="cast-name">Mert Kaan Arslan</div>
-          <div class="cast-name">Deniz Biçer</div>
-          <div class="cast-name">Siren Kallem</div>
-          <div class="cast-name">Burçak Cevit</div>
-          <div class="cast-name">Ceren Gündoğdu</div>
-          <div class="cast-name">Anita Sadat</div>
+        <div class="gallery-grid">
+          <div class="gallery-card gallery-main"></div>
+
+          <div class="gallery-side">
+            <div class="gallery-card">
+              <img src="assets/high-heels-red.jpeg" alt="High Heels kırmızı tema görseli" />
+            </div>
+            <div class="gallery-card">
+              <img src="assets/open-style-bordeaux.jpeg" alt="Open Style bordo tema görseli" />
+            </div>
+            <div class="gallery-card">
+              <img src="assets/high-heels-green.jpeg" alt="High Heels green tema görseli" />
+            </div>
+            <div class="gallery-card">
+              <img src="assets/magazine-pin.jpeg" alt="Yudansk Magazine pin görseli" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
-    <section class="section" id="dans-kadrosu">
+
+    <section>
       <div class="container">
-        <div class="section-head">
-          <span class="mini">Dans Kadrosu</span>
-          <h3>Sahnedeki dans ekibi</h3>
+        <div class="cta-panel">
+          <span class="section-kicker">Last Call</span>
+          <h2>
+            Yudansk Magazine’in stil sayfasını çevir. Bu gecede yerini şimdi ayırt.
+          </h2>
           <p>
-            Muhteşem Renkler Müzikali’nin dans kadrosu aşağıdaki isimlerden oluşmaktadır.
-          </p>
-        </div>
-
-        <div class="cast-grid">
-          <div class="cast-name">Elif Gedik</div>
-          <div class="cast-name">Ece Cingü</div>
-          <div class="cast-name">Ada Süzer</div>
-          <div class="cast-name">Sude Alpay</div>
-          <div class="cast-name">Nil Yüksel</div>
-          <div class="cast-name">Esra Günaydın</div>
-          <div class="cast-name">Selin Bakır</div>
-          <div class="cast-name">Ceren Gündoğdu</div>
-          <div class="cast-name">Ela Tümkaya</div>
-          <div class="cast-name">Zeynep Sude İpek</div>
-          <div class="cast-name">Ayşe Melis Ekinci</div>
-          <div class="cast-name">Esma Kaya</div>
-        </div>
-      </div>
-    </section>
-    
-    <section class="photo-gallery-section">
-  <div class="container">
-    <div class="section-head">
-      <span class="mini">Geçmişten Kareler</span>
-      <h2>Oyundan Kareler</h2>
-      <p>
-        YUDANSK sahnesinden öne çıkan anlar ve oyunun atmosferini yansıtan seçilmiş kareler.
-      </p>
-    </div>
-
-    <div class="photo-gallery-grid">
-      <img src="images/yudansk1.jpg" alt="YUDANSK oyundan kare 1" loading="lazy">
-      <img src="images/yudansk2.jpg" alt="YUDANSK oyundan kare 2" loading="lazy">
-      <img src="images/yudansk3.jpg" alt="YUDANSK oyundan kare 3" loading="lazy">
-      <img src="images/yudansk4.jpg" alt="YUDANSK oyundan kare 4" loading="lazy">
-      <img src="images/yudansk5.jpg" alt="YUDANSK oyundan kare 5" loading="lazy">
-      <img src="images/yudansk6.jpg" alt="YUDANSK oyundan kare 6" loading="lazy">
-      <img src="images/yudansk7.jpg" alt="YUDANSK oyundan kare 7" loading="lazy">
-      <img src="images/yudansk8.jpg" alt="YUDANSK oyundan kare 8" loading="lazy">
-      <img src="images/yudansk9.jpg" alt="YUDANSK oyundan kare 9" loading="lazy">
-      <img src="images/yudansk10.jpg" alt="YUDANSK oyundan kare 10" loading="lazy">
-      <img src="images/yudansk11.jpg" alt="YUDANSK oyundan kare 11" loading="lazy">
-      <img src="images/yudansk12.jpg" alt="YUDANSK oyundan kare 12" loading="lazy">
-      <img src="images/yudansk13.jpg" alt="YUDANSK oyundan kare 13" loading="lazy">
-      <img src="images/yudansk14.jpg" alt="YUDANSK oyundan kare 14" loading="lazy">
-      <img src="images/yudansk15.jpg" alt="YUDANSK oyundan kare 15" loading="lazy">
-    </div>
-  </div>
-</section>
-
-    <section class="section">
-      <div class="container">
-        <div class="cta-box">
-          <h3>Bu gecede yerini al.</h3>
-          <p>
-            YUDANSK tarafından sahnelenen Muhteşem Renkler Müzikali için biletini şimdi oluştur;
-            sahnenin, müziğin ve dansın aynı anda yükseldiği bu özel deneyimi kaçırma.
+            21. yılımızda, yılın en çok konuşulan dans gecesinde sen de yerini al.
+            Sahne ışıkları, ritim, görsel şovlar ve unutulmaz enerji seni bekliyor.
           </p>
 
-          <div class="cta-actions">
-            <a href="bilet.html" class="btn btn-primary">Bilet Sayfasına Git</a>
-            <a href="https://www.instagram.com/yudansk/" target="_blank" class="btn btn-secondary">Instagram</a>
+          <div class="cta-meta">
+            <div class="cta-chip">5 Mayıs 2026</div>
+            <div class="cta-chip">19.00</div>
+            <div class="cta-chip">İnan Kıraç Salonu</div>
+            <div class="cta-chip">450 TL</div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
+            <a href="#spotlight" class="btn btn-secondary">Performansları İncele</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-card">
-        <p>
-          <strong>YUDANSK</strong><br>
-          Yeditepe Üniversitesi Dans Kulübü tarafından sahnelenen Muhteşem Renkler Müzikali resmi etkinlik sayfası.
-        </p>
-        <div class="copyright">
-          Muhteşem Renkler Müzikali • YUDANSK
-        </div>
-      </div>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Yeditepe Üniversitesi Dans Kulübü • Yudansk Magazine • 21. Dans Festivali</span>
+      <span>5 Mayıs 2026 • İnan Kıraç Salonu</span>
     </div>
   </footer>
-
-  <div class="mobile-cta">
-    <div>
-      <small>Muhteşem Renkler Müzikali</small>
-      <strong>Bilet sayfasına geç</strong>
-    </div>
-    <a href="bilet.html" class="btn btn-primary">Bilet Al</a>
-  </div>
 </body>
 </html>
