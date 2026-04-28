@@ -1010,7 +1010,7 @@
           .replace(/^-|-$/g, "");
 
         const attendanceDateValue = document.getElementById("attendanceDate").value.trim();
-        const dayFolder = attendanceDateValue.replace(/\s+/g, "-");
+        const dayFolder = "5-Mayis-2026";
         const uploadPath = `${dayFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeFileName}`;
 
         const { error: uploadError } = await supabaseClient.storage
