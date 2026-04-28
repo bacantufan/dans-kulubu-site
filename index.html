@@ -577,41 +577,69 @@
       font-size:15px;
     }
 
-    .gallery-grid{
-      display:grid;
-      gap:16px;
-      grid-template-columns:1.3fr .7fr;
-    }
+    .moodboard-grid{
+  display:grid;
+  gap:16px;
+  grid-template-columns:repeat(12, minmax(0, 1fr));
+  align-items:stretch;
+}
 
-    @media (max-width: 960px){
-      .gallery-grid{
-        grid-template-columns:1fr;
-      }
-    }
+.mood-card{
+  grid-column:span 3;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.05);
+  box-shadow:var(--shadow);
+  min-height:220px;
+}
 
-    .gallery-main{
-      min-height:540px;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.2)),
-        url("assets/magazine-hero.jpeg") center/cover no-repeat;
-    }
+.mood-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
 
-    .gallery-side{
-      display:grid;
-      gap:16px;
-    }
+.mood-main{
+  grid-column:span 6;
+  grid-row:span 2;
+  min-height:460px;
+}
 
-    .gallery-card{
-      overflow:hidden;
-      min-height:170px;
-      background:rgba(255,255,255,.05);
-    }
+@media (max-width: 960px){
+  .moodboard-grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
 
-    .gallery-card img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
+  .mood-card,
+  .mood-main{
+    grid-column:auto;
+    grid-row:auto;
+  }
+
+  .mood-main{
+    min-height:420px;
+  }
+
+  .mood-card{
+    min-height:220px;
+  }
+}
+
+@media (max-width: 560px){
+  .moodboard-grid{
+    grid-template-columns:1fr;
+  }
+
+  .mood-main{
+    min-height:360px;
+  }
+
+  .mood-card{
+    min-height:240px;
+  }
+}
 
     .cta-panel{
       position:relative;
@@ -906,24 +934,27 @@
           </p>
         </div>
 
-        <div class="gallery-grid">
-          <div class="gallery-card gallery-main"></div>
+       <div class="moodboard-grid">
+  <article class="mood-card mood-main">
+    <img src="assets/magazine-hero.jpeg" alt="Yudansk Magazine ana afiş görseli" />
+  </article>
 
-          <div class="gallery-side">
-            <div class="gallery-card">
-              <img src="assets/high-heels-red.jpeg" alt="High Heels kırmızı tema görseli" />
-            </div>
-            <div class="gallery-card">
-              <img src="assets/open-style-bordeaux.jpeg" alt="Open Style bordo tema görseli" />
-            </div>
-            <div class="gallery-card">
-              <img src="assets/high-heels-green.jpeg" alt="High Heels green tema görseli" />
-            </div>
-            <div class="gallery-card">
-              <img src="assets/magazine-pin.jpeg" alt="Yudansk Magazine pin görseli" />
-            </div>
-          </div>
-        </div>
+  <article class="mood-card">
+    <img src="assets/high-heels-red.jpeg" alt="High Heels kırmızı tema görseli" />
+  </article>
+
+  <article class="mood-card">
+    <img src="assets/open-style-bordeaux.jpeg" alt="Open Style bordo tema görseli" />
+  </article>
+
+  <article class="mood-card">
+    <img src="assets/high-heels-green.jpeg" alt="High Heels green tema görseli" />
+  </article>
+
+  <article class="mood-card">
+    <img src="assets/magazine-pin.jpeg" alt="Yudansk Magazine pin görseli" />
+  </article>
+</div>
       </div>
     </section>
 
